@@ -10,9 +10,9 @@ export const ROTATING_GAME_PROMPTS = [
 ] as const;
 
 export const EASTER_EGG_PROMPTS = [
-  '✦ 让 Noobi 偷走最终 Boss 的键盘，并把所有报错变成金币……',
-  '✦ 制作一个 Noobi 在编译器迷宫里收集橡果、躲避红色报错的隐藏游戏……',
-  '✦ 做一个按下神秘按钮后会下起橡果雨，而且 Noobi 会跳舞的小游戏……',
+  '✦ 让 波波 偷走最终 Boss 的键盘，并把所有报错变成金币……',
+  '✦ 制作一个 波波 在编译器迷宫里收集橡果、躲避红色报错的隐藏游戏……',
+  '✦ 做一个按下神秘按钮后会下起橡果雨，而且 波波会跳舞的小游戏……',
 ] as const;
 
 export const EASTER_EGG_CHANCE = 0.02;

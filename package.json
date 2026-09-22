@@ -1,17 +1,17 @@
 {
-  "name": "noobi-ai",
+  "name": "bobo-ai",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Local-first desktop agent that turns a prompt into a reviewed, playable Web or Godot game with Codex App Server",
-  "author": "Noobi.ai",
-  "homepage": "https://github.com/Innate-Labs/Noobi.ai#readme",
+  "author": "bobo.ai",
+  "homepage": "https://github.com/fengxinbo558/Noobi.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Innate-Labs/Noobi.ai.git"
+    "url": "git+https://github.com/fengxinbo558/Noobi.ai.git"
   },
   "bugs": {
-    "url": "https://github.com/Innate-Labs/Noobi.ai/issues"
+    "url": "https://github.com/fengxinbo558/Noobi.ai/issues"
   },
   "keywords": [
     "codex",
@@ -80,8 +80,8 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "ai.noobi.desktop",
-    "productName": "Noobi.ai",
+    "appId": "ai.bobo.desktop",
+    "productName": "bobo.ai",
     "asar": true,
     "asarUnpack": [
       "node_modules/@openai/codex-*/vendor/**/*"
@@ -105,8 +105,11 @@
       ]
     },
     "dmg": {
-      "backgroundColor": "#11120f",
-      "title": "Noobi.ai ${version}"
+      "backgroundColor": "#f6f1e8",
+      "title": "bobo.ai ${version}"
     }
+  },
+  "optionalDependencies": {
+    "@openai/codex-darwin-arm64": "npm:@openai/codex@^0.148.0-darwin-arm64"
   }
 }

@@ -18,3 +18,8 @@ service-account*.json
 .noobi-private/
 *.tsbuildinfo
 *.tmp
+
+# Local visual review exports and original reference inventory
+design/*.zip
+design/bobo-v1/original/
+design/bobo-v1/review/

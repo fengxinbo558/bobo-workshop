@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T11:01:14.022350+00:00",
+  "title": "Design System: bobo.ai",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "primary",
+        "tonalRamp": [
+          "oklch(15% 0.1500 41.35)",
+          "oklch(26% 0.1500 41.35)",
+          "oklch(38% 0.1500 41.35)",
+          "oklch(49% 0.1500 41.35)",
+          "oklch(61% 0.1500 41.35)",
+          "oklch(72% 0.1500 41.35)",
+          "oklch(84% 0.1500 41.35)",
+          "oklch(95% 0.1500 41.35)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "primary-soft": {
+        "role": "primary",
+        "displayName": "primary-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0306 57.91)",
+          "oklch(26% 0.0306 57.91)",
+          "oklch(38% 0.0306 57.91)",
+          "oklch(49% 0.0306 57.91)",
+          "oklch(61% 0.0306 57.91)",
+          "oklch(72% 0.0306 57.91)",
+          "oklch(84% 0.0306 57.91)",
+          "oklch(95% 0.0306 57.91)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "primary-ink": {
+        "role": "primary",
+        "displayName": "primary-ink",
+        "tonalRamp": [
+          "oklch(15% 0.0085 67.73)",
+          "oklch(26% 0.0085 67.73)",
+          "oklch(38% 0.0085 67.73)",
+          "oklch(49% 0.0085 67.73)",
+          "oklch(61% 0.0085 67.73)",
+          "oklch(72% 0.0085 67.73)",
+          "oklch(84% 0.0085 67.73)",
+          "oklch(95% 0.0085 67.73)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "studio-accent": {
+        "role": "primary",
+        "displayName": "studio-accent",
+        "tonalRamp": [
+          "oklch(15% 0.1533 41.30)",
+          "oklch(26% 0.1533 41.30)",
+          "oklch(38% 0.1533 41.30)",
+          "oklch(49% 0.1533 41.30)",
+          "oklch(61% 0.1533 41.30)",
+          "oklch(72% 0.1533 41.30)",
+          "oklch(84% 0.1533 41.30)",
+          "oklch(95% 0.1533 41.30)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "canvas",
+        "tonalRamp": [
+          "oklch(15% 0.0131 82.40)",
+          "oklch(26% 0.0131 82.40)",
+          "oklch(38% 0.0131 82.40)",
+          "oklch(49% 0.0131 82.40)",
+          "oklch(61% 0.0131 82.40)",
+          "oklch(72% 0.0131 82.40)",
+          "oklch(84% 0.0131 82.40)",
+          "oklch(95% 0.0131 82.40)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "surface",
+        "tonalRamp": [
+          "oklch(15% 0.0107 76.60)",
+          "oklch(26% 0.0107 76.60)",
+          "oklch(38% 0.0107 76.60)",
+          "oklch(49% 0.0107 76.60)",
+          "oklch(61% 0.0107 76.60)",
+          "oklch(72% 0.0107 76.60)",
+          "oklch(84% 0.0107 76.60)",
+          "oklch(95% 0.0107 76.60)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "surface-raised",
+        "tonalRamp": [
+          "oklch(15% 0.0057 84.57)",
+          "oklch(26% 0.0057 84.57)",
+          "oklch(38% 0.0057 84.57)",
+          "oklch(49% 0.0057 84.57)",
+          "oklch(61% 0.0057 84.57)",
+          "oklch(72% 0.0057 84.57)",
+          "oklch(84% 0.0057 84.57)",
+          "oklch(95% 0.0057 84.57)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "surface-hover",
+        "tonalRamp": [
+          "oklch(15% 0.0239 73.61)",
+          "oklch(26% 0.0239 73.61)",
+          "oklch(38% 0.0239 73.61)",
+          "oklch(49% 0.0239 73.61)",
+          "oklch(61% 0.0239 73.61)",
+          "oklch(72% 0.0239 73.61)",
+          "oklch(84% 0.0239 73.61)",
+          "oklch(95% 0.0239 73.61)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "border",
+        "tonalRamp": [
+          "oklch(15% 0.0259 73.16)",
+          "oklch(26% 0.0259 73.16)",
+          "oklch(38% 0.0259 73.16)",
+          "oklch(49% 0.0259 73.16)",
+          "oklch(61% 0.0259 73.16)",
+          "oklch(72% 0.0259 73.16)",
+          "oklch(84% 0.0259 73.16)",
+          "oklch(95% 0.0259 73.16)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "border-strong",
+        "tonalRamp": [
+          "oklch(15% 0.0330 73.45)",
+          "oklch(26% 0.0330 73.45)",
+          "oklch(38% 0.0330 73.45)",
+          "oklch(49% 0.0330 73.45)",
+          "oklch(61% 0.0330 73.45)",
+          "oklch(72% 0.0330 73.45)",
+          "oklch(84% 0.0330 73.45)",
+          "oklch(95% 0.0330 73.45)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "text",
+        "tonalRamp": [
+          "oklch(15% 0.0202 54.26)",
+          "oklch(26% 0.0202 54.26)",
+          "oklch(38% 0.0202 54.26)",
+          "oklch(49% 0.0202 54.26)",
+          "oklch(61% 0.0202 54.26)",
+          "oklch(72% 0.0202 54.26)",
+          "oklch(84% 0.0202 54.26)",
+          "oklch(95% 0.0202 54.26)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "text-soft": {
+        "role": "neutral",
+        "displayName": "text-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0283 58.87)",
+          "oklch(26% 0.0283 58.87)",
+          "oklch(38% 0.0283 58.87)",
+          "oklch(49% 0.0283 58.87)",
+          "oklch(61% 0.0283 58.87)",
+          "oklch(72% 0.0283 58.87)",
+          "oklch(84% 0.0283 58.87)",
+          "oklch(95% 0.0283 58.87)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "muted",
+        "tonalRamp": [
+          "oklch(15% 0.0284 61.25)",
+          "oklch(26% 0.0284 61.25)",
+          "oklch(38% 0.0284 61.25)",
+          "oklch(49% 0.0284 61.25)",
+          "oklch(61% 0.0284 61.25)",
+          "oklch(72% 0.0284 61.25)",
+          "oklch(84% 0.0284 61.25)",
+          "oklch(95% 0.0284 61.25)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "success": {
+        "role": "neutral",
+        "displayName": "success",
+        "tonalRamp": [
+          "oklch(15% 0.0575 156.09)",
+          "oklch(26% 0.0575 156.09)",
+          "oklch(38% 0.0575 156.09)",
+          "oklch(49% 0.0575 156.09)",
+          "oklch(61% 0.0575 156.09)",
+          "oklch(72% 0.0575 156.09)",
+          "oklch(84% 0.0575 156.09)",
+          "oklch(95% 0.0575 156.09)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "success-soft": {
+        "role": "neutral",
+        "displayName": "success-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0152 136.08)",
+          "oklch(26% 0.0152 136.08)",
+          "oklch(38% 0.0152 136.08)",
+          "oklch(49% 0.0152 136.08)",
+          "oklch(61% 0.0152 136.08)",
+          "oklch(72% 0.0152 136.08)",
+          "oklch(84% 0.0152 136.08)",
+          "oklch(95% 0.0152 136.08)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "error",
+        "tonalRamp": [
+          "oklch(15% 0.1497 29.82)",
+          "oklch(26% 0.1497 29.82)",
+          "oklch(38% 0.1497 29.82)",
+          "oklch(49% 0.1497 29.82)",
+          "oklch(61% 0.1497 29.82)",
+          "oklch(72% 0.1497 29.82)",
+          "oklch(84% 0.1497 29.82)",
+          "oklch(95% 0.1497 29.82)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      },
+      "error-soft": {
+        "role": "neutral",
+        "displayName": "error-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0224 38.33)",
+          "oklch(26% 0.0224 38.33)",
+          "oklch(38% 0.0224 38.33)",
+          "oklch(49% 0.0224 38.33)",
+          "oklch(61% 0.0224 38.33)",
+          "oklch(72% 0.0224 38.33)",
+          "oklch(84% 0.0224 38.33)",
+          "oklch(95% 0.0224 38.33)"
+        ],
+        "note": "展示用 OKLCH 明度色阶；从实际颜色推导，不新增运行时色板。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "prompt-ambient",
+        "value": "0 8px 24px #9a61390b",
+        "purpose": "首页创意输入容器。"
+      },
+      {
+        "name": "glass-ambient",
+        "value": "0 12px 32px #7a4a2414",
+        "purpose": "现有浮层阴影变量。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "working",
+        "value": "bobo-working 2.8s ease-in-out infinite",
+        "purpose": "活动伙伴在中点上移 3px 并旋转 0.5deg；prefers-reduced-motion 时关闭。"
+      },
+      {
+        "name": "chip-hover",
+        "value": "transform 140ms ease, background 140ms ease, border-color 140ms ease",
+        "purpose": "创意快捷词悬停反馈。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-desktop",
+        "value": "1100px"
+      },
+      {
+        "name": "stacked",
+        "value": "800px"
+      }
+    ],
+    "focus": {
+      "value": "outline: 2px solid var(--accent); outline-offset: 2px",
+      "purpose": "继承基础样式中的键盘可见焦点。"
+    },
+    "sourceFiles": [
+      "src/renderer/bobo.css",
+      "src/renderer/styles.css",
+      "src/renderer/boboAssets.ts",
+      "src/renderer/components/BoboStudio.tsx"
+    ],
+    "darkThemeSource": "src/renderer/bobo.css :root[data-theme=dark]；使用现有暖深棕变量覆盖，不复制第二份维护源。"
+  },
+  "components": [
+    {
+      "name": "开始制作",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "首页主操作的实际变体；禁用时降低透明度。",
+      "html": "<button class=\"ds-create\">开始制作</button>",
+      "css": ".ds-create{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);height:44px;min-width:108px;padding:0 14px;border:0;border-radius:12px;background:#be4e1d;color:#fffaf5;font-size:13px;cursor:pointer}.ds-create:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 30px color-mix(in srgb,var(--studio-accent,#bf5122) 30%,transparent)}.ds-create:disabled{opacity:.48;cursor:not-allowed}.ds-create:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    },
+    {
+      "name": "停止制作",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "保持可见但不争夺主操作注意力。",
+      "html": "<button class=\"ds-stop\">停止制作</button>",
+      "css": ".ds-stop{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);min-height:44px;border:1px solid var(--line,#e6d9c9);background:var(--panel-raised,#fffdf9);color:var(--text,#392e27);border-radius:10px;padding:8px 12px;cursor:pointer}.ds-stop:hover{background:var(--panel-raised,#fffdf9)}.ds-stop:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    },
+    {
+      "name": "创意输入",
+      "kind": "input",
+      "refersTo": "input-shell",
+      "description": "完整容器可承接附件和提交操作。",
+      "html": "<div class=\"ds-input-shell\"><textarea class=\"ds-input\" aria-label=\"描述游戏创意\" placeholder=\"告诉波波你的想法\"></textarea></div>",
+      "css": ".ds-input-shell{border:1px solid var(--line,#e6d9c9);border-radius:18px;background:var(--panel-raised,#fffdf9);box-shadow:0 8px 24px #9a61390b;padding:4px}.ds-input{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);width:calc(100% - 44px);min-height:88px;padding:21px 22px;border:0;border-radius:14px;background:transparent;color:var(--text,#392e27);font-size:15px;line-height:1.8;resize:vertical}.ds-input:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    },
+    {
+      "name": "侧栏导航",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "当前页使用杏奶底色和橙字。",
+      "html": "<nav aria-label=\"主导航\"><button class=\"ds-nav\" aria-current=\"page\">首页</button><button class=\"ds-nav\">项目</button></nav>",
+      "css": ".ds-nav{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);display:block;width:100%;min-height:44px;padding:0 13px;border:0;border-radius:12px;background:transparent;color:var(--muted,#79695c);text-align:left;cursor:pointer}.ds-nav:hover{background:var(--panel,#fffaf3);color:var(--text,#392e27)}.ds-nav[aria-current]{background:var(--accent-soft,#f9e4d5);color:var(--accent,#b94e20);font-weight:700}.ds-nav:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    },
+    {
+      "name": "创意快捷词",
+      "kind": "chip",
+      "refersTo": "idea-chip",
+      "description": "暖纸色胶囊操作入口。",
+      "html": "<button class=\"ds-chip\">平台动作</button>",
+      "css": ".ds-chip{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);padding:7px 16px;min-height:44px;border:1px solid var(--line,#e6d9c9);border-radius:100px;background:var(--panel,#fffaf3);color:var(--text-soft,#67574b);font-size:12px;line-height:1.5;cursor:pointer;transition:transform 140ms ease,background 140ms ease,border-color 140ms ease}.ds-chip:hover{border-color:color-mix(in srgb,var(--studio-accent,#bf5122) 42%,var(--line,#e6d9c9));background:var(--glass-chip-hover,#f2e5d3);color:var(--text,#392e27);transform:translateY(-1px)}.ds-chip:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    },
+    {
+      "name": "伙伴卡文字区域",
+      "kind": "card",
+      "refersTo": "companion-card",
+      "description": "伙伴卡表面与排版样例；完整卡片在应用中配批准的角色图片。",
+      "html": "<button class=\"ds-companion\"><strong>策划</strong><span>帮你构思世界观和玩法</span></button>",
+      "css": ".ds-companion{font-family:var(--sans,'Avenir Next','PingFang SC',sans-serif);display:grid;gap:4px;padding:6px 12px 6px 4px;min-height:80px;border:1px solid var(--line,#e6d9c9);border-radius:16px;background:var(--panel,#fffaf3);color:var(--text,#392e27);text-align:left;cursor:pointer}.ds-companion strong{font-size:13px;align-self:end}.ds-companion span{font-size:11px;align-self:start;color:var(--muted,#79695c)}.ds-companion:hover{background:var(--accent-soft,#f9e4d5);border-color:var(--accent,#b94e20)}.ds-companion:focus-visible{outline:2px solid var(--accent,#b94e20);outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "暖暖的波波创作工坊",
+    "overview": "奶油白界面承托橙色潮玩小怪兽，像与一个有耐心的创作伙伴坐在同一张工作桌前。圆润角色、木质工坊与柔和植物来自现有插画资产；界面控件保持清楚、克制，承载实际项目和制作进度。\n\n本规范记录 Electron 应用当前实现。实现依据为 `src/renderer/bobo.css`、基础 `styles.css`、`boboAssets.ts` 与 `components/BoboStudio.tsx`；截图参考 `.noobi-smoke/bobo-home.png`、`bobo-workbench.png`、`bobo-two.png`、`bobo-solo.png`。它记录视觉系统，不证明完整游戏生成流程已通过端到端验证。",
+    "keyCharacteristics": [
+      "奶油白分层表面、暖棕正文、橙色操作与选中态。",
+      "潮玩角色承担身份，文字明确表达角色和运行状态。",
+      "首页留白充足，工作台紧凑而可扫描。"
+    ],
+    "rules": [
+      {
+        "name": "The Status Has Words Rule",
+        "body": "进度、暂停、错误和完成必须伴随文字，颜色和角色动作只作补充。",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Station Rule",
+        "body": "多人模式中角色与标签共用固定槽位；移除伙伴时保留其他角色的岗位，不按剩余人数重排标签。",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** 用现有暖色变量和批准的波波资产扩展新界面。",
+      "**Do** 保持岗位、角色标签和真实运行状态一致。",
+      "**Do** 保留可见键盘焦点与减少动态支持。"
+    ],
+    "donts": [
+      "**Don't** 恢复像素化图片采样或旧角色作为默认视觉。",
+      "**Don't** 把忙碌动作或工坊场景当作任务成功的证据。",
+      "**Don't** 为新界面复制旧技术标识作为面向用户的品牌名。"
+    ]
+  }
+}

@@ -2,16 +2,16 @@ import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import React, { type KeyboardEvent } from 'react';
 
 import type { NoobiPackId } from '../../shared/contracts';
-import classicAvatar from '../assets/noobi-packs/classic/frames/sprite-idle-a.png';
-import classicScene from '../assets/noobi-packs/classic/scene.png';
-import helloKittyAvatar from '../assets/noobi-packs/hellokitty/frames/sprite-idle-a.png';
-import helloKittyScene from '../assets/noobi-packs/hellokitty/scene.png';
-import mosslightAvatar from '../assets/noobi-packs/mosslight/frames/sprite-idle-a.png';
-import mosslightScene from '../assets/noobi-packs/mosslight/scene.png';
-import starforgeAvatar from '../assets/noobi-packs/starforge/frames/sprite-idle-a.png';
-import starforgeScene from '../assets/noobi-packs/starforge/scene.png';
-import twilightAvatar from '../assets/noobi-packs/twilight/frames/sprite-idle-a.png';
-import twilightScene from '../assets/noobi-packs/twilight/scene.png';
+import classicAvatar from '../assets/bobo/planner.png';
+import classicScene from '../assets/bobo/studio.png';
+import helloKittyAvatar from '../assets/bobo/engineer.png';
+import helloKittyScene from '../assets/bobo/studio.png';
+import mosslightAvatar from '../assets/bobo/artist.png';
+import mosslightScene from '../assets/bobo/studio.png';
+import starforgeAvatar from '../assets/bobo/tester.png';
+import starforgeScene from '../assets/bobo/studio.png';
+import twilightAvatar from '../assets/bobo/artist.png';
+import twilightScene from '../assets/bobo/studio.png';
 
 export interface NoobiPackOption {
   id: NoobiPackId;
@@ -28,56 +28,56 @@ export interface NoobiPackOption {
 export const NOOBI_PACK_OPTIONS: readonly NoobiPackOption[] = [
   {
     id: 'classic',
-    name: '经典工坊',
+    name: '奶油工坊',
     eyebrow: 'CLASSIC STUDIO',
-    description: '暖木工作室与原版 Noobi，适合大多数游戏制作任务。',
-    avatarLabel: '经典制作人',
+    description: '暖木工作室与策划波波，适合大多数游戏制作任务。',
+    avatarLabel: '波波策划师',
     avatarDescription: '热情、可靠的全能制作伙伴，适合陪你完成第一款游戏。',
-    sceneDescription: '暖木色像素工作室，包含需求桌、装配台与试玩区。',
+    sceneDescription: '奶油色创作工作室，包含需求桌、装配台与试玩区。',
     sceneImage: classicScene,
     avatarImage: classicAvatar,
   },
   {
     id: 'mosslight',
-    name: '苔光工坊',
-    eyebrow: 'MOSSLIGHT ATELIER',
-    description: '植物、琥珀灯与游侠 Noobi，适合自然和冒险题材。',
-    avatarLabel: '苔光游侠',
+    name: '橘子画室',
+    eyebrow: 'BOBO ATELIER',
+    description: '拿起画笔的波波，把想法变成有趣的画面。',
+    avatarLabel: '波波画师',
     avatarDescription: '安静敏锐的自然系伙伴，擅长探索、地图与冒险题材。',
-    sceneDescription: '被植物与琥珀灯包围的苔光工作室，气氛安静而专注。',
+    sceneDescription: '奶油色共享工坊，陪你完善游戏画面。',
     sceneImage: mosslightScene,
     avatarImage: mosslightAvatar,
   },
   {
     id: 'starforge',
-    name: '星铸工坊',
-    eyebrow: 'STARFORGE LAB',
-    description: '星舰机械间与工程师 Noobi，适合科幻和 3D 项目。',
-    avatarLabel: '星铸工程师',
-    avatarDescription: '喜欢机械与调试的工程伙伴，适合科幻、系统和 3D 项目。',
-    sceneDescription: '蓝色晶体与机械终端构成的星铸实验室，科技感更强。',
+    name: '试玩工坊',
+    eyebrow: 'BOBO PLAYTEST',
+    description: '拿起手柄试玩，关注操作、反馈与游戏体验。',
+    avatarLabel: '波波测试员',
+    avatarDescription: '拿起手柄认真试玩，检查操作与游戏反馈。',
+    sceneDescription: '奶油色共享工坊，为试玩与检查留出空间。',
     sceneImage: starforgeScene,
     avatarImage: starforgeAvatar,
   },
   {
     id: 'twilight',
-    name: '暮光魔法工坊',
-    eyebrow: 'TWILIGHT MAGIC LAB',
-    description: '小马宝莉·暮光闪闪与魔法研究室，适合解谜、叙事和奇幻冒险。',
-    avatarLabel: '小马宝莉·暮光闪闪',
-    avatarDescription: '专注研究与魔法推演的伙伴，适合解谜、叙事和奇幻冒险。',
-    sceneDescription: '紫色魔法研究室与星光装置，为奇幻制作提供安静舞台。',
+    name: '灵感工坊',
+    eyebrow: 'BOBO IDEAS',
+    description: '与波波一起发想，探索不同的游戏主题。',
+    avatarLabel: '波波创意师',
+    avatarDescription: '和画师共享形象，陪你发想题材与视觉创意。',
+    sceneDescription: '奶油色工坊与创意道具，为奇幻制作提供安静舞台。',
     sceneImage: twilightScene,
     avatarImage: twilightAvatar,
   },
   {
     id: 'hellokitty',
-    name: 'Hello Kitty 工坊',
-    eyebrow: 'HELLO KITTY STUDIO',
-    description: 'Hello Kitty 与草莓创意室，适合休闲、装扮和温馨题材。',
-    avatarLabel: 'Hello Kitty',
-    avatarDescription: '温柔细致的创意伙伴，适合休闲、装扮与治愈题材。',
-    sceneDescription: '明亮的草莓创意室，适合轻松、可爱和生活化的项目。',
+    name: '工程工坊',
+    eyebrow: 'BOBO ENGINEERING',
+    description: '打开电脑的波波，将玩法做成可以运行的游戏。',
+    avatarLabel: '波波工程师',
+    avatarDescription: '专注实现游戏逻辑，完成构建和问题修复。',
+    sceneDescription: '明亮的温暖创作室，适合轻松、可爱和生活化的项目。',
     sceneImage: helloKittyScene,
     avatarImage: helloKittyAvatar,
   },
@@ -92,7 +92,7 @@ export function noobiPackGridColumnCount(container: HTMLElement | null): number 
 }
 
 export function noobiPackLabel(id: NoobiPackId): string {
-  return NOOBI_PACK_OPTIONS.find((option) => option.id === id)?.name ?? '经典工坊';
+  return NOOBI_PACK_OPTIONS.find((option) => option.id === id)?.name ?? '奶油工坊';
 }
 
 interface NoobiPackPickerProps {
@@ -124,7 +124,7 @@ export function NoobiPackPicker({
     return (
       <label
         className={`noobi-pack-compact is-${resolvedValue}${value === null ? ' is-inherited' : ''}`}
-        title={disabled ? 'Agent 运行期间不能切换制作场景' : '选择这个项目的 Noobi 形象与制作场景'}
+        title={disabled ? 'Agent 运行期间不能切换制作场景' : '选择这个项目的 波波 形象与制作场景'}
       >
         <span
           className="noobi-pack-compact-swatch"
@@ -138,7 +138,7 @@ export function NoobiPackPicker({
           <strong>{busy ? '保存中…' : noobiPackLabel(resolvedValue)}</strong>
         </span>
         <select
-          aria-label="项目 Noobi 形象与制作场景"
+          aria-label="项目 波波 形象与制作场景"
           value={value ?? 'inherit'}
           disabled={disabled || busy}
           onChange={(event) => {
@@ -197,8 +197,8 @@ export function NoobiPackPicker({
       className={`noobi-pack-picker mode-${mode} presentation-${presentation}`}
       role="radiogroup"
       aria-label={presentation === 'character'
-        ? '选择默认 Noobi 角色'
-        : mode === 'global' ? '默认 Noobi 形象与制作场景' : '项目 Noobi 形象与制作场景'}
+        ? '选择默认 波波 角色'
+        : mode === 'global' ? '默认 波波 形象与制作场景' : '项目 波波 形象与制作场景'}
       aria-busy={busy}
     >
       {options.map((option, index) => {
@@ -241,7 +241,7 @@ export function NoobiPackPicker({
               {option.inherited ? <Sparkles className="noobi-pack-follow-icon" size={17} /> : null}
             </span>
             <span className="noobi-pack-card-copy">
-              <small>{presentation === 'character' ? 'NOOBI CHARACTER' : option.eyebrow}</small>
+              <small>{presentation === 'character' ? 'BOBO CHARACTER' : option.eyebrow}</small>
               <strong>{presentation === 'character' ? option.avatarLabel : option.name}</strong>
               <span>{presentation === 'character' ? option.avatarDescription : option.description}</span>
             </span>

@@ -62,7 +62,7 @@ const SECTIONS = [
   { id: 'environment', label: '环境管理', detail: 'Node、Codex、Godot', icon: Cpu },
   { id: 'media', label: '媒体 API', detail: '图像、音频、3D', icon: Boxes },
   { id: 'defaults', label: '项目默认值', detail: '目录、模型、推理', icon: Settings2 },
-  { id: 'noobi', label: 'Noobi 工坊', detail: '伙伴形象与场景', icon: Palette },
+  { id: 'noobi', label: '波波工坊', detail: '伙伴形象与场景', icon: Palette },
   { id: 'skills', label: 'Skills', detail: 'Agent 专业能力', icon: FileCode2 },
   { id: 'mcp', label: 'MCP Servers', detail: '工具与数据连接', icon: Cable },
   { id: 'prompts', label: '提示词', detail: '分角色模板', icon: FileText },
@@ -289,9 +289,9 @@ export function SettingsModal({
           {section === 'noobi' ? (
             <section>
               <SettingsHeading
-                eyebrow="NOOBI WORKSHOP"
+                eyebrow="BOBO WORKSHOP"
                 title="选择默认搭档与工作场景"
-                description="默认先由一位 Noobi 在一个单人工作室中陪你制作；多人编队与多人场景放在下方，按需启用。"
+                description="默认由四位波波伙伴一起制作；也可以在这里切换为单人陪伴。"
               />
 
               <section
@@ -315,7 +315,7 @@ export function SettingsModal({
                     <div>
                       <small>SOLO PARTNER</small>
                       <strong id="noobi-character-step-title">先选择一位默认角色</strong>
-                      <p>这位 Noobi 会独自出现在制作预览里，并跟随 Agent 的阶段行动。</p>
+                      <p>这位 波波会独自出现在制作预览里，并跟随 Agent 的阶段行动。</p>
                     </div>
                   </header>
                   <NoobiPackPicker
@@ -383,7 +383,7 @@ export function SettingsModal({
                   }}
                 />
                 <p className="noobi-pack-settings-note">
-                  只有选择多人舞台后，制作预览才会切换为编队模式。协作工坊按岗位渲染当前编队；荷塘钓鱼保留固定四人的完整动态演出。
+                  选择多人舞台后，制作工坊会切换为编队模式。协作工坊按岗位展示当前编队；休憩小屋展示波波的放松场景。
                 </p>
               </section>
             </section>
@@ -457,7 +457,7 @@ function AccountSettings({
       <SettingsHeading
         eyebrow="CODEX APP SERVER"
         title="运行时与账户"
-        description="Noobi 通过官方 App Server 使用 Codex；认证在系统浏览器中完成。"
+        description="波波 通过官方 App Server 使用 Codex；认证在系统浏览器中完成。"
         action={
           <button className="secondary-button compact" type="button" disabled={busy} onClick={onRefresh}>
             <RefreshCw size={13} className={busy ? 'spin' : ''} /> 刷新

@@ -1,3 +1,4 @@
+import { boboIcon } from '../boboAssets';
 import {
   FolderKanban,
   Gauge,
@@ -148,11 +149,11 @@ export function ProjectRail({
                 <PanelLeftOpen className="brand-toggle-icon" size={19} aria-hidden="true" />
               </button>
             ) : (
-              <div className="brand is-static" aria-label="Noobi.ai">
-                <span className="brand-monogram" aria-hidden="true">N</span>
+              <div className="brand is-static" aria-label="bobo.ai">
+                <span className="brand-monogram" aria-hidden="true"><img src={boboIcon} alt="" /></span>
                 <span className="brand-copy">
-                  <strong>Noobi.ai</strong>
-                  <small>AI GAME STUDIO</small>
+                  <strong>bobo.ai</strong>
+                  <small>你的创作伙伴</small>
                 </span>
               </div>
             )
@@ -164,10 +165,10 @@ export function ProjectRail({
               title={collapsed ? '展开首页侧栏' : '返回首页'}
               onClick={collapsed ? onToggleCollapse : onHome}
             >
-              {collapsed ? <span className="brand-monogram" aria-hidden="true">N</span> : null}
+              <span className="brand-monogram" aria-hidden="true"><img src={boboIcon} alt="" /></span>
               <span className="brand-copy">
-                <strong>Noobi.ai</strong>
-                <small>AI GAME STUDIO</small>
+                <strong>bobo.ai</strong>
+                <small>你的创作伙伴</small>
               </span>
             </button>
           )}
@@ -193,7 +194,7 @@ export function ProjectRail({
           </button>
         </div>
 
-        <nav className="rail-primary-navigation" aria-label="Noobi 导航">
+        <nav className="rail-primary-navigation" aria-label="波波 导航">
           <button className={variant === 'dashboard' ? 'is-active' : ''} type="button" onClick={onHome}>
             <Home size={17} />
             <span>首页</span>

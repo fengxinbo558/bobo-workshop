@@ -50,7 +50,7 @@ import {
   DEFAULT_NOOBI_STAGE_MODE,
 } from '../../shared/contracts';
 import { toMessage } from '../ui';
-import { ProductionDiorama } from './ProductionDiorama';
+import { BoboStudio as ProductionDiorama } from './BoboStudio';
 import {
   NoobiCrewPicker,
   NOOBI_CREW_ROLE_OPTIONS,
@@ -96,7 +96,7 @@ export function Inspector({
   const [evaluatingExperience, setEvaluatingExperience] = useState(false);
   const [experienceReportOpen, setExperienceReportOpen] = useState(false);
   const [previewRevision, setPreviewRevision] = useState(0);
-  const [showBuildPreview, setShowBuildPreview] = useState(false);
+  const [showBuildPreview, setShowBuildPreview] = useState(true);
   const [dragActive, setDragActive] = useState(false);
   const [crewSaving, setCrewSaving] = useState(false);
   const [crewEditorOpen, setCrewEditorOpen] = useState(false);
@@ -149,7 +149,7 @@ export function Inspector({
     setSelectedFile(null);
     setTab('preview');
     setAssetNotice(null);
-    setShowBuildPreview(false);
+    setShowBuildPreview(true);
     setExperienceReportOpen(false);
     setCrewEditorOpen(false);
     void refresh();
@@ -157,7 +157,7 @@ export function Inspector({
 
   useEffect(() => {
     if (project.status === 'running' && previousProjectStatus.current !== 'running') {
-      setShowBuildPreview(false);
+      setShowBuildPreview(true);
     }
     previousProjectStatus.current = project.status;
   }, [project.status]);
@@ -372,7 +372,7 @@ export function Inspector({
       <div className="inspector-toolbar">
         <span>
           {tab === 'preview'
-            ? showProductionScene ? 'NOOBI PRODUCTION STUDIO' : 'LOCAL GAME PREVIEW'
+            ? '游戏预览'
             : tab === 'assets'
               ? 'GAME ASSET LIBRARY'
               : 'PROJECT FILES'}
@@ -395,7 +395,7 @@ export function Inspector({
                 ref={crewToggleRef}
                 aria-expanded={crewEditorOpen}
                 aria-controls="project-noobi-crew-editor"
-                title="编辑项目 Noobi 制作编队"
+                title="编辑项目 波波制作编队"
                 onClick={() => setCrewEditorOpen((open) => !open)}
               >
                 <Users size={13} aria-hidden="true" />
@@ -471,7 +471,7 @@ export function Inspector({
         <aside
           className="inspector-crew-panel"
           id="project-noobi-crew-editor"
-          aria-label="项目 Noobi 制作编队"
+          aria-label="项目 波波制作编队"
           onKeyDown={(event) => {
             if (event.key !== 'Escape') return;
             event.stopPropagation();
@@ -509,7 +509,7 @@ export function Inspector({
             value={resolvedNoobiCrew}
             disabled={project.status === 'running'}
             busy={crewSaving}
-            label="项目 Noobi 制作编队"
+            label="项目 波波制作编队"
             onChange={(crew) => void selectNoobiCrew(crew)}
           />
           <footer>
@@ -545,6 +545,8 @@ export function Inspector({
               title={`${project.name} 游戏预览`}
               sandbox="allow-scripts allow-same-origin allow-pointer-lock"
             />
+          ) : !payload.previewUrl ? (
+            <div className="preview-empty"><MonitorPlay size={40} /><strong>游戏预览会显示在这里</strong><p>从左侧开始制作，构建完成后可以直接试玩。</p></div>
           ) : (
             <ProductionDiorama
               key={`${resolvedNoobiStageMode}:${resolvedNoobiPackId}:${resolvedNoobiSoloSceneId}:${resolvedNoobiSceneId}`}
@@ -984,7 +986,7 @@ function AssetStudio({
         : '宿主私有证明中没有可信生成图片；请检查图像 API 或 Codex ImageGen 后继续制作并重新验证。'
       : hasTrustedUnreferencedImage
         ? '宿主已验证图片来源，下一步需要让游戏生产代码真实加载并显示它。'
-        : 'Noobi 优先使用已配置图像 API，否则回退 Codex ImageGen；成功后会自动出现在这里。';
+        : '波波 优先使用已配置图像 API，否则回退 Codex ImageGen；成功后会自动出现在这里。';
     return (
       <div className={`asset-empty requirement-imagegen${terminal ? ' is-error' : ''}`}>
         <ImageIcon size={28} />

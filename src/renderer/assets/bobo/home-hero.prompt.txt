@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: standalone production hero illustration for Bobo desktop app, landscape 3:2, 1536x1024.
+Input images: reference 1 is approved Bobo home design, reference 2 is approved character identity board. These are visual references ONLY. Create a NEW standalone scene, NEVER reproduce any UI, labels, text, posters, cards, mockup frames.
+Primary request: Approved Bobo, an adorable soft orange clay monster with a taller curved horn on viewer-left and shorter rounded horn on viewer-right, big rounded ivory face, two dark cocoa vertical oval eyes, tiny smiling mouth and ONE little tooth, seated behind a cream desk. Match the approved Bobo shape, face, warm orange color and premium tactile clay material precisely.
+Scene: minimal warm ivory studio background matching #F6F1E8. A little potted orange tree on one side of the desk, blue game blueprint lying on the desk with abstract white lines but absolutely no writing, a couple of simple crayons.
+Critical controller anatomy: Bobo holds a compact orange game controller naturally in BOTH hands, HORIZONTAL and level across the body; its LEFT and RIGHT handles extend left/right. The controller's PLAIN BACK SHELL faces the camera/viewer. Buttons and thumbsticks face the character, away from the viewer. Only a narrow top rim/shoulder buttons may show. Arms rest naturally near desk edge.
+Composition: contained central composition of the entire Bobo head/bust, desk, and orange tree with comfortable margins, camera eye level with subtle downward view. No clipping horns/tree, no text, no logo, no UI, no lettering, no decorative borders.
+Lighting: soft daylight, creamy ambient shadows, sophisticated polished 3D clay illustration, clean sharp expressive face and smooth gentle textures.

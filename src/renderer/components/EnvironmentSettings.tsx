@@ -34,7 +34,7 @@ const TOOL_ICONS: Record<EnvironmentToolStatus['id'], LucideIcon> = {
 
 const TOOL_DESCRIPTIONS: Record<EnvironmentToolStatus['id'], string> = {
   codex: 'Agent 会话、工具调用与项目执行',
-  node: 'Noobi 桌面主进程与构建工具链',
+  node: '波波 桌面主进程与构建工具链',
   godot: 'Godot 4 项目、场景验证与多平台导出',
 };
 
@@ -124,7 +124,7 @@ export function EnvironmentSettings({ onMessage }: EnvironmentSettingsProps) {
         <div>
           <span>GAME TOOLCHAIN / LOCAL HOST</span>
           <h3>环境管理</h3>
-          <p>检查游戏生产所需的本地工具。Noobi 只使用已经确认的可执行文件，不把环境路径交给 Agent 猜测。</p>
+          <p>检查游戏生产所需的本地工具。波波 只使用已经确认的可执行文件，不把环境路径交给 Agent 猜测。</p>
         </div>
         <button
           className="secondary-button compact"

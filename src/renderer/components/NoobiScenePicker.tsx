@@ -5,8 +5,8 @@ import type {
   NoobiPackId,
   NoobiSceneId,
 } from '../../shared/contracts';
-import collaborationScene from '../assets/noobi-packs/collaboration/scene.png';
-import fishingScene from '../assets/noobi-packs/fishing/four-ip-fishing.gif';
+import collaborationScene from '../assets/bobo/studio.png';
+import fishingScene from '../assets/bobo/home-hero.png';
 import {
   NOOBI_PACK_OPTIONS,
   noobiPackGridColumnCount,
@@ -23,10 +23,10 @@ export interface NoobiSceneOption<Id extends string = string> {
 }
 
 export const NOOBI_SOLO_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiPackId>[] =
-  NOOBI_PACK_OPTIONS.map((option) => ({
+  NOOBI_PACK_OPTIONS.filter((option) => option.id === 'classic').map((option) => ({
     id: option.id,
     eyebrow: option.eyebrow,
-    name: option.name,
+    name: '共享工坊',
     description: option.sceneDescription,
     image: option.sceneImage,
     badges: ['单人工作室', '角色独立选择'],
@@ -45,12 +45,12 @@ export const NOOBI_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiSceneId>[] = [
   },
   {
     id: 'fishing',
-    eyebrow: 'POND RETREAT',
-    name: '荷塘钓鱼',
-    description: '流水、游鱼与随风花草组成的四人钓鱼休憩场景。',
+    eyebrow: 'BOBO RETREAT',
+    name: '休憩小屋',
+    description: '波波的暖色休憩空间，制作间隙轻松一下。',
     image: fishingScene,
-    badges: ['动态循环', '固定四人'],
-    animated: true,
+    badges: ['温暖场景', '波波陪伴'],
+    animated: false,
   },
 ] as const satisfies readonly NoobiSceneOption<NoobiSceneId>[];
 
@@ -78,7 +78,7 @@ export function NoobiSoloScenePicker({
 }: NoobiSoloScenePickerProps) {
   return (
     <NoobiScenePickerShell
-      value={value}
+      value={NOOBI_SOLO_SCENE_OPTIONS.some(option => option.id === value) ? value : 'classic'}
       options={NOOBI_SOLO_SCENE_OPTIONS}
       variant="solo"
       disabled={disabled}
@@ -151,7 +151,7 @@ function NoobiScenePickerShell<Id extends string>({
     <section
       className={`noobi-scene-picker variant-${variant}`}
       data-scene-kind={variant}
-      aria-label={solo ? 'Noobi 单人工作室' : 'Noobi 多人运行背景'}
+      aria-label={solo ? '波波 单人工作室' : '波波 多人运行背景'}
       aria-busy={busy}
     >
       <header className="noobi-scene-heading">

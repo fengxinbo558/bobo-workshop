@@ -1,12 +1,12 @@
-import cozyWorkshopGif from '../assets/noobi-transition-scenes/noobi-cozy-workshop.gif';
-import crystalLabGif from '../assets/noobi-transition-scenes/noobi-crystal-lab.gif';
-import forestCampGif from '../assets/noobi-transition-scenes/noobi-forest-camp.gif';
-import potionGardenGif from '../assets/noobi-transition-scenes/noobi-potion-garden.gif';
-import rooftopStudioGif from '../assets/noobi-transition-scenes/noobi-rooftop-studio.gif';
-import seasideArcadeGif from '../assets/noobi-transition-scenes/noobi-seaside-arcade.gif';
-import skyDockGif from '../assets/noobi-transition-scenes/noobi-sky-dock.gif';
-import snowCabinGif from '../assets/noobi-transition-scenes/noobi-snow-cabin.gif';
-import starObservatoryGif from '../assets/noobi-transition-scenes/noobi-star-observatory.gif';
+import cozyWorkshopGif from '../assets/bobo/studio.png';
+import crystalLabGif from '../assets/bobo/studio.png';
+import forestCampGif from '../assets/bobo/studio.png';
+import potionGardenGif from '../assets/bobo/studio.png';
+import rooftopStudioGif from '../assets/bobo/studio.png';
+import seasideArcadeGif from '../assets/bobo/studio.png';
+import skyDockGif from '../assets/bobo/studio.png';
+import snowCabinGif from '../assets/bobo/studio.png';
+import starObservatoryGif from '../assets/bobo/studio.png';
 
 export const NOOBI_TRANSITION_SCENES = [
   cozyWorkshopGif,

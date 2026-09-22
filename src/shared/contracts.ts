@@ -30,7 +30,7 @@ export const DEFAULT_NOOBI_SCENE_ID: NoobiSceneId = 'collaboration';
 
 export const NOOBI_STAGE_MODES = ['solo', 'crew'] as const;
 export type NoobiStageMode = (typeof NOOBI_STAGE_MODES)[number];
-export const DEFAULT_NOOBI_STAGE_MODE: NoobiStageMode = 'solo';
+export const DEFAULT_NOOBI_STAGE_MODE: NoobiStageMode = 'crew';
 
 export const NOOBI_PACK_IDS = [
   'classic',

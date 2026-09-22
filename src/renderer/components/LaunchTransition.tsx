@@ -1,7 +1,7 @@
 import React from 'react';
 
-import walkFrameA from '../assets/noobi-packs/classic/frames/sprite-walk-a-a.png';
-import walkFrameB from '../assets/noobi-packs/classic/frames/sprite-walk-a-b.png';
+import walkFrameA from '../assets/bobo/planner.png';
+import walkFrameB from '../assets/bobo/planner.png';
 
 export type LaunchTransitionPhase = 'running' | 'leaving';
 
@@ -19,7 +19,7 @@ export function LaunchTransition({ phase }: LaunchTransitionProps) {
     >
       <div className="launch-transition-copy">
         <strong>正在建立 New Game</strong>
-        <span>鸭嘴兽正把创意送进制作工作台</span>
+        <span>波波正把创意送进制作工作台</span>
       </div>
       <div className="launch-transition-track" aria-hidden="true">
         <span className="launch-transition-runner">

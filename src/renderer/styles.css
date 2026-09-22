@@ -6504,7 +6504,7 @@ a {
   background-image:
     linear-gradient(180deg, rgba(247, 251, 255, 0.03) 0%, rgba(247, 251, 255, 0.12) 42%, rgba(249, 251, 255, 0.58) 100%),
     radial-gradient(ellipse at 50% 38%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 58%, transparent 78%),
-    url('../../docs/images/noobi-snow-mountain-hero.png');
+    none;
   background-position: center, center, center 46%;
   background-repeat: no-repeat;
   background-size: cover, cover, cover;
@@ -6516,7 +6516,7 @@ a {
   background-image:
     linear-gradient(180deg, rgba(12, 20, 38, 0.38), rgba(12, 18, 32, 0.76)),
     radial-gradient(ellipse at 50% 38%, rgba(31, 45, 72, 0.06), rgba(12, 18, 32, 0.58) 78%),
-    url('../../docs/images/noobi-snow-mountain-hero.png');
+    none;
 }
 
 .view-home .workspace {

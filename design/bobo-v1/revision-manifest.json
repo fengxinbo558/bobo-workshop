@@ -1,0 +1,23 @@
+[
+  {
+    "name": "bobo-character-board",
+    "original": "bobo-character-board.png",
+    "revised": "bobo-character-board-v2.png",
+    "original_sha256": "ccb0d33b5aa87dafcffe3a457b6e506323124c3b12eaa514b5216efe19af23bc",
+    "revised_sha256": "992793c0af8469b8f67148386e50e70adbe05b45e050941f1ca79618a67209b3"
+  },
+  {
+    "name": "bobo-home",
+    "original": "bobo-home.png",
+    "revised": "bobo-home-v2.png",
+    "original_sha256": "1b08a7dd765b290dbc672a7c435de177fa28ccde2a69316d06cf982bcccab3ec",
+    "revised_sha256": "6ebe7a1d177a8699d83cea8092eff61b5cdf53bcf7ff07e0561ea69160281928"
+  },
+  {
+    "name": "bobo-workbench",
+    "original": "bobo-workbench.png",
+    "revised": "bobo-workbench-v2.png",
+    "original_sha256": "a136a8dbd64c9708bcc3356605a2675f55628e79f1332643aece4afa8fc24957",
+    "revised_sha256": "8ea78f1c6cf86df78b88ae3103468473d62512e9a62ee6521a7e1a1921651045"
+  }
+]

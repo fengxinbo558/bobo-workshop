@@ -123,7 +123,9 @@ const moduleDirectory = dirname(fileURLToPath(import.meta.url));
 const smokeCapture = process.env.NOOBI_SMOKE_CAPTURE?.trim() || null;
 if (smokeCapture) app.setPath('userData', resolve('.noobi-smoke/user-data'));
 
-app.setName('Noobi.ai');
+app.setName('bobo.ai');
+if (!smokeCapture) app.setPath('userData', join(app.getPath('appData'), 'bobo.ai'));
+
 
 const runtime = new CodexAppServer({
   codexHome: join(app.getPath('userData'), 'codex-home'),
@@ -167,7 +169,7 @@ if (!hasSingleInstanceLock) {
 } else {
   void app.whenReady().then(launch).catch((error) => {
     if (smokeCapture) process.stderr.write(`Noobi UI smoke failed: ${asError(error).message}\n`);
-    else dialog.showErrorBox('Noobi.ai 无法启动', asError(error).message);
+    else dialog.showErrorBox('bobo.ai 无法启动', asError(error).message);
     app.exit(1);
   });
   app.on('second-instance', () => {
@@ -201,7 +203,7 @@ async function launch(): Promise<void> {
   const userData = app.getPath('userData');
   const defaultWorkspace = smokeCapture
     ? join(userData, 'smoke-projects')
-    : join(homedir(), 'Noobi Games');
+    : join(homedir(), 'Bobo Games');
   projectStore = new ProjectStore({
     storageFile: join(userData, 'projects.json'),
     defaultWorkspace,
@@ -303,8 +305,8 @@ async function createWindow(): Promise<void> {
     height: 940,
     minWidth: 760,
     minHeight: 620,
-    backgroundColor: '#11120f',
-    title: 'Noobi.ai',
+    backgroundColor: '#f6f1e8',
+    title: 'bobo.ai',
     show: false,
     webPreferences: {
       preload: join(moduleDirectory, 'preload.cjs'),
@@ -2194,7 +2196,7 @@ function handle(
 ): void {
   ipcMain.handle(channel, (event, ...args) => {
     assertTrustedRenderer(event);
-    if (shuttingDown) throw new Error('Noobi.ai 正在退出');
+    if (shuttingDown) throw new Error('bobo.ai 正在退出');
     return listener(event, ...args);
   });
 }
@@ -2251,6 +2253,8 @@ async function ensureSmokeProject(): Promise<void> {
     }
     smokePatch.noobiCrewOverride = smokeCrew;
   }
+  if (process.env.NOOBI_SMOKE_CREW_SIZE === '2') smokePatch.noobiCrewOverride = [DEFAULT_NOOBI_CREW[0]!, DEFAULT_NOOBI_CREW[3]!];
+  else if (process.env.NOOBI_SMOKE_CREW === '1') smokePatch.noobiCrewOverride = null;
   if (Object.keys(smokePatch).length > 0) {
     project = await projectStore.update(project.id, smokePatch);
   }
@@ -2294,11 +2298,17 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     window.setSize(760, 800, false);
   }
   await new Promise((resolvePromise) => setTimeout(resolvePromise, 2_500));
-  const healthy = await window.webContents.executeJavaScript(
-    `Boolean(document.querySelector('.app-shell')) && !document.querySelector('.loading-error')`,
-    true,
-  ) as boolean;
-  if (!healthy) throw new Error('Renderer did not reach the Noobi workbench');
+  let healthy = false;
+  for (let attempt = 0; attempt < 60 && !healthy; attempt += 1) {
+    healthy = await window.webContents.executeJavaScript(
+      `Boolean(document.querySelector('.app-shell')) && !document.querySelector('.loading-error')`, true,
+    ) as boolean;
+    if (!healthy) await delay(500);
+  }
+  if (!healthy) {
+    const state = await window.webContents.executeJavaScript(`document.body.innerText.slice(0, 800)`, true);
+    throw new Error(`Renderer did not reach the Bobo app: ${state}`);
+  }
   const smokeTheme = process.env.NOOBI_SMOKE_THEME;
   if (smokeTheme === 'light' || smokeTheme === 'dark') {
     await window.webContents.executeJavaScript(
@@ -2536,13 +2546,13 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || crewCards.selectedCharacters !== 1
       || crewCards.characterImages !== expectedPackCount
       || crewCards.loadedCharacterImages !== expectedPackCount
-      || crewCards.soloScenes !== expectedPackCount
+      || crewCards.soloScenes !== 1
       || crewCards.selectedSoloScenes !== 1
       || crewCards.multiplayerScenes !== NOOBI_SCENE_IDS.length
       || crewCards.selectedMultiplayerScenes !== 0
-      || crewCards.animatedScenes !== 1
-      || crewCards.sceneImages !== expectedPackCount + NOOBI_SCENE_IDS.length
-      || crewCards.loadedSceneImages !== expectedPackCount + NOOBI_SCENE_IDS.length
+      || crewCards.animatedScenes !== 0
+      || crewCards.sceneImages !== 1 + NOOBI_SCENE_IDS.length
+      || crewCards.loadedSceneImages !== 1 + NOOBI_SCENE_IDS.length
       || crewCards.activeMode !== 'solo') {
       throw new Error(`Noobi crew cards did not render correctly: ${JSON.stringify(crewCards)}`);
     }
@@ -2772,47 +2782,26 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     process.stdout.write(`Noobi collapsed settings icon aligned ${JSON.stringify(alignment)}\n`);
   }
   if (process.env.NOOBI_SMOKE_CREW === '1') {
-    const crewState = await window.webContents.executeJavaScript(
-      `(() => {
-        const scene = document.querySelector('.production-diorama');
-        const actors = Array.from(document.querySelectorAll('.production-crew-member'));
-        const roles = actors.map((actor) => actor.getAttribute('data-crew-role') ?? '');
-        const packs = actors.map((actor) => actor.getAttribute('data-noobi-member-pack') ?? '');
-        const shadows = actors.filter((actor) => actor.querySelector('.production-assistant-shadow'));
-        return scene instanceof HTMLElement ? {
-          mode: scene.dataset.sceneMode ?? '',
-          count: actors.length,
-          roles,
-          packs,
-          uniqueRoles: new Set(roles).size,
-          uniquePacks: new Set(packs).size,
-          shadows: shadows.length,
-          primary: actors.filter((actor) => actor.getAttribute('data-crew-active') === 'true').length,
-        } : null;
-      })()`,
-      true,
-    ) as {
-      mode: string;
-      count: number;
-      roles: string[];
-      packs: string[];
-      uniqueRoles: number;
-      uniquePacks: number;
-      shadows: number;
-      primary: number;
-    } | null;
-    if (!crewState
-      || crewState.mode !== 'collaboration'
-      || crewState.count !== DEFAULT_NOOBI_CREW.length
-      || crewState.uniqueRoles !== crewState.count
-      || crewState.uniquePacks !== crewState.count
-      || crewState.shadows !== crewState.count
-      || crewState.primary !== 1) {
-      throw new Error(`Noobi collaboration crew did not load correctly: ${JSON.stringify(crewState)}`);
+    const state = await window.webContents.executeJavaScript(`(() => {
+      const scene = document.querySelector('.bobo-studio');
+      const actors = [...(scene?.querySelectorAll('.bobo-station') ?? [])];
+      return {
+        count: actors.length,
+        roles: new Set(actors.map(a => a.dataset.crewRole)).size,
+        packs: new Set(actors.map(a => a.dataset.noobiMemberPack)).size,
+        loaded: actors.filter(a => { const i = a.querySelector('img'); return i?.complete && i.naturalWidth > 0; }).length,
+        active: actors.filter(a => a.dataset.active === 'true').length,
+        activeRole: actors.find(a => a.dataset.active === 'true')?.dataset.crewRole,
+        overflow: document.documentElement.scrollWidth > innerWidth
+      };
+    })()`, true) as {count: number; roles: number; packs: number; loaded: number; active: number; activeRole: string; overflow: boolean};
+    const running = process.env.NOOBI_SMOKE_STATUS === 'running';
+    const expectedCount = process.env.NOOBI_SMOKE_CREW_SIZE === '2' ? 2 : 4;
+    if (state.count !== expectedCount || state.roles !== expectedCount || state.packs !== expectedCount || state.loaded !== expectedCount || state.active !== (running ? 1 : 0) || state.overflow
+      || (running && process.env.NOOBI_SMOKE_STAGE === 'verify' && state.activeRole !== 'tester')) {
+      throw new Error(`Bobo crew failed: ${JSON.stringify(state)}`);
     }
-    process.stdout.write(
-      `Noobi collaboration crew loaded ${crewState.count} unique specialists: ${crewState.roles.join(', ')}\n`,
-    );
+    process.stdout.write(`Bobo crew verified: ${JSON.stringify(state)}\n`);
   }
   const expectedPack = process.env.NOOBI_SMOKE_PACK?.trim();
   if (isNoobiPackId(expectedPack)) {
@@ -3005,6 +2994,15 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     );
     await delay(250);
   }
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const settled = await window.webContents.executeJavaScript(
+      `!document.querySelector('.is-page-transitioning, .launch-transition') && [...document.images].every(i => i.complete)`, true,
+    ) as boolean;
+    if (settled) break;
+    if (attempt === 39) throw new Error('Bobo UI did not settle before capture');
+    await delay(150);
+  }
+  await window.webContents.executeJavaScript('document.fonts.ready.then(() => true)', true);
   const image = await window.webContents.capturePage();
   const output = resolve(target);
   await mkdir(dirname(output), { recursive: true });

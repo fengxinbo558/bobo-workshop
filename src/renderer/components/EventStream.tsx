@@ -66,7 +66,7 @@ export function EventStream({ project, events }: EventStreamProps) {
           <p>
             {project.status === 'draft'
               ? '启动后，这里会持续展示计划、工具调用、文件变化和验证结果。'
-              : '在下方输入修改要求，Noobi 会在同一 Codex 线程中继续。'}
+              : '在下方输入修改要求，波波会在同一 Codex 线程中继续。'}
           </p>
         </div>
       ) : null}

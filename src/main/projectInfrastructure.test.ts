@@ -172,14 +172,14 @@ describe('project infrastructure', () => {
     const store = new ProjectStore(storageFile, workspace);
 
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'solo',
+      defaultNoobiStageMode: 'crew',
       defaultNoobiSoloSceneId: 'classic',
     });
     await expect(store.saveSettings({
-      defaultNoobiStageMode: 'crew',
+      defaultNoobiStageMode: 'solo',
       defaultNoobiSoloSceneId: 'mosslight',
     })).resolves.toMatchObject({
-      defaultNoobiStageMode: 'crew',
+      defaultNoobiStageMode: 'solo',
       defaultNoobiSoloSceneId: 'mosslight',
     });
     await expect(store.saveSettings({
@@ -191,7 +191,7 @@ describe('project infrastructure', () => {
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'crew',
+      defaultNoobiStageMode: 'solo',
       defaultNoobiSoloSceneId: 'mosslight',
     });
   });
@@ -369,7 +369,7 @@ describe('project infrastructure', () => {
     expect(migrated.projects[1]?.noobiPackOverrideId).toBeNull();
     expect(migrated.projects[0]?.noobiCrewOverride).toBeNull();
     expect(migrated.projects[1]?.noobiCrewOverride).toBeNull();
-    expect(migrated.settings?.defaultNoobiStageMode).toBe('solo');
+    expect(migrated.settings?.defaultNoobiStageMode).toBe('crew');
     expect(migrated.settings?.defaultNoobiSoloSceneId).toBe('classic');
     expect(migrated.settings?.defaultNoobiSceneId).toBe('collaboration');
     expect(migrated.settings?.defaultNoobiPackId).toBe('classic');
@@ -407,7 +407,7 @@ describe('project infrastructure', () => {
 
     const store = new ProjectStore(storageFile, workspace);
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'solo',
+      defaultNoobiStageMode: 'crew',
       defaultNoobiSoloSceneId: 'classic',
       defaultNoobiSceneId: 'fishing',
       defaultNoobiPackId: 'twilight',
@@ -424,7 +424,7 @@ describe('project infrastructure', () => {
       >>;
     };
     expect(migrated.settings).toMatchObject({
-      defaultNoobiStageMode: 'solo',
+      defaultNoobiStageMode: 'crew',
       defaultNoobiSoloSceneId: 'classic',
       defaultNoobiSceneId: 'fishing',
       defaultNoobiPackId: 'twilight',

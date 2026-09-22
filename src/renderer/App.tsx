@@ -3,6 +3,7 @@ import {
   Menu,
   Moon,
   Settings,
+  Square,
   Sun,
   X,
 } from 'lucide-react';
@@ -34,6 +35,7 @@ import { EventStream } from './components/EventStream';
 import { HomeDashboard, type HomeLaunchInput } from './components/HomeDashboard';
 import { Inspector } from './components/Inspector';
 import { LaunchTransition, type LaunchTransitionPhase } from './components/LaunchTransition';
+import { BoboStudio } from './components/BoboStudio';
 import { Pipeline } from './components/Pipeline';
 import {
   PIXEL_COVER_DURATION_MS,
@@ -252,7 +254,7 @@ export function App() {
   function ensureRunReady(): boolean {
     setError('');
     if (!runtime) {
-      setError('Noobi.ai 正在读取 Codex 运行时，请稍后再试。');
+      setError('bobo.ai 正在读取 Codex 运行时，请稍后再试。');
       return false;
     }
     if (runtime.state !== 'ready') {
@@ -377,7 +379,7 @@ export function App() {
       await window.noobi.retryAssetPlan(selected.id, plan.id);
       setRefreshSignal((value) => value + 1);
       await runProject(
-        `重新生成并完整接入素材工单 ${plan.id}（${plan.kind} / ${plan.name}）。必须使用该 planId 调用对应的 Noobi 素材工具；生成成功后更新生产代码中的真实引用，运行构建和玩法验证，直到宿主验收通过。不要停留在占位或仅生成未接入状态。`,
+        `重新生成并完整接入素材工单 ${plan.id}（${plan.kind} / ${plan.name}）。必须使用该 planId 调用对应的 波波 素材工具；生成成功后更新生产代码中的真实引用，运行构建和玩法验证，直到宿主验收通过。不要停留在占位或仅生成未接入状态。`,
         selected.model ?? settings.defaultModel,
         settings.defaultEffort,
       );
@@ -457,7 +459,7 @@ export function App() {
     return (
       <main className="loading-screen">
         <div className="loading-brand">
-          <div><strong>Noobi.ai</strong><small>GAME PRODUCTION SYSTEM</small></div>
+          <div><strong>bobo.ai</strong><small>GAME PRODUCTION SYSTEM</small></div>
         </div>
         {loadingError ? (
           <div className="loading-error" role="alert">
@@ -533,7 +535,7 @@ export function App() {
           </button>
 
           <div className="topbar-project">
-            <strong>{selected?.name ?? 'Noobi Workspace'}</strong>
+            <strong>{selected?.name ?? 'bobo 工作室'}</strong>
             {selected ? (
               <>
                 <span className={`engine-chip engine-${selected.engine}`}>
@@ -547,6 +549,7 @@ export function App() {
           </div>
 
           <div className="topbar-actions">
+            {selected?.status === 'running' && <button className="bobo-stop-button" type="button" onClick={() => void stopProject()}><Square size={13} fill="currentColor" /> 停止制作</button>}
             <button
               className="icon-button"
               type="button"
@@ -581,9 +584,10 @@ export function App() {
         {selected ? (
           <div className={`production-layout status-${selected.status}`}>
             <section className="production-center">
+              <Pipeline stage={studioStage ?? selected.stage} status={selected.status} compact />
               <header className="agent-pane-heading">
                 <div>
-                  <span>NOOBI AGENT</span>
+                  <span>BOBO STUDIO</span>
                   <button
                     className="agent-project-name"
                     type="button"
@@ -599,6 +603,7 @@ export function App() {
                   {PROJECT_STATUS_LABELS[selected.status]}
                 </span>
               </header>
+              <BoboStudio stage={studioStage ?? selected.stage} status={selected.status} crew={selected.noobiCrewOverride ?? settings.defaultNoobiCrew} stageMode={settings.defaultNoobiStageMode} packId={selected.noobiPackOverrideId ?? settings.defaultNoobiPackId} soloSceneId={settings.defaultNoobiSoloSceneId} sceneId={settings.defaultNoobiSceneId} />
               <EventStream project={selected} events={selectedEvents} />
               <Composer
                 key={selected.id}
@@ -616,7 +621,6 @@ export function App() {
               />
             </section>
             <section className="studio-canvas">
-              <Pipeline stage={studioStage ?? selected.stage} status={selected.status} compact />
               <Inspector
                 project={selected}
                 settings={settings}

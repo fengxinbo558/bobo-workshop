@@ -84,7 +84,7 @@ export function NoobiCrewPicker({
   value,
   disabled = false,
   busy = false,
-  label = 'Noobi 制作编队',
+  label = '波波制作编队',
   onChange,
 }: NoobiCrewPickerProps) {
   const [activePackId, setActivePackId] = useState<NoobiPackId>(

@@ -27,7 +27,7 @@ const frameAssets = import.meta.glob(
 function frameSource(packId: NoobiPackId, filename: string): string {
   const key = `./assets/noobi-packs/${packId}/frames/${filename}`;
   const source = frameAssets[key];
-  if (!source) throw new Error(`Missing Noobi animation frame: ${key}`);
+  if (!source) throw new Error(`Missing 波波 animation frame: ${key}`);
   return source;
 }
 

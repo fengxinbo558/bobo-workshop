@@ -1,0 +1,6 @@
+Use case: logo-brand
+Asset type: production desktop application icon, square 1024x1024.
+Input image: approved Bobo character board for identity reference, especially bottom-right app icon. Generate a NEW standalone polished icon, not a crop of the board.
+Primary request: centered face/bust of the approved orange clay Bobo on a warm ivory cream squircle tile. Preserve asymmetrical horns: taller softly curved horn on viewer-left, smaller rounded horn on viewer-right. Broad rounded ivory face patch, two dark cocoa vertical oval eyes, friendly small curved smile with ONE tiny creamy tooth. Lower shoulders visible, no arms or accessories.
+Style: premium tactile 3D soft-clay app icon, warm orange #ED793F, warm ivory #F6F1E8, cocoa eyes #302B27; gentle daylight from upper-left, clean soft shadows, excellent face readability at 32 px.
+Composition: a single centered large Bobo bust filling about 82 percent of a cream rounded square tile, comfortable margin around horns. The cream squircle fills 94 percent of square canvas with subtle rounded corners; outside background matches cream to avoid harsh black edges. No gamepad, no letters, no text, no logo marks, no border, no extra objects, no UI. Match approved character expression and silhouette exactly.

@@ -10,7 +10,7 @@ import {
 } from './NoobiPackPicker';
 
 describe('NoobiPackPicker', () => {
-  it('offers exactly every supported Noobi production pack', () => {
+  it('offers exactly every supported 波波 production pack', () => {
     expect(NOOBI_PACK_OPTIONS.map((option) => option.id)).toEqual([...NOOBI_PACK_IDS]);
   });
 
@@ -35,10 +35,10 @@ describe('NoobiPackPicker', () => {
       onChange: vi.fn(),
     }));
 
-    expect(markup).toContain('aria-label="选择默认 Noobi 角色"');
+    expect(markup).toContain('aria-label="选择默认 波波 角色"');
     expect(markup.match(/data-pack-kind="character"/gu)).toHaveLength(NOOBI_PACK_IDS.length);
     expect(markup.match(/aria-checked="true"/gu)).toHaveLength(1);
-    expect(markup).toContain('小马宝莉·暮光闪闪');
+    expect(markup).toContain('波波创意师');
     expect(markup).not.toContain('noobi-pack-scene-image');
   });
 });

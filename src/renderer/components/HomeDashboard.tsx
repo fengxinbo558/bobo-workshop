@@ -34,6 +34,8 @@ import { ModelPicker } from './ModelPicker';
 import { ProjectIconImage } from './ProjectIcon';
 import { RotatingIdeaInput } from './RotatingIdeaInput';
 
+import { boboHero, BOBO_ROLES } from '../boboAssets';
+
 const IDEA_STARTERS = [
   {
     label: '平台动作',
@@ -84,7 +86,7 @@ interface HomeDashboardProps {
   onLaunch: (input: HomeLaunchInput) => Promise<void>;
   onOpenProject: (project: ProjectRecord) => void;
   onOpenRail: () => void;
-  onOpenSettings: (section?: 'account' | 'environment' | 'media') => void;
+  onOpenSettings: (section?: 'account' | 'environment' | 'media' | 'noobi') => void;
   onToggleTheme: () => void;
 }
 
@@ -238,11 +240,12 @@ export function HomeDashboard({
       <div className="home-scroll">
         <section className="home-hero" aria-labelledby="home-title">
           <div className="home-hero-content">
+            <img className="bobo-home-hero" src={boboHero} alt="波波在自己的创作桌前准备就绪" />
             <span className={`home-loop-status ${runtimeReady ? 'is-ready' : 'is-attention'}`}>
-              <i /> {runtimeReady ? 'LOOP MODE 已就绪' : '完成运行时设置后开始'} <ArrowRight size={13} />
+              <i /> {runtimeReady ? '工作室已就绪' : '完成运行时设置后开始'} <ArrowRight size={13} />
             </span>
-            <h1 id="home-title">今天想做什么游戏，{accountName}？</h1>
-            <p>描述玩法、美术和你最在意的体验。Noobi 会持续制作、试玩、评测和修复，直到得到可交付成品。</p>
+            <h1 id="home-title" title={`你好，${accountName}`}>今天，做个好玩的。</h1>
+            <p>告诉波波你的想法，一起把它做成游戏。</p>
 
             <div
               className={`home-prompt-card${dragActive ? ' is-dragging' : ''}`}
@@ -345,7 +348,8 @@ export function HomeDashboard({
                 >
                   {busy
                     ? <Square size={12} fill="currentColor" />
-                    : <ArrowUp size={20} strokeWidth={2.2} />}
+                    : <ArrowUp size={18} strokeWidth={2.2} />}
+                  <span>{busy ? '正在创建' : '开始制作'}</span>
                 </button>
               </div>
               {dragActive ? (
@@ -370,8 +374,8 @@ export function HomeDashboard({
         <section className="home-projects" aria-labelledby="recent-projects-title">
           <header>
             <div>
-              <span>YOUR GAMES</span>
-              <h2 id="recent-projects-title">继续最近的制作</h2>
+
+              <h2 id="recent-projects-title">最近制作</h2>
             </div>
             <button
               type="button"
@@ -409,10 +413,11 @@ export function HomeDashboard({
             <div className="home-project-empty">
               <Sparkles size={20} />
               <strong>第一个游戏会出现在这里</strong>
-              <span>从上面的一句话开始，Noobi 会建立完整工程。</span>
+              <span>从上面的一句话开始，波波会建立完整工程。</span>
             </div>
           )}
         </section>
+        <section className="bobo-home-crew" aria-label="我的制作伙伴"><h2>我的制作伙伴</h2><div>{Object.entries(BOBO_ROLES).map(([role, member]) => <button key={role} type="button" onClick={() => onOpenSettings('noobi')}><img src={member.image} alt="" /><strong>{member.label}</strong><span>{member.detail}</span></button>)}</div></section>
       </div>
     </section>
   );

@@ -103,7 +103,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'brief-desk',
     stationLabel: '需求桌',
     headline: '正在把想法拆成可制作的任务',
-    detail: 'Noobi 会阅读需求、记录重点，并确认游戏的核心目标。',
+    detail: '波波会阅读需求、记录重点，并确认游戏的核心目标。',
     roamPoints: [
       navigationPoint('brief-main'),
       navigationPoint('brief-east'),
@@ -124,7 +124,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'assembly-bench',
     stationLabel: '装配台',
     headline: '正在搭起游戏工程骨架',
-    detail: 'Noobi 会准备目录、运行环境和第一版可启动入口。',
+    detail: '波波会准备目录、运行环境和第一版可启动入口。',
     roamPoints: [
       navigationPoint('assembly-main'),
       navigationPoint('assembly-left'),
@@ -144,7 +144,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'design-board',
     stationLabel: '玩法白板',
     headline: '正在推演游戏怎么玩才有趣',
-    detail: 'Noobi 会画出核心循环、规则、反馈和玩家目标。',
+    detail: '波波会画出核心循环、规则、反馈和玩家目标。',
     roamPoints: [
       navigationPoint('design-main'),
       navigationPoint('design-left'),
@@ -165,7 +165,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'asset-easel',
     stationLabel: '素材画架',
     headline: '正在准备角色、场景与声音素材',
-    detail: 'Noobi 会生成、筛选并整理真正会被游戏使用的素材。',
+    detail: '波波会生成、筛选并整理真正会被游戏使用的素材。',
     roamPoints: [
       navigationPoint('asset-main'),
       navigationPoint('asset-left'),
@@ -185,7 +185,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'world-lounge',
     stationLabel: '场景休息区',
     headline: '正在让关卡和世界长出来',
-    detail: '场景构建会持续一会儿；Noobi 会看地图、摆放关卡，也会偷偷打盹。',
+    detail: '场景构建会持续一会儿；波波会看地图、摆放关卡，也会偷偷打盹。',
     roamPoints: [
       navigationPoint('world-main'),
       navigationPoint('world-left'),
@@ -207,7 +207,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'code-console',
     stationLabel: '代码终端',
     headline: '正在把玩法写成可以运行的游戏',
-    detail: 'Noobi 会实现交互、动画、音效、规则和场景逻辑。',
+    detail: '波波会实现交互、动画、音效、规则和场景逻辑。',
     roamPoints: [
       navigationPoint('code-main'),
       navigationPoint('code-east'),
@@ -227,7 +227,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'test-arcade',
     stationLabel: '试玩机',
     headline: '正在试玩、评测并修复问题',
-    detail: 'Noobi 会亲自操作游戏，检查能否开始、游玩、失败和重来。',
+    detail: '波波会亲自操作游戏，检查能否开始、游玩、失败和重来。',
     roamPoints: [
       navigationPoint('arcade-main'),
       navigationPoint('arcade-left'),
@@ -247,7 +247,7 @@ const STAGE_SCENES: Record<PipelineStage, ProductionAssistantScene> = {
     station: 'delivery-stage',
     stationLabel: '交付台',
     headline: '可交付游戏已经准备好了',
-    detail: 'Noobi 已完成制作、试玩和检查；现在可以进入游戏。',
+    detail: '波波 已完成制作、试玩和检查；现在可以进入游戏。',
     roamPoints: [
       navigationPoint('delivery-main'),
       navigationPoint('delivery-left'),
@@ -381,9 +381,9 @@ const PRODUCTION_CREW_PRIMARY_ROLE: Readonly<Record<PipelineStage, ProductionCre
 };
 
 export const PRODUCTION_ASSISTANT_EASTER_EGGS: readonly ProductionAssistantEasterEgg[] = [
-  { id: 'moonwalk', label: '彩蛋：Noobi 突然开始月球漫步' },
+  { id: 'moonwalk', label: '彩蛋：波波 突然开始月球漫步' },
   { id: 'golden-acorn', label: '彩蛋：发现了一颗金色橡果' },
-  { id: 'mini-noobi', label: '彩蛋：迷你 Noobi 来帮忙了' },
+  { id: 'mini-noobi', label: '彩蛋：迷你 波波 来帮忙了' },
   { id: 'debug-dance', label: '彩蛋：报错消失后跳起调试舞' },
 ] as const;
 
