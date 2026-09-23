@@ -8,7 +8,7 @@ import {
   ProductionDiorama,
 } from './ProductionDiorama';
 
-describe('Noobi ground shadow profiles', () => {
+describe('BoBo ground shadow profiles', () => {
   it('uses a slightly wider shadow while the actor is walking', () => {
     expect(noobiGroundShadowProfile('walk', 'walking')).toBe('walking');
     expect(noobiGroundShadowProfile('carry', 'walking')).toBe('walking');
@@ -114,7 +114,7 @@ describe('Noobi ground shadow profiles', () => {
     expect(markup).toContain('data-runtime-scene="fishing"');
     expect(markup).toContain('data-scene-mode="fishing"');
     expect(markup).toContain('four-ip-fishing.gif');
-    expect(markup).toContain('NOOBI WORKING');
+    expect(markup).toContain('BOBO WORKING');
     expect(markup).not.toContain('class="workshop-occluder"');
     expect(markup).not.toContain('data-noobi-member-pack=');
     expect(markup).not.toContain('data-crew-role=');

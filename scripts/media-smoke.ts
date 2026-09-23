@@ -33,7 +33,7 @@ try {
   await createWorkspaceTemplate(workspace, {
     id: 'media-smoke',
     name: 'Media Smoke',
-    idea: 'Verify Noobi dynamic media tools through the real Codex App Server.',
+    idea: 'Verify BoBo dynamic media tools through the real Codex App Server.',
     createdAt: new Date().toISOString(),
     model: null,
   });
@@ -50,7 +50,7 @@ try {
     ephemeral: true,
     dynamicTools: MEDIA_DYNAMIC_TOOLS,
     developerInstructions:
-      'This is an automated Noobi media tool test. Use the provided dynamic tool exactly as requested. Do not run shell commands or edit files directly.',
+      'This is an automated BoBo media tool test. Use the provided dynamic tool exactly as requested. Do not run shell commands or edit files directly.',
   });
   const result = await runtime.runTurn({
     threadId,
@@ -59,7 +59,7 @@ try {
     effort: model.efforts.includes('low') ? 'low' : model.defaultEffort,
     approvalPolicy: 'never',
     prompt:
-      'Call noobi_audio_synthesize exactly once with name media_smoke, preset pickup, durationSeconds 0.1, and seed 23. Then reply only with the returned relativePath.',
+      'Call bobo_audio_synthesize exactly once with name media_smoke, preset pickup, durationSeconds 0.1, and seed 23. Then reply only with the returned relativePath.',
   });
 
   const assets = await assetStore.list('media-smoke', workspace);
@@ -71,7 +71,7 @@ try {
   if (result.status !== 'completed') throw new Error(`Media smoke turn ended with ${result.status}.`);
 
   process.stdout.write(
-    `Noobi media smoke passed: ${model.displayName}; ${audio.relativePath}; ${audio.size} bytes\n`,
+    `BoBo media smoke passed: ${model.displayName}; ${audio.relativePath}; ${audio.size} bytes\n`,
   );
 } finally {
   await runtime.stop().catch(() => undefined);

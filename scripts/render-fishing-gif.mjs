@@ -347,7 +347,7 @@ const NATIVE_FOLIAGE_CLUSTERS = [
   },
 ];
 
-const HELP = `Render a seamless pixel-art GIF of four current Noobi IPs fishing.
+const HELP = `Render a seamless pixel-art GIF of four current BoBo IPs fishing.
 
 Usage:
   node scripts/render-fishing-gif.mjs [options]
@@ -689,7 +689,7 @@ function parsePacks(value) {
   if (packs.length !== 4) throw new Error('--packs requires exactly four comma-separated IDs.');
   if (new Set(packs).size !== packs.length) throw new Error('--packs cannot contain duplicates.');
   const unknown = packs.filter((pack) => !KNOWN_PACKS.has(pack));
-  if (unknown.length > 0) throw new Error(`Unknown Noobi pack: ${unknown.join(', ')}`);
+  if (unknown.length > 0) throw new Error(`Unknown BoBo pack: ${unknown.join(', ')}`);
   return packs;
 }
 

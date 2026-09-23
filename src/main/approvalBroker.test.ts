@@ -62,7 +62,7 @@ describe('ApprovalBroker', () => {
     expect(runtime.rejectServerRequest).toHaveBeenCalledWith(
       'unknown-1',
       -32601,
-      'Noobi.ai does not support attestation/generate',
+      'BoBo does not support attestation/generate',
     );
   });
 });

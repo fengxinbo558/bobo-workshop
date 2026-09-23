@@ -18,7 +18,7 @@ import type { ProjectRecord } from '../src/shared/contracts.js';
 const workspace = await mkdtemp(join(tmpdir(), 'noobi-icon-smoke-'));
 const codexHome =
   process.env.NOOBI_SMOKE_CODEX_HOME?.trim()
-  || join(process.env.HOME ?? '', 'Library', 'Application Support', 'Noobi.ai', 'codex-home');
+  || join(process.env.HOME ?? '', 'Library', 'Application Support', 'BoBo', 'codex-home');
 const runtime = new CodexAppServer({ codexHome });
 
 try {

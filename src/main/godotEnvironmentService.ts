@@ -313,7 +313,7 @@ export class GodotEnvironmentService {
         ? `Godot ${version} 已就绪。`
         : state === 'incompatible'
           ? version
-            ? `检测到 Godot ${version}；Noobi.ai 当前需要 Godot 4.x。`
+            ? `检测到 Godot ${version}；BoBo 当前需要 Godot 4.x。`
             : '该文件可以运行，但没有返回有效的 Godot 版本。'
           : result.timedOut
             ? '读取 Godot 版本超时。'

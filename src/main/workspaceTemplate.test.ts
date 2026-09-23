@@ -37,8 +37,8 @@ describe('createWorkspaceTemplate', () => {
       'small playable vertical slice',
     );
     await expect(
-      readFile(join(root, '.codex/skills/noobi-game-builder/SKILL.md'), 'utf8'),
-    ).resolves.toContain('Noobi Game Builder');
+      readFile(join(root, '.codex/skills/bobo-game-builder/SKILL.md'), 'utf8'),
+    ).resolves.toContain('BoBo Game Builder');
 
     const manifest = JSON.parse(
       await readFile(join(root, 'public/assets/asset-pack.json'), 'utf8'),
@@ -90,8 +90,8 @@ describe('createWorkspaceTemplate', () => {
     ]));
 
     const agents = await readFile(join(root, 'AGENTS.md'), 'utf8');
-    expect(agents).toContain('noobi_image_generate');
-    expect(agents).toContain('host-trusted generated image is required for every Noobi.ai game');
+    expect(agents).toContain('bobo_image_generate');
+    expect(agents).toContain('host-trusted generated image is required for every BoBo game');
     expect(agents).toContain('Codex ImageGen fallback');
     expect(agents).toContain('visibly loaded by the running game');
     expect(agents).toContain('core visual asset coverage table');
@@ -103,14 +103,14 @@ describe('createWorkspaceTemplate', () => {
     expect(agents).toContain('Do not regenerate an already suitable animation asset');
     expect(agents).toContain('self-contained Three.js-authored GLB');
     expect(agents).toContain('real rigged GLB clip');
-    expect(agents).toContain('noobi_audio_synthesize');
-    expect(agents).toContain('noobi_audio_generate');
+    expect(agents).toContain('bobo_audio_synthesize');
+    expect(agents).toContain('bobo_audio_generate');
     expect(agents).toContain('must set an explicit `purpose`');
     expect(agents).toContain('`music`, `speech`, `vocal-sfx`, `sfx`, or `ambience`');
     expect(agents).toContain('Do not claim MiniMax generates generic game SFX or ambience');
     expect(agents).toContain('gunshots, explosions');
     expect(agents).toContain('`procedural-audio`');
-    expect(agents).toContain('noobi_model3d_generate');
+    expect(agents).toContain('bobo_model3d_generate');
     expect(agents).toContain('self-contained GLB 2.0');
     expect(agents).toContain('host automatically prioritizes an active 3D API');
     expect(agents).toContain('built-in Three.js exporter');
@@ -130,11 +130,11 @@ describe('createWorkspaceTemplate', () => {
     expectManagedMediaPolicy(agents);
 
     const skill = await readFile(
-      join(root, '.codex/skills/noobi-game-builder/SKILL.md'),
+      join(root, '.codex/skills/bobo-game-builder/SKILL.md'),
       'utf8',
     );
     expect(skill).toContain('public/assets/asset-pack.json');
-    expect(skill).toContain('noobi_asset_register');
+    expect(skill).toContain('bobo_asset_register');
     expect(skill).toContain('MiniMax `music` to its Music model');
     expect(skill).toContain('`speech`/`vocal-sfx` to its Speech model');
     expect(skill).toContain('A `purpose` of `sfx` or `ambience` intentionally returns `procedural-audio`');
@@ -164,10 +164,10 @@ describe('createWorkspaceTemplate', () => {
     expect(skill).toContain('sourceAnimationFps');
     expect(skill).toContain('Never duplicate frames merely to claim 120 FPS');
     expect(skill).toContain('bounded fixed-step accumulator at 120 Hz');
-    expect(skill.startsWith('---\nname: noobi-game-builder')).toBe(true);
+    expect(skill.startsWith('---\nname: bobo-game-builder')).toBe(true);
     expect(occurrences(skill, NOOBI_HOST_RUNTIME_POLICY_START)).toBe(1);
     expect(skill.indexOf(NOOBI_HOST_RUNTIME_POLICY_START)).toBeLessThan(
-      skill.indexOf('# Noobi Game Builder'),
+      skill.indexOf('# BoBo Game Builder'),
     );
     expectManagedMediaPolicy(skill);
 
@@ -189,21 +189,21 @@ describe('createWorkspaceTemplate', () => {
     expect(design).toContain('`artifacts/playtest/latest/report.json` passes every declared step');
 
     const readme = await readFile(join(root, 'README.md'), 'utf8');
-    expect(readme).toContain('Every Noobi.ai run includes an animation needs assessment');
+    expect(readme).toContain('Every BoBo run includes an animation needs assessment');
     expect(readme).toContain('verify and reuse the existing frame set/sprite sheet');
     expect(readme).toContain('Actual rigged 3D characters use real GLB animation clips');
     expect(readme).toContain('This project targets **120 FPS**');
     expect(readme).toContain('executable experience route in `.noobi/playtest.json`');
-    expect(readme).toContain('Noobi.ai owns the resulting `artifacts/playtest/latest/report.json`');
+    expect(readme).toContain('BoBo owns the resulting `artifacts/playtest/latest/report.json`');
 
     const metadata = JSON.parse(
       await readFile(join(root, '.noobi/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(metadata.targetFrameRate).toBe(120);
-    expect(metadata.starter).toBe('noobi-browser-neutral');
+    expect(metadata.starter).toBe('bobo-browser-neutral');
 
     const starter = await readFile(join(root, 'src/main.js'), 'utf8');
-    expect(starter).toContain('NOOBI_HOST_GENERATED_NEUTRAL_STARTER');
+    expect(starter).toContain('BOBO_HOST_GENERATED_NEUTRAL_STARTER');
     expect(starter).toContain('neutral scaffolding created for a brand-new project');
     expect(starter).toContain('等待 Agent 根据项目需求构建实际玩法');
     expect(starter).not.toContain('收集绿色光点');
@@ -232,13 +232,13 @@ describe('createWorkspaceTemplate', () => {
     });
 
     const agents = await readFile(join(root, 'AGENTS.md'), 'utf8');
-    const skill = await readFile(join(root, '.codex/skills/noobi-game-builder/SKILL.md'), 'utf8');
+    const skill = await readFile(join(root, '.codex/skills/bobo-game-builder/SKILL.md'), 'utf8');
     const metadata = JSON.parse(
       await readFile(join(root, '.noobi/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     const starter = await readFile(join(root, 'scripts/main.gd'), 'utf8');
-    expect(metadata.starter).toBe('noobi-godot-4-neutral');
-    expect(starter).toContain('NOOBI_HOST_GENERATED_NEUTRAL_STARTER');
+    expect(metadata.starter).toBe('bobo-godot-4-neutral');
+    expect(starter).toContain('BOBO_HOST_GENERATED_NEUTRAL_STARTER');
     expect(starter).toContain('NEUTRAL GODOT STARTER');
     expect(starter).not.toContain('TARGET_SCORE');
     expect(starter).not.toContain('hazard_positions');
@@ -303,7 +303,7 @@ describe('createWorkspaceTemplate', () => {
     await createWorkspaceTemplate(root, project);
 
     const agentsPath = join(root, 'AGENTS.md');
-    const skillPath = join(root, '.codex/skills/noobi-game-builder/SKILL.md');
+    const skillPath = join(root, '.codex/skills/bobo-game-builder/SKILL.md');
     await appendFile(agentsPath, '\nUSER_AGENTS_SENTINEL\n', 'utf8');
     await appendFile(skillPath, '\nUSER_SKILL_SENTINEL\n', 'utf8');
     const agentsBefore = await readFile(agentsPath, 'utf8');
@@ -335,9 +335,9 @@ describe('createWorkspaceTemplate', () => {
       expectManagedMediaPolicy(content);
     }
     expect(agentsAfter.startsWith(NOOBI_HOST_RUNTIME_POLICY_START)).toBe(true);
-    expect(skillAfter.startsWith('---\nname: noobi-game-builder')).toBe(true);
+    expect(skillAfter.startsWith('---\nname: bobo-game-builder')).toBe(true);
     expect(skillAfter.indexOf(NOOBI_HOST_RUNTIME_POLICY_START)).toBeLessThan(
-      skillAfter.indexOf('# Noobi Game Builder'),
+      skillAfter.indexOf('# BoBo Game Builder'),
     );
     expect(withoutManagedPolicy(agentsAfter)).toBe(withoutManagedPolicy(agentsBefore));
     expect(withoutManagedPolicy(skillAfter)).toBe(withoutManagedPolicy(skillBefore));
@@ -366,11 +366,11 @@ describe('createWorkspaceTemplate', () => {
     await createWorkspaceTemplate(root, project);
 
     const agentsPath = join(root, 'AGENTS.md');
-    const skillPath = join(root, '.codex/skills/noobi-game-builder/SKILL.md');
+    const skillPath = join(root, '.codex/skills/bobo-game-builder/SKILL.md');
     const legacyAgents = '# User-owned legacy agents\n\nUSER_AGENTS_LEGACY_SENTINEL\n';
     const skillFrontMatter = [
       '---',
-      'name: noobi-game-builder',
+      'name: bobo-game-builder',
       'description: User-maintained legacy skill.',
       '---',
     ].join('\n');
@@ -461,7 +461,7 @@ function expectManagedMediaPolicy(source: string): void {
   expect(policy).toContain('enabled MiniMax Music service');
   expect(policy).toContain('at least one MiniMax-generated music track');
   expect(policy).toContain('planning role cannot call its tool');
-  expect(policy).toContain('`noobi_audio_generate` with `purpose=music`');
+  expect(policy).toContain('`bobo_audio_generate` with `purpose=music`');
   expect(policy).toContain('exist under `public/assets/audio/`');
   expect(policy).toContain('loaded and played by production game code');
   expect(policy).toContain('Never silently substitute procedural or synthesized audio');

@@ -28,7 +28,7 @@ interface IconAgentRuntime {
 
 const ICON_TURN_TIMEOUT_MS = 240_000;
 
-const ICON_AGENT_INSTRUCTIONS = `You are Noobi's pixel-icon artist. Your single job is to create one pixel-art game icon that visually represents the player's game.
+const ICON_AGENT_INSTRUCTIONS = `You are BoBo's pixel-icon artist. Any platform branding must say BoBo, with an orange-and-cream mascot; never use an upstream logo. Your single job is to create one pixel-art game icon that visually represents the player's game.
 
 Workflow:
 1. Read the game name and concept in the user message.

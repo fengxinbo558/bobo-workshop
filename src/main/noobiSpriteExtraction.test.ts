@@ -183,7 +183,7 @@ function writeSyntheticActionSheet(filePath: string): void {
   writeFileSync(filePath, PNG.sync.write(image));
 }
 
-describe('Noobi sprite extraction scale', () => {
+describe('BoBo sprite extraction scale', () => {
   it('matches an alternate action frame to the canonical A-frame body height', () => {
     const canonical = { minX: 20, minY: 10, maxX: 225, maxY: 257 }; // 248 px
     const alternate = { minX: 22, minY: 30, maxX: 223, maxY: 232 }; // 203 px

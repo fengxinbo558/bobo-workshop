@@ -274,7 +274,7 @@ export class ProjectStore {
       if (index < 0) throw new Error(`Unknown project: ${id}`);
       const root = await resolveExistingProjectDirectory(projectDirectory, id);
       const duplicate = state.projects.find((project) => project.id !== id && project.root === root);
-      if (duplicate) throw new Error('这个文件夹已经绑定到另一个 NooBi 游戏。');
+      if (duplicate) throw new Error('这个文件夹已经绑定到另一个 BoBo 游戏。');
       const next: ProjectRecord = {
         ...state.projects[index]!,
         root,
@@ -829,13 +829,13 @@ function validatedGameEngine(value: unknown, projectId: string): GameEngine {
 
 function validatedNoobiPackOverrideId(value: unknown, projectId: string): NoobiPackId | null {
   if (value !== null && !isNoobiPackId(value)) {
-    throw new Error(`Project ${projectId} has an invalid Noobi pack override`);
+    throw new Error(`Project ${projectId} has an invalid BoBo pack override`);
   }
   return value;
 }
 
 function validatedNoobiCrewOverride(value: unknown, projectId: string): NoobiCrewMember[] | null {
-  return value === null ? null : validatedNoobiCrew(value, `Project ${projectId} Noobi crew override`);
+  return value === null ? null : validatedNoobiCrew(value, `Project ${projectId} BoBo crew override`);
 }
 
 function validatedNoobiCrew(value: unknown, field: string): NoobiCrewMember[] {
@@ -884,24 +884,24 @@ function validateSettings(value: unknown): AppSettings {
     ? DEFAULT_NOOBI_STAGE_MODE
     : value.defaultNoobiStageMode;
   if (!isNoobiStageMode(defaultNoobiStageMode)) {
-    throw new Error('Default Noobi stage mode setting is invalid');
+    throw new Error('Default BoBo stage mode setting is invalid');
   }
   const defaultNoobiSoloSceneId = value.defaultNoobiSoloSceneId === undefined
     ? DEFAULT_NOOBI_SOLO_SCENE_ID
     : value.defaultNoobiSoloSceneId;
   if (!isNoobiPackId(defaultNoobiSoloSceneId)) {
-    throw new Error('Default Noobi solo scene setting is invalid');
+    throw new Error('Default BoBo solo scene setting is invalid');
   }
   const defaultNoobiSceneId = value.defaultNoobiSceneId === undefined
     ? DEFAULT_NOOBI_SCENE_ID
     : value.defaultNoobiSceneId;
   if (!isNoobiSceneId(defaultNoobiSceneId)) {
-    throw new Error('Default Noobi scene setting is invalid');
+    throw new Error('Default BoBo scene setting is invalid');
   }
   const defaultNoobiPackId = value.defaultNoobiPackId === undefined
     ? DEFAULT_NOOBI_PACK_ID
     : value.defaultNoobiPackId;
-  if (!isNoobiPackId(defaultNoobiPackId)) throw new Error('Default Noobi pack setting is invalid');
+  if (!isNoobiPackId(defaultNoobiPackId)) throw new Error('Default BoBo pack setting is invalid');
   const defaultNoobiCrew = value.defaultNoobiCrew === undefined
     ? DEFAULT_NOOBI_CREW
     : value.defaultNoobiCrew;
@@ -914,7 +914,7 @@ function validateSettings(value: unknown): AppSettings {
     defaultNoobiSoloSceneId,
     defaultNoobiSceneId,
     defaultNoobiPackId,
-    defaultNoobiCrew: validatedNoobiCrew(defaultNoobiCrew, 'Default Noobi crew setting'),
+    defaultNoobiCrew: validatedNoobiCrew(defaultNoobiCrew, 'Default BoBo crew setting'),
     theme: value.theme,
   };
 }
@@ -971,18 +971,18 @@ export async function resolveExistingProjectDirectory(
     metadataInfo = await lstat(metadataPath);
   } catch (error) {
     if (isNodeError(error, 'ENOENT')) {
-      throw new Error('所选文件夹不是 NooBi 游戏文件夹：缺少 .noobi/project.json。');
+      throw new Error('所选文件夹不是 BoBo 游戏文件夹：缺少 .noobi/project.json。');
     }
     throw error;
   }
   if (metadataInfo.isSymbolicLink() || !metadataInfo.isFile() || metadataInfo.size > MAX_FILE_BYTES) {
-    throw new Error('所选文件夹的 NooBi 项目标记无效。');
+    throw new Error('所选文件夹的 BoBo 项目标记无效。');
   }
   let metadata: unknown;
   try {
     metadata = JSON.parse(await readFile(metadataPath, 'utf8'));
   } catch {
-    throw new Error('所选文件夹的 NooBi 项目标记无法读取。');
+    throw new Error('所选文件夹的 BoBo 项目标记无法读取。');
   }
   if (!metadata || typeof metadata !== 'object' || (metadata as { id?: unknown }).id !== validatedId(projectId)) {
     throw new Error('所选文件夹不属于当前游戏，请选择改名前的同一个游戏文件夹。');

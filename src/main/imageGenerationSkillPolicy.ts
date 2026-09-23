@@ -44,7 +44,7 @@ export async function assertRequiredImageGenerationSkillToggleAllowed(
     return;
   }
   if (await sameRealPath(skill.path, expectedPath)) {
-    throw new Error('ImageGen 是 Noobi.ai 的宿主必需 Skill，不能停用');
+    throw new Error('ImageGen 是 BoBo 的宿主必需 Skill，不能停用');
   }
 }
 

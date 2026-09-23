@@ -24,8 +24,8 @@ try {
     defaultWorkspace: join(root, 'games'),
   });
   const project = await store.create({
-    name: 'Noobi Godot Smoke',
-    idea: 'Verify the real Noobi Godot starter, validation, and Web export pipeline.',
+    name: 'BoBo Godot Smoke',
+    idea: 'Verify the real BoBo Godot starter, validation, and Web export pipeline.',
     parentDirectory: join(root, 'games'),
     model: null,
     engine: 'godot',
@@ -77,7 +77,7 @@ try {
 
   process.stdout.write(
     [
-      'Noobi Godot smoke passed',
+      'BoBo Godot smoke passed',
       'engine=' + status.tool.version,
       'project=' + project.engine,
       'artifacts=' + exported.artifacts.length,

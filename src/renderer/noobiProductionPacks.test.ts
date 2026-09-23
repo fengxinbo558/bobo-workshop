@@ -4,7 +4,7 @@ import { NOOBI_PACK_IDS } from '../shared/contracts';
 import { noobiManifestSources } from './noobiAnimation';
 import { noobiProductionPack } from './noobiProductionPacks';
 
-describe('Noobi production packs', () => {
+describe('BoBo production packs', () => {
   it('ships a matching scene and complete animation manifest for every selectable pack', () => {
     for (const packId of NOOBI_PACK_IDS) {
       const pack = noobiProductionPack(packId);

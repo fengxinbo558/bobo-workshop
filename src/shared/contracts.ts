@@ -573,9 +573,9 @@ export interface NoobiApi {
   readProjectFile(projectId: string, relativePath: string): Promise<FileReadResult>;
   /** Returns the project icon as a PNG data URL, or null when no icon exists yet. */
   getProjectIcon(projectId: string): Promise<ProjectIconData | null>;
-  /** Pass null to make the project follow the app-wide Noobi production pack again. */
+  /** Pass null to make the project follow the app-wide BoBo production pack again. */
   saveProjectNoobiPack(projectId: string, packId: NoobiPackId | null): Promise<ProjectRecord>;
-  /** Pass null to make the project follow the app-wide Noobi crew again. */
+  /** Pass null to make the project follow the app-wide BoBo crew again. */
   saveProjectNoobiCrew(
     projectId: string,
     crew: readonly NoobiCrewMember[] | null,

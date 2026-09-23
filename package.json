@@ -92,7 +92,8 @@
       "node_modules/three/**/*",
       "node_modules/three-stdlib/**/*",
       "node_modules/@openai/codex/**/*",
-      "node_modules/@openai/codex-*/*"
+      "node_modules/@openai/codex-*/*",
+      "build/icon.png"
     ],
     "directories": {
       "output": "release"

@@ -32,7 +32,7 @@ describe('pixel page transition wave', () => {
   });
 });
 
-describe('Noobi transition scene rotation', () => {
+describe('BoBo transition scene rotation', () => {
   it('ships nine scenes and advances one scene per transition run', () => {
     expect(NOOBI_TRANSITION_SCENE_COUNT).toBe(9);
     expect(noobiTransitionSceneIndex(1)).toBe(0);

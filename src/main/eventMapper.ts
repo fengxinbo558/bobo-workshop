@@ -124,7 +124,7 @@ export function inferStage(value: string, fallback: PipelineStage): PipelineStag
 /**
  * Resolve the visible production station from structured App Server facts.
  * Free-form assistant/reasoning/output deltas deliberately preserve the
- * current station: a single token such as "test" must never teleport Noobi.
+ * current station: a single token such as "test" must never teleport BoBo.
  */
 export function stageForNotification(
   notification: { method: string; params?: unknown },
@@ -195,7 +195,7 @@ function inferCommandStage(command: string, fallback: PipelineStage): PipelineSt
     || /godot[^\n]*(?:--headless|--editor-pid)/u.test(normalized)) {
     return 'verify';
   }
-  if (/\b(?:imagegen|image_generation|generate[_ -]?(?:image|audio|music|model)|noobi_(?:image|audio|music|model3d)|blender)\b/u.test(normalized)) {
+  if (/\b(?:imagegen|image_generation|generate[_ -]?(?:image|audio|music|model)|(?:bobo|noobi)_(?:image|audio|music|model3d)(?:_[a-z]+)?|blender)\b/u.test(normalized)) {
     return 'assets';
   }
   if (/\b(?:npm|pnpm|yarn)\s+(?:install|init)\b/u.test(normalized)

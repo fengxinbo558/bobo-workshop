@@ -3399,7 +3399,7 @@ a {
   font-size: 10px;
 }
 
-/* Noobi production packs keep avatar, action set and workshop scenery paired as
+/* BoBo production packs keep avatar, action set and workshop scenery paired as
    one visual world. Cards preview the exact production assets, not placeholders. */
 .noobi-pack-picker {
   display: grid;
@@ -6485,7 +6485,7 @@ a {
 }
 
 /* --------------------------------------------------------------------------
-   Studio shell v2 — a calm, canvas-first Noobi workspace
+   Studio shell v2 — a calm, canvas-first BoBo workspace
    -------------------------------------------------------------------------- */
 
 .app-shell.view-home,
@@ -9229,7 +9229,7 @@ a {
   }
 }
 
-/* Cozy production village — a large life-sim map with Noobi living inside it. */
+/* Cozy production village — a large life-sim map with BoBo living inside it. */
 .production-diorama {
   aspect-ratio: 8 / 5;
   min-height: clamp(520px, 66vh, 760px);

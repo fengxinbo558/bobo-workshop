@@ -21,7 +21,7 @@ const animation = (overrides: Partial<NoobiAnimation> = {}): NoobiAnimation => (
   ...overrides,
 });
 
-describe('Noobi sprite animation timeline', () => {
+describe('BoBo sprite animation timeline', () => {
   it('honors the duration of every keyframe instead of assuming a uniform interval', () => {
     const clip = animation();
     expect(noobiFrameAtElapsed(clip, 0)).toBe(0);

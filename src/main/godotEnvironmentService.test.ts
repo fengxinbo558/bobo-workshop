@@ -84,7 +84,7 @@ describe('GodotEnvironmentService', () => {
     expect(status.canExportProjects).toBe(true);
   });
 
-  it('requires a Web template for the Noobi integrated export capability', async () => {
+  it('requires a Web template for the BoBo integrated export capability', async () => {
     const root = await temporaryRoot('noobi-godot-native-only-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const versionPath = join(root, 'templates/4.7.1.stable');

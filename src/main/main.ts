@@ -1,3 +1,4 @@
+import { auditGeneratedBranding } from './branding.js';
 import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readFile, realpath } from 'node:fs/promises';
 import { homedir } from 'node:os';
@@ -117,6 +118,8 @@ import { verifyWebProductionBuild } from './webProductionBuild.js';
 import {
   synchronizeGodotPresentationPolicy,
   synchronizeWorkspaceHostPolicy,
+  synchronizeBoboStarterBranding,
+  markWorkspaceBrandingVersion,
 } from './workspaceTemplate.js';
 
 const moduleDirectory = dirname(fileURLToPath(import.meta.url));
@@ -169,7 +172,7 @@ if (!hasSingleInstanceLock) {
   app.exit(0);
 } else {
   void app.whenReady().then(launch).catch((error) => {
-    if (smokeCapture) process.stderr.write(`Noobi UI smoke failed: ${asError(error).message}\n`);
+    if (smokeCapture) process.stderr.write(`BoBo UI smoke failed: ${asError(error).message}\n`);
     else dialog.showErrorBox('波波工坊 无法启动', asError(error).message);
     app.exit(1);
   });
@@ -296,8 +299,28 @@ async function launch(): Promise<void> {
   bindRuntimeEvents();
   bindHarnessEvents();
   bindIpc();
+  if (!smokeCapture) await upgradeExistingProjectBranding();
   await ensureSmokeProject();
   await createWindow();
+}
+
+async function upgradeExistingProjectBranding(): Promise<void> {
+  for (const project of await projectStore.list()) {
+    try {
+      const path = join(project.root, '.noobi', 'project.json');
+      const metadata = JSON.parse(await readFile(path, 'utf8'));
+      if (metadata.brandingVersion === 1) continue;
+      if (metadata.id !== project.id) throw new Error('Project identity mismatch');
+      await synchronizeWorkspaceHostPolicy(project.root, project);
+      await synchronizeBoboStarterBranding(project.root);
+      if (project.engine === 'godot') await verifyGodotProject(project, true);
+      // A source Web project is rebuilt by the production pipeline on its next run.
+      // Godot exports are refreshed above so existing previews carry the new brand.
+      await markWorkspaceBrandingVersion(project.root, project.id);
+    } catch (error) {
+      await updateProject(project.id, { lastError: `BoBo 品牌升级未完成：${asError(error).message}` });
+    }
+  }
 }
 
 async function createWindow(): Promise<void> {
@@ -696,6 +719,7 @@ function bindIpc(): void {
       });
       try {
         await synchronizeWorkspaceHostPolicy(prepared.root, prepared);
+        await synchronizeBoboStarterBranding(prepared.root);
         if (prepared.engine === 'godot') {
           await synchronizeGodotPresentationPolicy(prepared.root);
         }
@@ -940,7 +964,7 @@ function bindIpc(): void {
   ) => {
     const id = validateProjectId(projectId);
     if (packId !== null && !isNoobiPackId(packId)) {
-      throw new Error('无效的 Noobi 主题包');
+      throw new Error('无效的 BoBo 主题包');
     }
     return updateProject(id, { noobiPackOverrideId: packId });
   });
@@ -950,7 +974,7 @@ function bindIpc(): void {
     crew: unknown,
   ) => {
     const id = validateProjectId(projectId);
-    if (crew !== null && !isNoobiCrew(crew)) throw new Error('无效的 Noobi 协作编队');
+    if (crew !== null && !isNoobiCrew(crew)) throw new Error('无效的 BoBo 协作编队');
     return updateProject(id, {
       noobiCrewOverride: crew === null
         ? null
@@ -1663,6 +1687,13 @@ async function validateProjectDelivery(
   }
   throwIfDeliveryAborted(signal);
 
+  try {
+    const staleBrandFiles = await auditGeneratedBranding(project.root);
+    if (staleBrandFiles.length) findings.push(`BRANDING: 以下源码或导出文件仍含旧品牌：${staleBrandFiles.slice(0, 20).join('、')}。统一使用 BoBo / 波波工坊及已提供的 BoBo 图标，修复后重新构建。`);
+  } catch (error) {
+    findings.push(`BRANDING: ${asError(error).message}`);
+  }
+
   let assets: GameAssetRecord[];
   try {
     assets = await assetStore.list(project.id, project.root);
@@ -1753,7 +1784,7 @@ async function validateProjectDelivery(
             ? '当前音频文件的路径或 SHA-256 与宿主 MiniMax 生成证明不匹配'
             : '受信 MiniMax 音乐的完整资源路径没有出现在生产源码或构建产物中';
         findings.push(
-          `MINIMAX_MUSIC: ${detail}。调用 noobi_audio_generate（purpose=music），保留宿主入库音频，并由游戏生产代码真实加载播放。`,
+          `MINIMAX_MUSIC: ${detail}。调用 bobo_audio_generate（purpose=music），保留宿主入库音频，并由游戏生产代码真实加载播放。`,
         );
       }
     } catch (error) {
@@ -2058,7 +2089,7 @@ async function ensureProjectLocation(
   while (true) {
     const options: Electron.OpenDialogOptions = {
       title: `重新连接“${project.name}”的项目文件夹`,
-      message: '请选择这个游戏改名或移动后的文件夹，NooBi 会核对项目身份并更新保存路径。',
+      message: '请选择这个游戏改名或移动后的文件夹，BoBo 会核对项目身份并更新保存路径。',
       buttonLabel: '重新连接',
       defaultPath: dirname(project.root),
       properties: ['openDirectory'],
@@ -2356,13 +2387,13 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       })()`,
       true,
     ) as boolean;
-    if (!roundTrip) throw new Error('Collapsed Noobi monogram was not available');
+    if (!roundTrip) throw new Error('Collapsed BoBo monogram was not available');
     await delay(200);
     const railExpanded = await window.webContents.executeJavaScript(
       `document.querySelector('.project-rail.mode-dashboard')?.classList.contains('is-collapsed') === false`,
       true,
     ) as boolean;
-    if (!railExpanded) throw new Error('Collapsed Noobi monogram did not expand the home rail');
+    if (!railExpanded) throw new Error('Collapsed BoBo monogram did not expand the home rail');
     await window.webContents.executeJavaScript(
       `document.querySelector('[aria-label="收起首页侧栏"]')?.click()`,
       true,
@@ -2388,7 +2419,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       throw new Error(`Rotating prompt did not complete a delete/type cycle: ${JSON.stringify(lengths)}`);
     }
     process.stdout.write(
-      `Noobi rotating prompt passed; samples=${samples.length}; min=${Math.min(...lengths)}; max=${Math.max(...lengths)}\n`,
+      `BoBo rotating prompt passed; samples=${samples.length}; min=${Math.min(...lengths)}; max=${Math.max(...lengths)}\n`,
     );
   }
   if (process.env.NOOBI_SMOKE_MODEL_MENU === '1') {
@@ -2441,7 +2472,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     if (!menu || menu.width <= 0 || menu.height <= 0 || menu.display === 'none' || menu.visibility === 'hidden' || menu.opacity === '0' || menu.options === 0) {
       throw new Error(`Model picker did not open correctly: ${JSON.stringify(menu)}`);
     }
-    process.stdout.write(`Noobi model picker opened ${JSON.stringify(menu)}\n`);
+    process.stdout.write(`BoBo model picker opened ${JSON.stringify(menu)}\n`);
   }
   if (process.env.NOOBI_SMOKE_VIEW === 'settings-noobi') {
     await window.webContents.executeJavaScript(
@@ -2471,14 +2502,14 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     const selectedSection = await window.webContents.executeJavaScript(
       `(() => {
         const trigger = Array.from(document.querySelectorAll('.settings-nav button'))
-          .find((node) => node.textContent?.includes('Noobi 工坊'));
+          .find((node) => node.textContent?.includes('BoBo 工坊'));
         if (!(trigger instanceof HTMLButtonElement)) return false;
         trigger.click();
         return true;
       })()`,
       true,
     ) as boolean;
-    if (!selectedSection) throw new Error('Noobi workshop settings section was not available');
+    if (!selectedSection) throw new Error('BoBo workshop settings section was not available');
     await delay(500);
     const crewCards = await window.webContents.executeJavaScript(
       `(() => {
@@ -2555,10 +2586,10 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || crewCards.sceneImages !== 1 + NOOBI_SCENE_IDS.length
       || crewCards.loadedSceneImages !== 1 + NOOBI_SCENE_IDS.length
       || crewCards.activeMode !== 'solo') {
-      throw new Error(`Noobi crew cards did not render correctly: ${JSON.stringify(crewCards)}`);
+      throw new Error(`BoBo crew cards did not render correctly: ${JSON.stringify(crewCards)}`);
     }
     process.stdout.write(
-      `Noobi workshop settings rendered one solo character, ${crewCards.soloScenes} solo scenes, and ${crewCards.multiplayerScenes} multiplayer scenes\n`,
+      `BoBo workshop settings rendered one solo character, ${crewCards.soloScenes} solo scenes, and ${crewCards.multiplayerScenes} multiplayer scenes\n`,
     );
     const settingsScrollY = Number.parseInt(process.env.NOOBI_SMOKE_SETTINGS_SCROLL_Y ?? '', 10);
     if (Number.isFinite(settingsScrollY)) {
@@ -2629,11 +2660,11 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
         || sceneState.id !== expectedScene
         || !sceneState.loaded
         || !fishingSceneReady) {
-        throw new Error(`Noobi runtime background did not load correctly: ${JSON.stringify(sceneState)}`);
+        throw new Error(`BoBo runtime background did not load correctly: ${JSON.stringify(sceneState)}`);
       }
-      process.stdout.write(`Noobi runtime background loaded: ${sceneState.id}\n`);
+      process.stdout.write(`BoBo runtime background loaded: ${sceneState.id}\n`);
     } else if (process.env.NOOBI_SMOKE_EXPERIENCE_REPORT === 'expand' && hasPlayablePreview) {
-      process.stdout.write('Noobi workbench loaded a playable game preview\n');
+      process.stdout.write('BoBo workbench loaded a playable game preview\n');
     } else if (process.env.NOOBI_SMOKE_CREW !== '1') {
       const soloState = await window.webContents.executeJavaScript(
         `(() => {
@@ -2666,9 +2697,9 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
         || soloState.actors !== 1
         || !soloState.indicator
         || !soloState.loaded) {
-        throw new Error(`Noobi solo default did not load correctly: ${JSON.stringify(soloState)}`);
+        throw new Error(`BoBo solo default did not load correctly: ${JSON.stringify(soloState)}`);
       }
-      process.stdout.write('Noobi solo default loaded one character in the classic studio\n');
+      process.stdout.write('BoBo solo default loaded one character in the classic studio\n');
     }
   }
   if (process.env.NOOBI_SMOKE_PROJECT_RAIL === '1') {
@@ -2715,7 +2746,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || !railState.closeVisible) {
       throw new Error(`Project rail did not open correctly: ${JSON.stringify(railState)}`);
     }
-    process.stdout.write(`Noobi project rail opened ${JSON.stringify(railState)}\n`);
+    process.stdout.write(`BoBo project rail opened ${JSON.stringify(railState)}\n`);
   }
   if (process.env.NOOBI_SMOKE_PROJECT_MENU === '1') {
     const opened = await window.webContents.executeJavaScript(
@@ -2752,7 +2783,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || !['重命名', '置顶', '删除'].every((label) => menuState.labels.includes(label))) {
       throw new Error(`Project action menu did not open correctly: ${JSON.stringify(menuState)}`);
     }
-    process.stdout.write(`Noobi project action menu opened ${JSON.stringify(menuState)}\n`);
+    process.stdout.write(`BoBo project action menu opened ${JSON.stringify(menuState)}\n`);
   }
   if (process.env.NOOBI_SMOKE_GEAR_ALIGNMENT === '1') {
     const alignment = await window.webContents.executeJavaScript(
@@ -2780,7 +2811,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || Math.abs(alignment.settingsCenter - alignment.runtimeCenter) > 1) {
       throw new Error(`Collapsed settings icon is not centered: ${JSON.stringify(alignment)}`);
     }
-    process.stdout.write(`Noobi collapsed settings icon aligned ${JSON.stringify(alignment)}\n`);
+    process.stdout.write(`BoBo collapsed settings icon aligned ${JSON.stringify(alignment)}\n`);
   }
   if (process.env.NOOBI_SMOKE_CREW === '1') {
     const state = await window.webContents.executeJavaScript(`(() => {
@@ -2848,7 +2879,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || initialFrame.shadowWidth < 12
       || initialFrame.shadowHeight < 3
       || !initialFrame.shadowProfile) {
-      throw new Error(`Noobi production pack did not load: ${JSON.stringify(initialFrame)}`);
+      throw new Error(`BoBo production pack did not load: ${JSON.stringify(initialFrame)}`);
     }
     let frameChanged = false;
     for (let attempt = 0; attempt < 25 && !frameChanged; attempt += 1) {
@@ -2860,10 +2891,10 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       frameChanged = currentFrame !== initialFrame.frame;
     }
     if (!frameChanged) {
-      throw new Error(`Noobi multi-frame animation did not advance: ${JSON.stringify(initialFrame)}`);
+      throw new Error(`BoBo multi-frame animation did not advance: ${JSON.stringify(initialFrame)}`);
     }
     process.stdout.write(
-      `Noobi production pack ${expectedPack} loaded ${initialFrame.manifest} with ${initialFrame.count} keyed frames and ${initialFrame.shadowProfile} ground shadow\n`,
+      `BoBo production pack ${expectedPack} loaded ${initialFrame.manifest} with ${initialFrame.count} keyed frames and ${initialFrame.shadowProfile} ground shadow\n`,
     );
   }
   if (process.env.NOOBI_SMOKE_ASSISTANT_MOTION === '1') {
@@ -2882,7 +2913,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       ));
     }
     if (!changed) throw new Error(`Production assistant did not change action or position: ${JSON.stringify(initial)}`);
-    process.stdout.write(`Noobi production assistant moved from ${initial.action} at ${initial.station}\n`);
+    process.stdout.write(`BoBo production assistant moved from ${initial.action} at ${initial.station}\n`);
   }
   if (process.env.NOOBI_SMOKE_RENAME_TITLE === '1') {
     const workbenchBrandCanExpand = await window.webContents.executeJavaScript(
@@ -2991,7 +3022,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       throw new Error(`Experience report did not expand correctly: ${JSON.stringify({ collapsed, expanded })}`);
     }
     process.stdout.write(
-      `Noobi experience report opened as ${expanded.width}x${expanded.height}px without resizing the ${expanded.previewHeight}px preview\n`,
+      `BoBo experience report opened as ${expanded.width}x${expanded.height}px without resizing the ${expanded.previewHeight}px preview\n`,
     );
     await delay(250);
   }
@@ -3009,9 +3040,9 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
   await mkdir(dirname(output), { recursive: true });
   const { writeFile } = await import('node:fs/promises');
   await writeFile(output, image.toPNG());
-  process.stdout.write(`Noobi UI smoke captured ${output}\n`);
+  process.stdout.write(`BoBo UI smoke captured ${output}\n`);
   if (process.env.NOOBI_SMOKE_HOLD === '1') {
-    process.stdout.write('Noobi UI smoke window left open for inspection\n');
+    process.stdout.write('BoBo UI smoke window left open for inspection\n');
     return;
   }
   app.quit();
@@ -3069,7 +3100,7 @@ async function recoverInterruptedProjects(): Promise<void> {
       .map((project) => projectStore.update(project.id, {
         status: 'stopped',
         activeTurnId: null,
-        lastError: 'Noobi.ai 上次退出时，该任务没有确认完成。请检查文件后再继续。',
+        lastError: 'BoBo 上次退出时，该任务没有确认完成。请检查文件后再继续。',
       })),
   );
 }
@@ -3146,15 +3177,15 @@ function validateSettingsPatch(value: Partial<AppSettings>): Partial<AppSettings
   for (const key of Object.keys(value)) if (!allowed.has(key)) throw new Error(`未知设置：${key}`);
   if (value.defaultNoobiStageMode !== undefined
     && !isNoobiStageMode(value.defaultNoobiStageMode)) {
-    throw new Error('无效的 Noobi 舞台模式');
+    throw new Error('无效的 BoBo 舞台模式');
   }
   if (value.defaultNoobiSoloSceneId !== undefined
     && !isNoobiPackId(value.defaultNoobiSoloSceneId)) {
-    throw new Error('无效的 Noobi 单人场景');
+    throw new Error('无效的 BoBo 单人场景');
   }
   if (value.defaultNoobiSceneId !== undefined
     && !isNoobiSceneId(value.defaultNoobiSceneId)) {
-    throw new Error('无效的 Noobi 场景');
+    throw new Error('无效的 BoBo 场景');
   }
   return value;
 }

@@ -200,7 +200,7 @@ export class MediaGenerationService {
       }, {
         name,
         prompt,
-        provider: `Noobi:${displayName}`,
+        provider: `BoBo:${displayName}`,
         model,
         presetId,
         source: 'procedural',

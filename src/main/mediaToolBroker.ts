@@ -75,8 +75,8 @@ const ASSET_PLAN_ARGUMENT_KEYS = [
 export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   {
     type: 'function',
-    name: 'noobi_asset_list',
-    description: 'List validated game assets in this Noobi.ai project. Returns workspace-relative paths only.',
+    name: 'bobo_asset_list',
+    description: 'List validated game assets in this BoBo project. Returns workspace-relative paths only.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -88,8 +88,8 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_asset_plan',
-    description: 'Create or update an expected game asset before generation, or list/get current expected-asset states. Reuse the returned planId in generation and registration calls so failures remain visible and retryable in the Noobi.ai workbench.',
+    name: 'bobo_asset_plan',
+    description: 'Create or update an expected game asset before generation, or list/get current expected-asset states. Reuse the returned planId in generation and registration calls so failures remain visible and retryable in the BoBo workbench.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -117,7 +117,7 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_asset_register',
+    name: 'bobo_asset_register',
     description: 'Validate and register an existing asset under public/assets in the current project. For gameplay images, classify the visual role and stable subjectId; card atlases must also declare atlasColumns, atlasRows, and comma-separated subjects.',
     inputSchema: {
       type: 'object',
@@ -138,7 +138,7 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_audio_synthesize',
+    name: 'bobo_audio_synthesize',
     description: 'Create a short deterministic procedural game sound as mono PCM16 WAV and register it as an asset.',
     inputSchema: {
       type: 'object',
@@ -155,7 +155,7 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_image_generate',
+    name: 'bobo_image_generate',
     description: 'Generate and register an image using the configured image API. If none is configured, returns an explicit Codex ImageGen fallback instruction.',
     inputSchema: {
       type: 'object',
@@ -175,8 +175,8 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_audio_generate',
-    description: 'Generate and register audio through the configured provider. Always set purpose. MiniMax Music handles music; MiniMax Speech handles speech and vocal-sfx. For nonverbal vocal-sfx, write actual Speech 2.8 interjection tags such as (groans), (gasps), or (hissing), not descriptive prose. MiniMax accepts mp3/wav and does not honor durationSeconds. Generic sfx and ambience are not claimed as MiniMax capabilities and return a procedural-audio fallback for noobi_audio_synthesize or deterministic Web Audio.',
+    name: 'bobo_audio_generate',
+    description: 'Generate and register audio through the configured provider. Always set purpose. MiniMax Music handles music; MiniMax Speech handles speech and vocal-sfx. For nonverbal vocal-sfx, write actual Speech 2.8 interjection tags such as (groans), (gasps), or (hissing), not descriptive prose. MiniMax accepts mp3/wav and does not honor durationSeconds. Generic sfx and ambience are not claimed as MiniMax capabilities and return a procedural-audio fallback for bobo_audio_synthesize or deterministic Web Audio.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -202,8 +202,8 @@ export const MEDIA_DYNAMIC_TOOLS: DynamicToolSpec[] = [
   },
   {
     type: 'function',
-    name: 'noobi_model3d_generate',
-    description: 'Generate and register a self-contained GLB. Noobi.ai automatically uses the configured 3D model API first; when no 3D API is configured, the host uses Three.js to author and export a procedural GLB. The final game must load the returned GLB (including in Godot); Three.js is not the game runtime. Set animation=true for a fallback rig with real idle, walk, and run clips.',
+    name: 'bobo_model3d_generate',
+    description: 'Generate and register a self-contained GLB. BoBo automatically uses the configured 3D model API first; when no 3D API is configured, the host uses Three.js to author and export a procedural GLB. The final game must load the returned GLB (including in Godot); Three.js is not the game runtime. Set animation=true for a fallback rig with real idle, walk, and run clips.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -239,33 +239,34 @@ export class MediaToolBroker {
     try {
       const params = readCallParams(request.params);
       project = await this.#options.resolveProject(params.threadId);
-      if (!project) throw new ToolInputError('This tool call is not attached to an active Noobi.ai project');
+      if (!project) throw new ToolInputError('This tool call is not attached to an active BoBo project');
 
       let payload: unknown;
-      switch (params.tool) {
-        case 'noobi_asset_list':
+      // Accept calls from pre-rename conversations while advertising only BoBo tools.
+      switch (params.tool.replace(/^noobi_/, 'bobo_')) {
+        case 'bobo_asset_list':
           payload = await this.#list(project, params.arguments);
           break;
-        case 'noobi_asset_plan':
+        case 'bobo_asset_plan':
           payload = await this.#plan(project, params.arguments);
           break;
-        case 'noobi_asset_register':
+        case 'bobo_asset_register':
           payload = await this.#register(project, params.arguments);
           break;
-        case 'noobi_audio_synthesize':
+        case 'bobo_audio_synthesize':
           payload = await this.#synthesize(project, params.arguments);
           break;
-        case 'noobi_image_generate':
+        case 'bobo_image_generate':
           payload = await this.#generate(project, 'image', params.arguments);
           break;
-        case 'noobi_audio_generate':
+        case 'bobo_audio_generate':
           payload = await this.#generate(project, 'audio', params.arguments);
           break;
-        case 'noobi_model3d_generate':
+        case 'bobo_model3d_generate':
           payload = await this.#generate(project, 'model3d', params.arguments);
           break;
         default:
-          throw new ToolInputError('Unknown Noobi.ai media tool');
+          throw new ToolInputError('Unknown BoBo media tool');
       }
       this.#respond(request.id, payload, true);
     } catch (error) {
@@ -426,7 +427,7 @@ export class MediaToolBroker {
         relativePath: generated.relativePath,
         name,
         source: 'procedural',
-        provider: 'noobi-procedural-audio',
+        provider: 'bobo-procedural-audio',
         metadata: {
           preset: generated.preset,
           durationSeconds: generated.durationSeconds,
@@ -950,10 +951,10 @@ function publicGenerationResult(
       prompt: result.prompt,
       ...(plan ? { planId: plan.id } : {}),
       ...(result.fallback === 'codex-imagegen'
-        ? { instruction: `Invoke the Codex $imagegen skill now, then register the generated image with Noobi.ai${plan ? ` using planId=${plan.id}` : ''}.` }
+        ? { instruction: `Invoke the Codex $imagegen skill now, then register the generated image with BoBo${plan ? ` using planId=${plan.id}` : ''}.` }
         : result.fallback === 'procedural-audio'
-          ? { instruction: `Use noobi_audio_synthesize${plan ? ` with planId=${plan.id}` : ''} for a short deterministic effect, deterministic Web Audio for a custom/ambient fallback, or import a licensed WAV/MP3/OGG. Do not claim MiniMax generated generic SFX or ambience.` }
-          : { instruction: 'Call noobi_model3d_generate again. It automatically routes to a configured 3D API or the built-in Three.js GLB exporter.' }),
+          ? { instruction: `Use bobo_audio_synthesize${plan ? ` with planId=${plan.id}` : ''} for a short deterministic effect, deterministic Web Audio for a custom/ambient fallback, or import a licensed WAV/MP3/OGG. Do not claim MiniMax generated generic SFX or ambience.` }
+          : { instruction: 'Call bobo_model3d_generate again. It automatically routes to a configured 3D API or the built-in Three.js GLB exporter.' }),
     },
     ...(plan ? { plan: publicAssetPlan(plan) } : {}),
   };

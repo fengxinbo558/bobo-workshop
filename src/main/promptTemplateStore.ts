@@ -1,3 +1,4 @@
+import { rebrandHostText } from './branding.js';
 import { randomUUID } from 'node:crypto';
 import { mkdir, open, readFile, rename, stat, unlink } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
@@ -44,7 +45,7 @@ interface PromptTemplateDocument {
 const DEFINITIONS: Readonly<Record<PromptTemplateId, Omit<PromptTemplate, 'id' | 'content' | 'enabled' | 'customized'>>> = {
   planner: {
     name: '规划 Agent',
-    description: '追加到需求拆解与生产规划阶段，不会替换 Noobi 的安全和素材契约。',
+    description: '追加到需求拆解与生产规划阶段，不会替换 BoBo 的安全和素材契约。',
   },
   implementer: {
     name: '实现 Agent',
@@ -133,7 +134,7 @@ export class PromptTemplateStore {
     return Object.fromEntries(
       templates
         .filter((template) => template.enabled && template.content.length > 0)
-        .map((template) => [template.id, template.content]),
+        .map((template) => [template.id, rebrandHostText(template.content)]),
     );
   }
 

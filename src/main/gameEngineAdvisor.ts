@@ -48,7 +48,7 @@ interface EngineAdvisorRuntime {
   unsubscribeThread(threadId: string): Promise<void>;
 }
 
-const ADVISOR_INSTRUCTIONS = `You are Noobi's game-engine routing Agent. Decide the project runtime before any workspace is created.
+const ADVISOR_INSTRUCTIONS = `You are BoBo's game-engine routing Agent. Decide the project runtime before any workspace is created.
 
 Return one strict JSON object and nothing else, with exactly these fields:
 {"engine":"web|godot","confidence":"high|medium|low","reasonCode":"native-3d-physics|engine-native-animation|browser-2d|ui-driven-game|explicit-runtime|other","rationale":"one short sentence"}

@@ -18,7 +18,7 @@ const GAME_HTML = `<!doctype html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Noobi playtest smoke</title>
+  <title>BoBo playtest smoke</title>
   <style>
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#071018}
     body{display:grid;place-items:center}canvas{width:min(92vw,900px);height:auto;border:2px solid #5de4a3}
@@ -177,7 +177,7 @@ try {
   if (smokeResultPath) {
     await writeFile(smokeResultPath, `${JSON.stringify({ ok: true, root, report }, null, 2)}\n`);
   }
-  process.stdout.write(`Noobi experience playtest passed: ${report.score}/100 · ${report.durationMs}ms\n`);
+  process.stdout.write(`BoBo experience playtest passed: ${report.score}/100 · ${report.durationMs}ms\n`);
 } catch (error) {
   const message = error instanceof Error ? error.stack ?? error.message : String(error);
   if (smokeResultPath) {

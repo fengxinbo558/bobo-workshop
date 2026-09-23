@@ -143,7 +143,7 @@ function buildRiggedCharacter(
   if (!merged) throw new Error('Could not merge procedural character geometry');
 
   const materials = segments.map((_, index) => new THREE.MeshStandardMaterial({
-    name: `NoobiMaterial${index + 1}`,
+    name: `BoBoMaterial${index + 1}`,
     color: index === 2 ? palette[2] : palette[index % 2],
     roughness: index === 2 ? 0.62 : 0.78,
     metalness: index < 3 ? 0.16 : 0.05,
@@ -181,7 +181,7 @@ function buildStaticModel(
   root.name = name;
   root.userData = { proceduralFallback: true, rigged: false };
   const materials = palette.map((color, index) => new THREE.MeshStandardMaterial({
-    name: `NoobiMaterial${index + 1}`,
+    name: `BoBoMaterial${index + 1}`,
     color,
     roughness: index === 2 ? 0.55 : 0.82,
     metalness: index === 2 ? 0.42 : 0.05,

@@ -96,7 +96,7 @@ describe('project infrastructure', () => {
     await expect(store.get(project.id)).resolves.toMatchObject({ id: project.id });
   });
 
-  it('persists global and project Noobi packs while validating their ids', async () => {
+  it('persists global and project BoBo packs while validating their ids', async () => {
     const root = await mkdtemp(join(tmpdir(), 'noobi-pack-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
@@ -125,7 +125,7 @@ describe('project infrastructure', () => {
     );
     await expect(store.saveSettings({
       defaultNoobiPackId: 'unknown-pack' as 'classic',
-    })).rejects.toThrow('Default Noobi pack setting is invalid');
+    })).rejects.toThrow('Default BoBo pack setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
@@ -139,7 +139,7 @@ describe('project infrastructure', () => {
     });
   });
 
-  it('persists the default Noobi scene while rejecting unknown scene ids', async () => {
+  it('persists the default BoBo scene while rejecting unknown scene ids', async () => {
     const root = await mkdtemp(join(tmpdir(), 'noobi-scene-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
@@ -156,7 +156,7 @@ describe('project infrastructure', () => {
     });
     await expect(store.saveSettings({
       defaultNoobiSceneId: 'unknown-scene' as never,
-    })).rejects.toThrow('Default Noobi scene setting is invalid');
+    })).rejects.toThrow('Default BoBo scene setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
@@ -164,7 +164,7 @@ describe('project infrastructure', () => {
     });
   });
 
-  it('persists the default Noobi stage mode and solo scene while validating both', async () => {
+  it('persists the default BoBo stage mode and solo scene while validating both', async () => {
     const root = await mkdtemp(join(tmpdir(), 'noobi-stage-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
@@ -184,10 +184,10 @@ describe('project infrastructure', () => {
     });
     await expect(store.saveSettings({
       defaultNoobiStageMode: 'unknown-mode' as never,
-    })).rejects.toThrow('Default Noobi stage mode setting is invalid');
+    })).rejects.toThrow('Default BoBo stage mode setting is invalid');
     await expect(store.saveSettings({
       defaultNoobiSoloSceneId: 'unknown-scene' as never,
-    })).rejects.toThrow('Default Noobi solo scene setting is invalid');
+    })).rejects.toThrow('Default BoBo solo scene setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
@@ -196,7 +196,7 @@ describe('project infrastructure', () => {
     });
   });
 
-  it('persists validated global and project Noobi crews without visual asset data', async () => {
+  it('persists validated global and project BoBo crews without visual asset data', async () => {
     const root = await mkdtemp(join(tmpdir(), 'noobi-crew-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
@@ -381,7 +381,7 @@ describe('project infrastructure', () => {
     ]);
   });
 
-  it('adds solo defaults to legacy settings without replacing existing Noobi choices', async () => {
+  it('adds solo defaults to legacy settings without replacing existing BoBo choices', async () => {
     const root = await mkdtemp(join(tmpdir(), 'noobi-stage-migration-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
@@ -452,14 +452,12 @@ describe('project infrastructure', () => {
       'boot_splash/show_image=false',
     );
     await expect(readFile(join(project.root, 'project.godot'), 'utf8')).resolves.toContain(
-      'config/icon="res://resources/noobi-runtime-icon.svg"',
+      'config/icon="res://resources/bobo-runtime-icon.png"',
     );
     await expect(readFile(join(project.root, 'project.godot'), 'utf8')).resolves.toContain(
-      'boot_splash/image="res://resources/noobi-runtime-icon.svg"',
+      'boot_splash/image="res://resources/bobo-runtime-icon.png"',
     );
-    await expect(readFile(join(project.root, 'resources/noobi-runtime-icon.svg'), 'utf8')).resolves.toContain(
-      '<svg',
-    );
+    expect((await readFile(join(project.root, 'resources/bobo-runtime-icon.png'))).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
     await expect(readFile(join(project.root, 'scenes/main.tscn'), 'utf8')).resolves.toContain(
       'res://scripts/main.gd',
     );

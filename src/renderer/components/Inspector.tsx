@@ -412,7 +412,7 @@ export function Inspector({
                 <strong>{resolvedNoobiCrew.length}人</strong>
               </button>
             ) : (
-              <div className="inspector-solo-indicator" aria-label={`单人搭档：${resolvedNoobiPack?.avatarLabel ?? 'Noobi'}`}>
+              <div className="inspector-solo-indicator" aria-label={`单人搭档：${resolvedNoobiPack?.avatarLabel ?? 'BoBo'}`}>
                 {resolvedNoobiPack ? <img src={resolvedNoobiPack.avatarImage} alt="" draggable={false} /> : null}
                 <span>
                   <small>SOLO</small>

@@ -97,7 +97,7 @@ export function ProductionDiorama({
   const activeActor = actorSnapshots[activeMember.role] ?? initialCrewActor(activeMember);
   const visibleEgg = activeActor.easterEgg;
   const statusLabel = status === 'running'
-    ? 'NOOBI WORKING'
+    ? 'BOBO WORKING'
     : status === 'completed'
       ? 'READY TO PLAY'
       : status === 'waiting'

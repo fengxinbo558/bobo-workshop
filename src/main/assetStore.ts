@@ -546,7 +546,7 @@ function validateManifest(value: unknown, projectId: string): LoadedManifest {
       assets.push(asset);
     } catch {
       // The game-building agent can edit this workspace-owned file. Keep valid
-      // game assets usable and remove entries outside Noobi's supported schema.
+      // game assets usable and remove entries outside BoBo's supported schema.
       repaired = true;
     }
   }

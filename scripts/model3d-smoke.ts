@@ -28,7 +28,7 @@ try {
   if (generated.provider.route !== 'threejs-fallback') throw new Error('3D fallback route was not reported');
 
   await writeFile(join(root, 'project.godot'), `[application]
-config/name="Noobi Model3D Smoke"
+config/name="BoBo Model3D Smoke"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
@@ -58,7 +58,7 @@ renderer/rendering_method.mobile="gl_compatibility"
   }
 
   process.stdout.write([
-    'Noobi 3D route smoke passed',
+    'BoBo 3D route smoke passed',
     `engine=${status.tool.version}`,
     `route=${generated.provider.route}`,
     `asset=${generated.asset.relativePath}`,

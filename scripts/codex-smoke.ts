@@ -46,7 +46,7 @@ try {
   }
 
   process.stdout.write(
-    `Noobi Codex smoke passed: ${status.version ?? 'unknown version'}, ${model.displayName}, ${threadId}\n`,
+    `BoBo Codex smoke passed: ${status.version ?? 'unknown version'}, ${model.displayName}, ${threadId}\n`,
   );
 } finally {
   await runtime.stop().catch(() => undefined);

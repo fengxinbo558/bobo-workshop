@@ -75,6 +75,6 @@ describe('rotating game prompt', () => {
   });
 
   it('keeps combined emoji together as one visible character', () => {
-    expect(splitGraphemes('Noobi 👨‍💻 🐿️')).toEqual(['N', 'o', 'o', 'b', 'i', ' ', '👨‍💻', ' ', '🐿️']);
+    expect(splitGraphemes('BoBo 👨‍💻 🐿️')).toEqual(['B', 'o', 'B', 'o', ' ', '👨‍💻', ' ', '🐿️']);
   });
 });
