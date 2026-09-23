@@ -1,5 +1,5 @@
 ---
-name: bobo.ai
+name: 波波工坊
 description: 奶油白与橙色的小怪兽创作伙伴
 colors:
   primary: "#b94e20"
@@ -80,7 +80,7 @@ components:
     padding: "6px 12px 6px 4px"
 ---
 
-# Design System: bobo.ai
+# Design System: 波波工坊
 
 ## Overview
 
@@ -165,7 +165,7 @@ components:
 
 **The Fixed Station Rule.** 多人模式中角色与标签共用固定槽位；移除伙伴时保留其他角色的岗位，不按剩余人数重排标签。
 
-单人模式使用同一个共享工坊和固定岗位，并保留所选角色外观；休憩场景使用现有首页插画。运行时只有活动伙伴做轻微动作，周期 2.8s，幅度 3px 和 0.5°；系统请求减少动态时关闭动作。保留旧 pack/scene 标识的兼容映射，展示名使用 bobo.ai 与波波。
+单人模式使用同一个共享工坊和固定岗位，并保留所选角色外观；休憩场景使用现有首页插画。运行时只有活动伙伴做轻微动作，周期 2.8s，幅度 3px 和 0.5°；系统请求减少动态时关闭动作。保留旧 pack/scene 标识的兼容映射，展示名使用 波波工坊 与波波。
 
 ## Do's and Don'ts
 

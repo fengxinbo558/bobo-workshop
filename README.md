@@ -1,8 +1,11 @@
 <p align="center">
-  <img src="docs/images/noobi-app-icon.png" width="112" alt="Noobi.ai app icon">
+  <img src="src/renderer/assets/bobo/icon.png" width="112" alt="波波工坊 app icon">
 </p>
 
-<h1 align="center">Noobi.ai</h1>
+<h1 align="center">波波工坊</h1>
+
+> 波波工坊（Bobo Workshop）基于 [Innate-Labs/Noobi.ai](https://github.com/Innate-Labs/Noobi.ai) 开发。`dev` 是波波工坊开发分支，`main` 保留上游同步；IP 角色名为「波波」。
+
 
 <p align="center">
   <strong>Turn one game idea into a reviewed, playable Web or Godot game.</strong><br>
@@ -10,9 +13,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Innate-Labs/Noobi.ai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Innate-Labs/Noobi.ai/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-  <a href="https://github.com/Innate-Labs/Noobi.ai/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Innate-Labs/Noobi.ai?style=flat"></a>
-  <a href="https://github.com/Innate-Labs/Noobi.ai/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/Innate-Labs/Noobi.ai?style=flat"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/fengxinbo558/bobo-workshop/actions/workflows/ci.yml/badge.svg?branch=dev"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/fengxinbo558/bobo-workshop?style=flat"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/fengxinbo558/bobo-workshop?style=flat"></a>
   <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS-11120f">
   <img alt="Developer preview" src="https://img.shields.io/badge/status-developer%20preview-E9A93A">
 </p>
@@ -24,13 +27,13 @@
   <a href="README.zh-CN.md"><strong>简体中文</strong></a>
 </p>
 
-![Noobi.ai production workbench showing the agent pipeline, playable preview, assets and project files](docs/images/noobi-workbench.png)
+![波波工坊 studio illustration](src/renderer/assets/bobo/studio.png)
 
-Noobi.ai gives Codex a bounded game-production loop instead of asking one agent to improvise everything in a single pass. A read-only Planner scopes the work, an Implementer builds inside an isolated project directory, an independent Reviewer checks the result, and the host builds and plays the production output before completion. Failed review, build or playtest checks return to the same Implementer for up to three repair rounds.
+波波工坊 gives Codex a bounded game-production loop instead of asking one agent to improvise everything in a single pass. A read-only Planner scopes the work, an Implementer builds inside an isolated project directory, an independent Reviewer checks the result, and the host builds and plays the production output before completion. Failed review, build or playtest checks return to the same Implementer for up to three repair rounds.
 
 > **Current status:** developer preview for macOS. No signed or notarized binary is published yet; run it from source. The output is a standalone Web or Godot 4 project in your own workspace.
 
-## Why Noobi.ai
+## Why 波波工坊
 
 | | What you get |
 | --- | --- |
@@ -38,7 +41,7 @@ Noobi.ai gives Codex a bounded game-production loop instead of asking one agent 
 | **Review-gated production loop** | Planner → Implementer → Reviewer → formal build → automated playtest. Failed checks trigger up to three bounded repair rounds. |
 | **Automatic experience evaluation** | A sandboxed hidden browser exercises core controls, captures evidence, and checks visible gameplay, animation continuity and runtime errors. |
 | **Real media pipeline** | Route images, music, speech, sound effects and 3D through configured providers, Codex ImageGen, imported assets or procedural fallbacks. Failed assets remain visible as retryable placeholders. |
-| **A workspace you own** | Every game is a normal local project. Inspect the files, continue with Codex, commit it to Git, or take it outside Noobi.ai. |
+| **A workspace you own** | Every game is a normal local project. Inspect the files, continue with Codex, commit it to Git, or take it outside 波波工坊. |
 | **Built to extend** | Add media providers, Codex Skills, MCP servers, agent prompts, project templates, Godot export targets, or an entirely different workbench UI. |
 
 ## Quick start
@@ -52,15 +55,15 @@ Noobi.ai gives Codex a bounded game-production loop instead of asking one agent 
 - Godot 4 with exactly matching Web export templates, only when the Agent selects Godot
 
 ```bash
-git clone https://github.com/Innate-Labs/Noobi.ai.git
-cd Noobi.ai
+git clone https://github.com/fengxinbo558/bobo-workshop.git
+cd bobo-workshop
 npm ci
 npm run dev
 ```
 
-On first launch, open **Settings → Codex account** and sign in. Noobi.ai uses an app-private `userData/codex-home`; it does not overwrite your global `~/.codex` configuration.
+On first launch, open **Settings → Codex account** and sign in. 波波工坊 uses an app-private `userData/codex-home`; it does not overwrite your global `~/.codex` configuration.
 
-If Codex cannot be located automatically, point Noobi.ai at a binary explicitly:
+If Codex cannot be located automatically, point 波波工坊 at a binary explicitly:
 
 ```bash
 NOOBI_CODEX_BIN=/absolute/path/to/codex npm run dev
@@ -87,11 +90,11 @@ flowchart LR
 
 The workbench visualizes `Brief → Scaffold → GDD → Assets → World → Code → Verify → Complete`. Those stages explain progress; the Reviewer and host proof gate decide whether a run is actually complete.
 
-![Noobi.ai mascot orchestrating code, animation, 3D, audio and playable worlds](docs/images/noobi-game-agent-poster.png)
+![波波工坊 creative companion](src/renderer/assets/bobo/home-hero.png)
 
 ## Fork and customize
 
-Noobi.ai is intentionally organized around replaceable boundaries. A useful fork can start small:
+波波工坊 is intentionally organized around replaceable boundaries. A useful fork can start small:
 
 | Goal | Start here |
 | --- | --- |
@@ -207,7 +210,7 @@ Contributions that make the pipeline safer, more portable or easier to extend ar
 
 ## License
 
-No project license has been published yet. Until the repository owners select and add one, the code remains under the default copyright rules. If you plan to distribute a derivative, watch [the repository issues](https://github.com/Innate-Labs/Noobi.ai/issues) or contact the maintainers first.
+No project license has been published yet. Until the repository owners select and add one, the code remains under the default copyright rules. If you plan to distribute a derivative, watch [the repository issues](https://github.com/fengxinbo558/bobo-workshop/issues) or contact the maintainers first.
 
 ## Documentation
 

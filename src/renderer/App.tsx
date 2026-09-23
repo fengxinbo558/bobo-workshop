@@ -254,7 +254,7 @@ export function App() {
   function ensureRunReady(): boolean {
     setError('');
     if (!runtime) {
-      setError('bobo.ai 正在读取 Codex 运行时，请稍后再试。');
+      setError('波波工坊 正在读取 Codex 运行时，请稍后再试。');
       return false;
     }
     if (runtime.state !== 'ready') {
@@ -459,7 +459,7 @@ export function App() {
     return (
       <main className="loading-screen">
         <div className="loading-brand">
-          <div><strong>bobo.ai</strong><small>GAME PRODUCTION SYSTEM</small></div>
+          <div><strong>波波工坊</strong><small>GAME PRODUCTION SYSTEM</small></div>
         </div>
         {loadingError ? (
           <div className="loading-error" role="alert">

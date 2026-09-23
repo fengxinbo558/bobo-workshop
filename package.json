@@ -1,17 +1,17 @@
 {
-  "name": "bobo-ai",
+  "name": "bobo-workshop",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Local-first desktop agent that turns a prompt into a reviewed, playable Web or Godot game with Codex App Server",
-  "author": "bobo.ai",
-  "homepage": "https://github.com/fengxinbo558/Noobi.ai",
+  "description": "波波工坊 · 和波波一起，把创意做成可玩的游戏。",
+  "author": "波波工坊",
+  "homepage": "https://github.com/fengxinbo558/bobo-workshop",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fengxinbo558/Noobi.ai.git"
+    "url": "git+https://github.com/fengxinbo558/bobo-workshop.git"
   },
   "bugs": {
-    "url": "https://github.com/fengxinbo558/Noobi.ai/issues"
+    "url": "https://github.com/fengxinbo558/bobo-workshop/issues"
   },
   "keywords": [
     "codex",
@@ -81,7 +81,7 @@
   },
   "build": {
     "appId": "ai.bobo.desktop",
-    "productName": "bobo.ai",
+    "productName": "波波工坊",
     "asar": true,
     "asarUnpack": [
       "node_modules/@openai/codex-*/vendor/**/*"
@@ -106,7 +106,7 @@
     },
     "dmg": {
       "backgroundColor": "#f6f1e8",
-      "title": "bobo.ai ${version}"
+      "title": "波波工坊 ${version}"
     }
   },
   "optionalDependencies": {

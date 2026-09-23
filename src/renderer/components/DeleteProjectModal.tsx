@@ -15,7 +15,7 @@ export function DeleteProjectModal({ project, busy, onClose, onDelete }: DeleteP
     <Modal
       eyebrow="DANGER ZONE"
       title={`删除“${project.name}”？`}
-      description="这个操作无法撤销。bobo.ai 会删除项目记录以及对应的整个项目目录。"
+      description="这个操作无法撤销。波波工坊 会删除项目记录以及对应的整个项目目录。"
       className="project-action-modal delete-project-modal"
       onClose={busy ? undefined : onClose}
       footer={(
@@ -33,7 +33,7 @@ export function DeleteProjectModal({ project, busy, onClose, onDelete }: DeleteP
           <AlertTriangle size={20} />
           <div>
             <strong>请确认没有需要保留的代码或素材</strong>
-            <span>删除后无法从 bobo.ai 中恢复。</span>
+            <span>删除后无法从 波波工坊 中恢复。</span>
           </div>
         </div>
         <div className="delete-project-path">

@@ -123,7 +123,8 @@ const moduleDirectory = dirname(fileURLToPath(import.meta.url));
 const smokeCapture = process.env.NOOBI_SMOKE_CAPTURE?.trim() || null;
 if (smokeCapture) app.setPath('userData', resolve('.noobi-smoke/user-data'));
 
-app.setName('bobo.ai');
+app.setName('波波工坊');
+// Keep the existing profile path so renaming preserves accounts and projects.
 if (!smokeCapture) app.setPath('userData', join(app.getPath('appData'), 'bobo.ai'));
 
 
@@ -169,7 +170,7 @@ if (!hasSingleInstanceLock) {
 } else {
   void app.whenReady().then(launch).catch((error) => {
     if (smokeCapture) process.stderr.write(`Noobi UI smoke failed: ${asError(error).message}\n`);
-    else dialog.showErrorBox('bobo.ai 无法启动', asError(error).message);
+    else dialog.showErrorBox('波波工坊 无法启动', asError(error).message);
     app.exit(1);
   });
   app.on('second-instance', () => {
@@ -306,7 +307,7 @@ async function createWindow(): Promise<void> {
     minWidth: 760,
     minHeight: 620,
     backgroundColor: '#f6f1e8',
-    title: 'bobo.ai',
+    title: '波波工坊',
     show: false,
     webPreferences: {
       preload: join(moduleDirectory, 'preload.cjs'),
@@ -2196,7 +2197,7 @@ function handle(
 ): void {
   ipcMain.handle(channel, (event, ...args) => {
     assertTrustedRenderer(event);
-    if (shuttingDown) throw new Error('bobo.ai 正在退出');
+    if (shuttingDown) throw new Error('波波工坊 正在退出');
     return listener(event, ...args);
   });
 }

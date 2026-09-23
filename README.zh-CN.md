@@ -1,8 +1,11 @@
 <p align="center">
-  <img src="docs/images/noobi-app-icon.png" width="112" alt="Noobi.ai 应用图标">
+  <img src="src/renderer/assets/bobo/icon.png" width="112" alt="波波工坊 应用图标">
 </p>
 
-<h1 align="center">Noobi.ai</h1>
+<h1 align="center">波波工坊</h1>
+
+> 波波工坊（Bobo Workshop）基于 [Innate-Labs/Noobi.ai](https://github.com/Innate-Labs/Noobi.ai) 开发。`dev` 是波波工坊开发分支，`main` 保留上游同步；IP 角色名为「波波」。
+
 
 <p align="center">
   <strong>把一句游戏创意，变成经过审查、可以游玩的 Web 或 Godot 游戏。</strong><br>
@@ -10,9 +13,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Innate-Labs/Noobi.ai/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Innate-Labs/Noobi.ai/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-  <a href="https://github.com/Innate-Labs/Noobi.ai/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Innate-Labs/Noobi.ai?style=flat"></a>
-  <a href="https://github.com/Innate-Labs/Noobi.ai/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/Innate-Labs/Noobi.ai?style=flat"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/fengxinbo558/bobo-workshop/actions/workflows/ci.yml/badge.svg?branch=dev"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/fengxinbo558/bobo-workshop?style=flat"></a>
+  <a href="https://github.com/fengxinbo558/bobo-workshop/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/fengxinbo558/bobo-workshop?style=flat"></a>
   <img alt="平台：macOS" src="https://img.shields.io/badge/platform-macOS-11120f">
   <img alt="开发者预览版" src="https://img.shields.io/badge/status-developer%20preview-E9A93A">
 </p>
@@ -24,13 +27,13 @@
   <a href="README.md"><strong>English</strong></a>
 </p>
 
-![Noobi.ai 制作工作台，包含 Agent 管线、可玩预览、素材与工程文件](docs/images/noobi-workbench.png)
+![波波工坊 制作工作台，包含 Agent 管线、可玩预览、素材与工程文件](src/renderer/assets/bobo/studio.png)
 
-Noobi.ai 不让单个 Agent 在一次回合里即兴完成所有工作，而是把 Codex 放进一条有边界的游戏制作循环：只读 Planner 拆解任务，Implementer 在独立工程目录中实现，独立 Reviewer 检查真实结果，宿主再正式构建并自动试玩。审查、构建或体验评测未通过时，会交回同一个 Implementer，最多连续修复三轮。
+波波工坊 不让单个 Agent 在一次回合里即兴完成所有工作，而是把 Codex 放进一条有边界的游戏制作循环：只读 Planner 拆解任务，Implementer 在独立工程目录中实现，独立 Reviewer 检查真实结果，宿主再正式构建并自动试玩。审查、构建或体验评测未通过时，会交回同一个 Implementer，最多连续修复三轮。
 
 > **当前状态：** macOS 开发者预览版。项目暂未发布已签名、公证的安装包，请从源码运行。生成结果是你自己工作区里的独立 Web 或 Godot 4 游戏工程。
 
-## 为什么选择 Noobi.ai
+## 为什么选择 波波工坊
 
 | | 你会得到什么 |
 | --- | --- |
@@ -38,7 +41,7 @@ Noobi.ai 不让单个 Agent 在一次回合里即兴完成所有工作，而是�
 | **经过审查的制作循环** | Planner → Implementer → Reviewer → 正式构建 → 自动试玩；失败后最多进行三轮有界修复。 |
 | **自动体验评测** | 隔离的隐藏浏览器会操作主要玩法、记录截图，检查可见画面、动画连续性和运行错误。 |
 | **真实多媒体管线** | 图片、音乐、语音、音效和 3D 可走配置的 Provider、Codex ImageGen、导入素材或程序化回退；失败素材仍以可重试占位留在素材页。 |
-| **工程归用户所有** | 每个游戏都是普通本地项目，可以检查文件、继续用 Codex 修改、提交 Git，或完全脱离 Noobi.ai 使用。 |
+| **工程归用户所有** | 每个游戏都是普通本地项目，可以检查文件、继续用 Codex 修改、提交 Git，或完全脱离 波波工坊 使用。 |
 | **为扩展而设计** | 可增加媒体 Provider、Codex Skills、MCP Server、角色提示词、工程模板、Godot 导出目标或全新的工作台 UI。 |
 
 ## 快速开始
@@ -52,13 +55,13 @@ Noobi.ai 不让单个 Agent 在一次回合里即兴完成所有工作，而是�
 - 只有 Agent 判断需要 Godot 时，才要求 Godot 4 与版本精确匹配的 Web Export Templates
 
 ```bash
-git clone https://github.com/Innate-Labs/Noobi.ai.git
-cd Noobi.ai
+git clone https://github.com/fengxinbo558/bobo-workshop.git
+cd bobo-workshop
 npm ci
 npm run dev
 ```
 
-首次启动后，打开**设置 → Codex 账户**完成登录。Noobi.ai 使用应用私有的 `userData/codex-home`，不会覆盖全局 `~/.codex` 配置。
+首次启动后，打开**设置 → Codex 账户**完成登录。波波工坊 使用应用私有的 `userData/codex-home`，不会覆盖全局 `~/.codex` 配置。
 
 如果应用无法自动找到 Codex，可显式指定二进制：
 
@@ -87,11 +90,11 @@ flowchart LR
 
 工作台用 `Brief → Scaffold → GDD → Assets → World → Code → Verify → Complete` 展示制作进度；真正的完成条件由 Reviewer 与宿主证明门禁共同决定。
 
-![Noobi.ai 鸭嘴兽吉祥物编排代码、动画、3D、音频与可玩世界](docs/images/noobi-game-agent-poster.png)
+![波波工坊 鸭嘴兽吉祥物编排代码、动画、3D、音频与可玩世界](src/renderer/assets/bobo/home-hero.png)
 
 ## Fork 并定制
 
-Noobi.ai 把关键能力放在可替换的边界上，一个有价值的 Fork 可以从很小的改动开始：
+波波工坊 把关键能力放在可替换的边界上，一个有价值的 Fork 可以从很小的改动开始：
 
 | 目标 | 从这里开始 |
 | --- | --- |
@@ -179,7 +182,7 @@ npm run package:mac
 
 ## 许可证
 
-项目所有者尚未发布许可证。在正式加入 `LICENSE` 前，仓库内容仍受默认版权规则约束。如果你准备分发衍生版本，请关注[仓库 Issues](https://github.com/Innate-Labs/Noobi.ai/issues)或先联系维护者。
+项目所有者尚未发布许可证。在正式加入 `LICENSE` 前，仓库内容仍受默认版权规则约束。如果你准备分发衍生版本，请关注[仓库 Issues](https://github.com/fengxinbo558/bobo-workshop/issues)或先联系维护者。
 
 ## 文档
 

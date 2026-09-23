@@ -16,7 +16,7 @@ Create playable Web or Godot game projects from an idea, with planning, implemen
 
 ## Brand Commitments
 
-User confirmed new product name: bobo.ai. User selected warm collectible-toy styling, a rounded little monster, cream white and orange, with the feeling of a creative companion. The approved direction is now integrated into the Electron application: home, studio, preview layout, character selection and application icon. Runtime assets are in src/renderer/assets/bobo/.
+User confirmed new product name: 波波工坊. User selected warm collectible-toy styling, a rounded little monster, cream white and orange, with the feeling of a creative companion. The approved direction is now integrated into the Electron application: home, studio, preview layout, character selection and application icon. Runtime assets are in src/renderer/assets/bobo/.
 
 ## Capabilities and Constraints
 

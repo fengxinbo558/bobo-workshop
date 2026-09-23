@@ -149,10 +149,10 @@ export function ProjectRail({
                 <PanelLeftOpen className="brand-toggle-icon" size={19} aria-hidden="true" />
               </button>
             ) : (
-              <div className="brand is-static" aria-label="bobo.ai">
+              <div className="brand is-static" aria-label="波波工坊">
                 <span className="brand-monogram" aria-hidden="true"><img src={boboIcon} alt="" /></span>
                 <span className="brand-copy">
-                  <strong>bobo.ai</strong>
+                  <strong>波波工坊</strong>
                   <small>你的创作伙伴</small>
                 </span>
               </div>
@@ -167,7 +167,7 @@ export function ProjectRail({
             >
               <span className="brand-monogram" aria-hidden="true"><img src={boboIcon} alt="" /></span>
               <span className="brand-copy">
-                <strong>bobo.ai</strong>
+                <strong>波波工坊</strong>
                 <small>你的创作伙伴</small>
               </span>
             </button>
