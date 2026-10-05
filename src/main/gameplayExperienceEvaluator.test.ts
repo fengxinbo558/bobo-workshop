@@ -230,9 +230,9 @@ describe('GameplayExperienceEvaluator', () => {
         durationMs: 48,
       },
     ];
-    await mkdir(join(root, '.noobi'), { recursive: true });
+    await mkdir(join(root, '.bobo'), { recursive: true });
     await mkdir(join(root, 'dist'), { recursive: true });
-    await writeFile(join(root, '.noobi/playtest.json'), `${JSON.stringify(manifest)}\n`);
+    await writeFile(join(root, '.bobo/playtest.json'), `${JSON.stringify(manifest)}\n`);
     await writeFile(join(root, 'dist/index.html'), '<!doctype html><canvas></canvas>');
     const window = new MockWindow((index) => animatedFrame(index));
 
@@ -413,9 +413,9 @@ describe('GameplayExperienceEvaluator', () => {
         if (input.type === 'key') input.holdMs = 0;
       }
     }
-    await mkdir(join(root, '.noobi'), { recursive: true });
+    await mkdir(join(root, '.bobo'), { recursive: true });
     await mkdir(join(root, 'dist'), { recursive: true });
-    await writeFile(join(root, '.noobi/playtest.json'), `${JSON.stringify(manifest)}\n`);
+    await writeFile(join(root, '.bobo/playtest.json'), `${JSON.stringify(manifest)}\n`);
     await writeFile(join(root, 'dist/index.html'), '<!doctype html><canvas></canvas>');
     const window = new MockWindow((index) => animatedFrame(index));
     const evaluator = new GameplayExperienceEvaluator({
@@ -599,9 +599,9 @@ describe('GameplayExperienceEvaluator', () => {
         if (input.type === 'key') input.holdMs = 0;
       }
     }
-    await mkdir(join(root, '.noobi'), { recursive: true });
+    await mkdir(join(root, '.bobo'), { recursive: true });
     await mkdir(join(root, 'dist'), { recursive: true });
-    await writeFile(join(root, '.noobi/playtest.json'), `${JSON.stringify(manifest)}\n`);
+    await writeFile(join(root, '.bobo/playtest.json'), `${JSON.stringify(manifest)}\n`);
     await writeFile(join(root, 'dist/index.html'), '<!doctype html><canvas></canvas>');
     const window = new MockWindow((index) => animatedFrame(index));
     const capturePage = window.web.capturePage.bind(window.web);
@@ -979,15 +979,15 @@ function fakeImage(bitmap: Buffer, width = 24, height = 18): GameplayCapturedIma
 }
 
 async function temporaryRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-playtest-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-playtest-'));
   temporaryRoots.push(root);
   return root;
 }
 
 async function writeManifest(root: string): Promise<void> {
-  await mkdir(join(root, '.noobi'), { recursive: true });
+  await mkdir(join(root, '.bobo'), { recursive: true });
   await mkdir(join(root, 'dist'), { recursive: true });
-  await writeFile(join(root, '.noobi/playtest.json'), `${JSON.stringify(validManifest(), null, 2)}\n`);
+  await writeFile(join(root, '.bobo/playtest.json'), `${JSON.stringify(validManifest(), null, 2)}\n`);
   await writeFile(join(root, 'dist/index.html'), '<!doctype html><canvas></canvas>');
 }
 

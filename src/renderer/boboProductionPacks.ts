@@ -1,41 +1,41 @@
-import type { NoobiPackId } from '../shared/contracts';
-import classicScene from './assets/noobi-packs/classic/scene.png';
-import helloKittyScene from './assets/noobi-packs/hellokitty/scene.png';
-import mosslightScene from './assets/noobi-packs/mosslight/scene.png';
-import starforgeScene from './assets/noobi-packs/starforge/scene.png';
-import twilightScene from './assets/noobi-packs/twilight/scene.png';
+import type { BoboPackId } from '../shared/contracts';
+import classicScene from './assets/bobo-packs/classic/scene.png';
+import helloKittyScene from './assets/bobo-packs/hellokitty/scene.png';
+import mosslightScene from './assets/bobo-packs/mosslight/scene.png';
+import starforgeScene from './assets/bobo-packs/starforge/scene.png';
+import twilightScene from './assets/bobo-packs/twilight/scene.png';
 import type {
-  NoobiAnimation,
-  NoobiAnimationFrame,
-  NoobiSpriteManifest,
-} from './noobiAnimation';
+  BoboAnimation,
+  BoboAnimationFrame,
+  BoboSpriteManifest,
+} from './boboAnimation';
 
-export interface NoobiProductionPack {
-  id: NoobiPackId;
+export interface BoboProductionPack {
+  id: BoboPackId;
   sceneImage: string;
-  spriteManifest: NoobiSpriteManifest;
+  spriteManifest: BoboSpriteManifest;
 }
 
 const frameAssets = import.meta.glob(
   [
-    './assets/noobi-packs/*/frames/sprite-*.png',
-    '!./assets/noobi-packs/*/frames/sprite-sheet-*.png',
+    './assets/bobo-packs/*/frames/sprite-*.png',
+    '!./assets/bobo-packs/*/frames/sprite-sheet-*.png',
   ],
   { eager: true, import: 'default', query: '?url' },
 ) as Record<string, string>;
 
-function frameSource(packId: NoobiPackId, filename: string): string {
-  const key = `./assets/noobi-packs/${packId}/frames/${filename}`;
+function frameSource(packId: BoboPackId, filename: string): string {
+  const key = `./assets/bobo-packs/${packId}/frames/${filename}`;
   const source = frameAssets[key];
   if (!source) throw new Error(`Missing 波波 animation frame: ${key}`);
   return source;
 }
 
 function frames(
-  packId: NoobiPackId,
+  packId: BoboPackId,
   names: readonly string[],
   durations: readonly number[],
-): NoobiAnimationFrame[] {
+): BoboAnimationFrame[] {
   return names.map((name, index) => ({
     src: frameSource(packId, `sprite-${name}.png`),
     durationMs: durations[index] ?? durations.at(-1) ?? 160,
@@ -43,12 +43,12 @@ function frames(
 }
 
 function clip(
-  packId: NoobiPackId,
+  packId: BoboPackId,
   id: string,
   names: readonly string[],
   durations: readonly number[],
   restFrame = 0,
-): NoobiAnimation {
+): BoboAnimation {
   return {
     id: `${packId}-${id}`,
     frames: frames(packId, names, durations),
@@ -57,10 +57,10 @@ function clip(
   };
 }
 
-function manifest(packId: NoobiPackId): NoobiSpriteManifest {
+function manifest(packId: BoboPackId): BoboSpriteManifest {
   return {
     schemaVersion: 1,
-    id: `${packId}-noobi-v2`,
+    id: `${packId}-bobo-v2`,
     canvas: {
       width: 252,
       height: 336,
@@ -119,7 +119,7 @@ function manifest(packId: NoobiPackId): NoobiSpriteManifest {
   };
 }
 
-export const NOOBI_PRODUCTION_PACKS: Readonly<Record<NoobiPackId, NoobiProductionPack>> = {
+export const BOBO_PRODUCTION_PACKS: Readonly<Record<BoboPackId, BoboProductionPack>> = {
   classic: {
     id: 'classic',
     sceneImage: classicScene,
@@ -147,6 +147,6 @@ export const NOOBI_PRODUCTION_PACKS: Readonly<Record<NoobiPackId, NoobiProductio
   },
 };
 
-export function noobiProductionPack(packId: NoobiPackId): NoobiProductionPack {
-  return NOOBI_PRODUCTION_PACKS[packId];
+export function boboProductionPack(packId: BoboPackId): BoboProductionPack {
+  return BOBO_PRODUCTION_PACKS[packId];
 }

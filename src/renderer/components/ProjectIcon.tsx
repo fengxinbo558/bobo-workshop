@@ -38,7 +38,7 @@ export function ProjectIconImage({
     }
     setLoaded({ key, url: '' });
     let alive = true;
-    window.noobi
+    window.bobo
       .getProjectIcon(project.id)
       .then((data) => {
         if (!alive || !data) return;

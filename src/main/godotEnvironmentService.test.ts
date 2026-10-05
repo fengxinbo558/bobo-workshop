@@ -18,7 +18,7 @@ afterEach(async () => {
 
 describe('GodotEnvironmentService', () => {
   it('requires the exact export-template version instead of accepting a nearby install', async () => {
-    const root = await temporaryRoot('noobi-godot-mismatch-');
+    const root = await temporaryRoot('bobo-godot-mismatch-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const templateRoot = join(root, 'export_templates');
     await mkdir(join(templateRoot, '4.7.stable'), { recursive: true });
@@ -26,7 +26,7 @@ describe('GodotEnvironmentService', () => {
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'settings/godot.json'),
       platform: 'darwin',
-      environment: { NOOBI_GODOT_BIN: binary, PATH: '' },
+      environment: { BOBO_GODOT_BIN: binary, PATH: '' },
       homeDirectory: root,
       templateRoots: [templateRoot],
       processRunner: versionRunner('4.7.1.stable.official.a13da4feb'),
@@ -53,7 +53,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('reports platform targets from the exact template directory', async () => {
-    const root = await temporaryRoot('noobi-godot-templates-');
+    const root = await temporaryRoot('bobo-godot-templates-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const versionPath = join(root, 'templates/4.7.1.stable');
     await mkdir(versionPath, { recursive: true });
@@ -66,7 +66,7 @@ describe('GodotEnvironmentService', () => {
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
       platform: 'linux',
-      environment: { NOOBI_GODOT_BIN: binary, PATH: '' },
+      environment: { BOBO_GODOT_BIN: binary, PATH: '' },
       homeDirectory: root,
       templateRoots: [join(root, 'templates')],
       processRunner: versionRunner('4.7.1.stable.official.a13da4feb'),
@@ -85,7 +85,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('requires a Web template for the BoBo integrated export capability', async () => {
-    const root = await temporaryRoot('noobi-godot-native-only-');
+    const root = await temporaryRoot('bobo-godot-native-only-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const versionPath = join(root, 'templates/4.7.1.stable');
     await mkdir(versionPath, { recursive: true });
@@ -94,7 +94,7 @@ describe('GodotEnvironmentService', () => {
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
       platform: 'darwin',
-      environment: { NOOBI_GODOT_BIN: binary, PATH: '' },
+      environment: { BOBO_GODOT_BIN: binary, PATH: '' },
       homeDirectory: root,
       templateRoots: [join(root, 'templates')],
       processRunner: versionRunner('4.7.1.stable.official.demo'),
@@ -110,7 +110,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('accepts a selected macOS app bundle, stores the override, and resolves its real executable', async () => {
-    const root = await temporaryRoot('noobi-godot-app-');
+    const root = await temporaryRoot('bobo-godot-app-');
     const appBundle = join(root, 'Godot.app');
     const binary = await fakeExecutable(appBundle, 'Contents/MacOS/Godot');
     const storageFile = join(root, 'settings/godot.json');
@@ -142,7 +142,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('rejects relative, non-Godot, and incompatible configured executables', async () => {
-    const root = await temporaryRoot('noobi-godot-invalid-');
+    const root = await temporaryRoot('bobo-godot-invalid-');
     const binary = await fakeExecutable(root, 'bin/not-godot');
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
@@ -159,12 +159,12 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('ignores a malformed optional environment override and continues PATH discovery', async () => {
-    const root = await temporaryRoot('noobi-godot-path-');
+    const root = await temporaryRoot('bobo-godot-path-');
     await fakeExecutable(root, 'bin/godot4');
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
       platform: 'linux',
-      environment: { NOOBI_GODOT_BIN: 'relative/not-godot', PATH: join(root, 'bin') },
+      environment: { BOBO_GODOT_BIN: 'relative/not-godot', PATH: join(root, 'bin') },
       homeDirectory: root,
       processRunner: versionRunner('4.3.stable.official.demo'),
     });
@@ -175,7 +175,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('runs only fixed headless tasks and verifies Web export artifacts', async () => {
-    const root = await temporaryRoot('noobi-godot-execute-');
+    const root = await temporaryRoot('bobo-godot-execute-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const projectPath = join(root, 'game');
     await mkdir(projectPath, { recursive: true });
@@ -199,7 +199,7 @@ describe('GodotEnvironmentService', () => {
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
       platform: 'linux',
-      environment: { NOOBI_GODOT_BIN: binary, PATH: '' },
+      environment: { BOBO_GODOT_BIN: binary, PATH: '' },
       homeDirectory: root,
       processRunner: runner,
     });
@@ -248,7 +248,7 @@ describe('GodotEnvironmentService', () => {
   });
 
   it('fails closed on Godot crash markers and missing export artifacts even with exit code zero', async () => {
-    const root = await temporaryRoot('noobi-godot-fail-closed-');
+    const root = await temporaryRoot('bobo-godot-fail-closed-');
     const binary = await fakeExecutable(root, 'bin/godot');
     const projectPath = join(root, 'game');
     await mkdir(projectPath, { recursive: true });
@@ -268,7 +268,7 @@ describe('GodotEnvironmentService', () => {
     const service = new GodotEnvironmentService({
       storageFile: join(root, 'godot.json'),
       platform: 'linux',
-      environment: { NOOBI_GODOT_BIN: binary, PATH: '' },
+      environment: { BOBO_GODOT_BIN: binary, PATH: '' },
       homeDirectory: root,
       processRunner: runner,
     });
@@ -292,7 +292,7 @@ describe('godotProcessEnvironment', () => {
       LANG: 'zh_CN.UTF-8',
       OPENAI_API_KEY: 'secret',
       MINIMAX_API_KEY: 'secret',
-      NOOBI_CODEX_BIN: '/private/codex',
+      BOBO_CODEX_BIN: '/private/codex',
       NODE_OPTIONS: '--require malicious.js',
     })).toEqual({
       HOME: '/Users/test',

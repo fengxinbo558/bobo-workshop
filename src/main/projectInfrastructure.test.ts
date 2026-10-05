@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from 'node:fs/
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { NoobiCrewMember } from '../shared/contracts.js';
+import type { BoboCrewMember } from '../shared/contracts.js';
 import { PreviewServer } from './previewServer.js';
 import { ProjectStore } from './projectStore.js';
 
@@ -14,7 +14,7 @@ afterEach(async () => {
 
 describe('project infrastructure', () => {
   it('atomically reloads projects and rejects inspector traversal', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -30,8 +30,8 @@ describe('project infrastructure', () => {
       name: 'Boundary Game',
       engine: 'web',
       targetFrameRate: 60,
-      noobiPackOverrideId: null,
-      noobiCrewOverride: null,
+      boboPackOverrideId: null,
+      boboCrewOverride: null,
     });
     await expect(reloaded.readProjectFile(project.id, '../projects.json')).rejects.toThrow();
     await expect(store.update(project.id, { engine: 'godot' } as never)).rejects.toThrow(
@@ -40,7 +40,7 @@ describe('project infrastructure', () => {
   });
 
   it('renames, pins, and safely deletes a project with its workspace', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-project-actions-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-project-actions-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -76,7 +76,7 @@ describe('project infrastructure', () => {
   });
 
   it('refuses to delete a workspace whose host-owned identity was changed', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-project-delete-guard-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-project-delete-guard-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -87,7 +87,7 @@ describe('project infrastructure', () => {
       parentDirectory: workspace,
       model: null,
     });
-    const metadataPath = join(project.root, '.noobi/project.json');
+    const metadataPath = join(project.root, '.bobo/project.json');
     const metadata = JSON.parse(await readFile(metadataPath, 'utf8')) as Record<string, unknown>;
     await writeFile(metadataPath, `${JSON.stringify({ ...metadata, id: 'different-project' }, null, 2)}\n`);
 
@@ -97,7 +97,7 @@ describe('project infrastructure', () => {
   });
 
   it('persists global and project BoBo packs while validating their ids', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-pack-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-pack-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -110,94 +110,94 @@ describe('project infrastructure', () => {
     });
 
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiPackId: 'classic',
+      defaultBoboPackId: 'classic',
     });
-    await expect(store.saveSettings({ defaultNoobiPackId: 'twilight' })).resolves.toMatchObject({
-      defaultNoobiPackId: 'twilight',
+    await expect(store.saveSettings({ defaultBoboPackId: 'twilight' })).resolves.toMatchObject({
+      defaultBoboPackId: 'twilight',
     });
-    await expect(store.update(project.id, { noobiPackOverrideId: 'hellokitty' })).resolves.toMatchObject({
-      noobiPackOverrideId: 'hellokitty',
+    await expect(store.update(project.id, { boboPackOverrideId: 'hellokitty' })).resolves.toMatchObject({
+      boboPackOverrideId: 'hellokitty',
     });
     await expect(store.update(project.id, {
-      noobiPackOverrideId: 'unknown-pack' as 'classic',
+      boboPackOverrideId: 'unknown-pack' as 'classic',
     })).rejects.toThrow(
-      'noobiPackOverrideId must be classic, mosslight, starforge, twilight, hellokitty, or null',
+      'boboPackOverrideId must be classic, mosslight, starforge, twilight, hellokitty, or null',
     );
     await expect(store.saveSettings({
-      defaultNoobiPackId: 'unknown-pack' as 'classic',
+      defaultBoboPackId: 'unknown-pack' as 'classic',
     })).rejects.toThrow('Default BoBo pack setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
-      defaultNoobiPackId: 'twilight',
+      defaultBoboPackId: 'twilight',
     });
     await expect(reloaded.get(project.id)).resolves.toMatchObject({
-      noobiPackOverrideId: 'hellokitty',
+      boboPackOverrideId: 'hellokitty',
     });
-    await expect(reloaded.update(project.id, { noobiPackOverrideId: null })).resolves.toMatchObject({
-      noobiPackOverrideId: null,
+    await expect(reloaded.update(project.id, { boboPackOverrideId: null })).resolves.toMatchObject({
+      boboPackOverrideId: null,
     });
   });
 
   it('persists the default BoBo scene while rejecting unknown scene ids', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-scene-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-scene-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
     const store = new ProjectStore(storageFile, workspace);
 
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiSceneId: 'collaboration',
+      defaultBoboSceneId: 'collaboration',
     });
     await expect(store.saveSettings({
-      defaultNoobiSceneId: 'fishing',
+      defaultBoboSceneId: 'fishing',
     })).resolves.toMatchObject({
-      defaultNoobiSceneId: 'fishing',
+      defaultBoboSceneId: 'fishing',
     });
     await expect(store.saveSettings({
-      defaultNoobiSceneId: 'unknown-scene' as never,
+      defaultBoboSceneId: 'unknown-scene' as never,
     })).rejects.toThrow('Default BoBo scene setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
-      defaultNoobiSceneId: 'fishing',
+      defaultBoboSceneId: 'fishing',
     });
   });
 
   it('persists the default BoBo stage mode and solo scene while validating both', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-stage-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-stage-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
     const store = new ProjectStore(storageFile, workspace);
 
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'crew',
-      defaultNoobiSoloSceneId: 'classic',
+      defaultBoboStageMode: 'crew',
+      defaultBoboSoloSceneId: 'classic',
     });
     await expect(store.saveSettings({
-      defaultNoobiStageMode: 'solo',
-      defaultNoobiSoloSceneId: 'mosslight',
+      defaultBoboStageMode: 'solo',
+      defaultBoboSoloSceneId: 'mosslight',
     })).resolves.toMatchObject({
-      defaultNoobiStageMode: 'solo',
-      defaultNoobiSoloSceneId: 'mosslight',
+      defaultBoboStageMode: 'solo',
+      defaultBoboSoloSceneId: 'mosslight',
     });
     await expect(store.saveSettings({
-      defaultNoobiStageMode: 'unknown-mode' as never,
+      defaultBoboStageMode: 'unknown-mode' as never,
     })).rejects.toThrow('Default BoBo stage mode setting is invalid');
     await expect(store.saveSettings({
-      defaultNoobiSoloSceneId: 'unknown-scene' as never,
+      defaultBoboSoloSceneId: 'unknown-scene' as never,
     })).rejects.toThrow('Default BoBo solo scene setting is invalid');
 
     const reloaded = new ProjectStore(storageFile, workspace);
     await expect(reloaded.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'solo',
-      defaultNoobiSoloSceneId: 'mosslight',
+      defaultBoboStageMode: 'solo',
+      defaultBoboSoloSceneId: 'mosslight',
     });
   });
 
   it('persists validated global and project BoBo crews without visual asset data', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-crew-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-crew-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -208,68 +208,68 @@ describe('project infrastructure', () => {
       parentDirectory: workspace,
       model: null,
     });
-    const globalCrew: NoobiCrewMember[] = [
+    const globalCrew: BoboCrewMember[] = [
       { packId: 'classic', role: 'planner' },
       { packId: 'twilight', role: 'artist' },
       { packId: 'hellokitty', role: 'engineer' },
       { packId: 'starforge', role: 'tester' },
     ];
-    const projectCrew: NoobiCrewMember[] = [
+    const projectCrew: BoboCrewMember[] = [
       { packId: 'hellokitty', role: 'planner' },
       { packId: 'twilight', role: 'tester' },
     ];
 
-    await expect(store.getSettings()).resolves.toMatchObject({ defaultNoobiCrew: globalCrew });
-    await expect(store.saveSettings({ defaultNoobiCrew: globalCrew })).resolves.toMatchObject({
-      defaultNoobiCrew: globalCrew,
+    await expect(store.getSettings()).resolves.toMatchObject({ defaultBoboCrew: globalCrew });
+    await expect(store.saveSettings({ defaultBoboCrew: globalCrew })).resolves.toMatchObject({
+      defaultBoboCrew: globalCrew,
     });
-    await expect(store.update(project.id, { noobiCrewOverride: projectCrew })).resolves.toMatchObject({
-      noobiCrewOverride: projectCrew,
+    await expect(store.update(project.id, { boboCrewOverride: projectCrew })).resolves.toMatchObject({
+      boboCrewOverride: projectCrew,
     });
     await expect(store.update(project.id, {
-      noobiCrewOverride: [{ packId: 'classic', role: 'planner' }],
+      boboCrewOverride: [{ packId: 'classic', role: 'planner' }],
     })).rejects.toThrow('must contain 2 to 4 members');
     await expect(store.update(project.id, {
-      noobiCrewOverride: [
+      boboCrewOverride: [
         { packId: 'classic', role: 'planner' },
         { packId: 'classic', role: 'artist' },
       ],
     })).rejects.toThrow('duplicate packId');
     await expect(store.saveSettings({
-      defaultNoobiCrew: [
+      defaultBoboCrew: [
         { packId: 'classic', role: 'planner' },
         { packId: 'twilight', role: 'planner' },
       ],
     })).rejects.toThrow('duplicate role');
     await expect(store.update(project.id, {
-      noobiCrewOverride: [
+      boboCrewOverride: [
         { packId: 'unknown-pack', role: 'planner' },
         { packId: 'twilight', role: 'artist' },
       ] as never,
     })).rejects.toThrow('invalid packId');
     await expect(store.saveSettings({
-      defaultNoobiCrew: [
+      defaultBoboCrew: [
         { packId: 'classic', role: 'unknown-role' },
         { packId: 'twilight', role: 'artist' },
       ] as never,
     })).rejects.toThrow('invalid role');
     await expect(store.saveSettings({
-      defaultNoobiCrew: [
+      defaultBoboCrew: [
         { packId: 'classic', role: 'planner', avatarImage: 'data:image/png;base64,forbidden' },
         { packId: 'twilight', role: 'artist' },
-      ] as NoobiCrewMember[],
+      ] as BoboCrewMember[],
     })).rejects.toThrow('may only contain packId and role');
 
     const reloaded = new ProjectStore(storageFile, workspace);
-    await expect(reloaded.getSettings()).resolves.toMatchObject({ defaultNoobiCrew: globalCrew });
-    await expect(reloaded.get(project.id)).resolves.toMatchObject({ noobiCrewOverride: projectCrew });
-    await expect(reloaded.update(project.id, { noobiCrewOverride: null })).resolves.toMatchObject({
-      noobiCrewOverride: null,
+    await expect(reloaded.getSettings()).resolves.toMatchObject({ defaultBoboCrew: globalCrew });
+    await expect(reloaded.get(project.id)).resolves.toMatchObject({ boboCrewOverride: projectCrew });
+    await expect(reloaded.update(project.id, { boboCrewOverride: null })).resolves.toMatchObject({
+      boboCrewOverride: null,
     });
   });
 
   it('uses 60 FPS for new projects while preserving compatible legacy targets', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-fps-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-fps-store-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
@@ -350,30 +350,30 @@ describe('project infrastructure', () => {
       projects: Array<{
         engine?: string;
         targetFrameRate?: number;
-        noobiPackOverrideId?: string | null;
-        noobiCrewOverride?: NoobiCrewMember[] | null;
+        boboPackOverrideId?: string | null;
+        boboCrewOverride?: BoboCrewMember[] | null;
       }>;
       settings?: {
-        defaultNoobiStageMode?: string;
-        defaultNoobiSoloSceneId?: string;
-        defaultNoobiSceneId?: string;
-        defaultNoobiPackId?: string;
-        defaultNoobiCrew?: NoobiCrewMember[];
+        defaultBoboStageMode?: string;
+        defaultBoboSoloSceneId?: string;
+        defaultBoboSceneId?: string;
+        defaultBoboPackId?: string;
+        defaultBoboCrew?: BoboCrewMember[];
       };
     };
     expect(migrated.projects[0]?.engine).toBe('web');
     expect(migrated.projects[0]?.targetFrameRate).toBe(60);
     expect(migrated.projects[1]?.engine).toBe('godot');
     expect(migrated.projects[1]?.targetFrameRate).toBe(120);
-    expect(migrated.projects[0]?.noobiPackOverrideId).toBeNull();
-    expect(migrated.projects[1]?.noobiPackOverrideId).toBeNull();
-    expect(migrated.projects[0]?.noobiCrewOverride).toBeNull();
-    expect(migrated.projects[1]?.noobiCrewOverride).toBeNull();
-    expect(migrated.settings?.defaultNoobiStageMode).toBe('crew');
-    expect(migrated.settings?.defaultNoobiSoloSceneId).toBe('classic');
-    expect(migrated.settings?.defaultNoobiSceneId).toBe('collaboration');
-    expect(migrated.settings?.defaultNoobiPackId).toBe('classic');
-    expect(migrated.settings?.defaultNoobiCrew).toEqual([
+    expect(migrated.projects[0]?.boboPackOverrideId).toBeNull();
+    expect(migrated.projects[1]?.boboPackOverrideId).toBeNull();
+    expect(migrated.projects[0]?.boboCrewOverride).toBeNull();
+    expect(migrated.projects[1]?.boboCrewOverride).toBeNull();
+    expect(migrated.settings?.defaultBoboStageMode).toBe('crew');
+    expect(migrated.settings?.defaultBoboSoloSceneId).toBe('classic');
+    expect(migrated.settings?.defaultBoboSceneId).toBe('collaboration');
+    expect(migrated.settings?.defaultBoboPackId).toBe('classic');
+    expect(migrated.settings?.defaultBoboCrew).toEqual([
       { packId: 'classic', role: 'planner' },
       { packId: 'twilight', role: 'artist' },
       { packId: 'hellokitty', role: 'engineer' },
@@ -382,11 +382,11 @@ describe('project infrastructure', () => {
   });
 
   it('adds solo defaults to legacy settings without replacing existing BoBo choices', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-stage-migration-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-stage-migration-test-'));
     roots.push(root);
     const storageFile = join(root, 'data/projects.json');
     const workspace = join(root, 'games');
-    const existingCrew: NoobiCrewMember[] = [
+    const existingCrew: BoboCrewMember[] = [
       { packId: 'hellokitty', role: 'artist' },
       { packId: 'starforge', role: 'tester' },
     ];
@@ -398,42 +398,42 @@ describe('project infrastructure', () => {
         defaultWorkspace: workspace,
         defaultModel: null,
         defaultEffort: 'medium',
-        defaultNoobiSceneId: 'fishing',
-        defaultNoobiPackId: 'twilight',
-        defaultNoobiCrew: existingCrew,
+        defaultBoboSceneId: 'fishing',
+        defaultBoboPackId: 'twilight',
+        defaultBoboCrew: existingCrew,
         theme: 'light',
       },
     }, null, 2)}\n`);
 
     const store = new ProjectStore(storageFile, workspace);
     await expect(store.getSettings()).resolves.toMatchObject({
-      defaultNoobiStageMode: 'crew',
-      defaultNoobiSoloSceneId: 'classic',
-      defaultNoobiSceneId: 'fishing',
-      defaultNoobiPackId: 'twilight',
-      defaultNoobiCrew: existingCrew,
+      defaultBoboStageMode: 'crew',
+      defaultBoboSoloSceneId: 'classic',
+      defaultBoboSceneId: 'fishing',
+      defaultBoboPackId: 'twilight',
+      defaultBoboCrew: existingCrew,
     });
     const migrated = JSON.parse(await readFile(storageFile, 'utf8')) as {
       settings?: Partial<Record<
-        | 'defaultNoobiStageMode'
-        | 'defaultNoobiSoloSceneId'
-        | 'defaultNoobiSceneId'
-        | 'defaultNoobiPackId'
-        | 'defaultNoobiCrew',
+        | 'defaultBoboStageMode'
+        | 'defaultBoboSoloSceneId'
+        | 'defaultBoboSceneId'
+        | 'defaultBoboPackId'
+        | 'defaultBoboCrew',
         unknown
       >>;
     };
     expect(migrated.settings).toMatchObject({
-      defaultNoobiStageMode: 'crew',
-      defaultNoobiSoloSceneId: 'classic',
-      defaultNoobiSceneId: 'fishing',
-      defaultNoobiPackId: 'twilight',
-      defaultNoobiCrew: existingCrew,
+      defaultBoboStageMode: 'crew',
+      defaultBoboSoloSceneId: 'classic',
+      defaultBoboSceneId: 'fishing',
+      defaultBoboPackId: 'twilight',
+      defaultBoboCrew: existingCrew,
     });
   });
 
   it('creates a Godot 4 project with scenes, GDScript, assets, and a Web preset', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-godot-store-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-godot-store-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({
@@ -476,7 +476,7 @@ describe('project infrastructure', () => {
   });
 
   it('serves the playable starter on loopback without blocking the Electron iframe', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-preview-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-preview-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({
@@ -499,7 +499,7 @@ describe('project infrastructure', () => {
   });
 
   it('hides Godot branding in legacy Web previews without mutating the build', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-godot-preview-branding-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-godot-preview-branding-'));
     roots.push(root);
     const buildRoot = join(root, 'build/web');
     const legacyHtml = `<!doctype html>
@@ -527,9 +527,9 @@ describe('project infrastructure', () => {
       expect(hiddenHtml).not.toContain('index.png');
       expect(hiddenHtml).not.toContain('-gd-engine-icon');
       expect(hiddenHtml).not.toContain('apple-touch-icon');
-      expect(hiddenHtml).toContain('id="noobi-godot-branding-guard"');
+      expect(hiddenHtml).toContain('id="bobo-godot-branding-guard"');
       expect(hiddenHtml).toContain('MutationObserver');
-      expect(hiddenHtml.match(/noobi-godot-branding-guard/gu)).toHaveLength(1);
+      expect(hiddenHtml.match(/bobo-godot-branding-guard/gu)).toHaveLength(1);
       const hiddenHead = await fetch(hiddenUrl, { method: 'HEAD' });
       expect(Number(hiddenHead.headers.get('content-length'))).toBe(Buffer.byteLength(hiddenHtml));
       expect((await fetch(new URL('favicon.ico', hiddenUrl))).status).toBe(204);
@@ -547,7 +547,7 @@ describe('project infrastructure', () => {
   });
 
   it('mirrors Vite public asset URLs while using the source fallback', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-preview-assets-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-preview-assets-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({
@@ -578,7 +578,7 @@ describe('project infrastructure', () => {
   });
 
   it('serves fresh public media ahead of dist while keeping documents and scripts in dist', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-preview-fresh-assets-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-preview-fresh-assets-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({
@@ -619,7 +619,7 @@ describe('project infrastructure', () => {
   });
 
   it('serves only packaged media when the strict playtest overlay is disabled', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-preview-strict-assets-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-preview-strict-assets-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({
@@ -652,7 +652,7 @@ describe('project infrastructure', () => {
   });
 
   it('does not fall back to dist when a public media path escapes through a symlink', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-preview-symlink-assets-test-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-preview-symlink-assets-test-'));
     roots.push(root);
     const store = new ProjectStore(join(root, 'projects.json'), join(root, 'games'));
     const project = await store.create({

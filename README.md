@@ -4,8 +4,6 @@
 
 <h1 align="center">波波工坊</h1>
 
-> 波波工坊（Bobo Workshop）基于 [Innate-Labs/Noobi.ai](https://github.com/Innate-Labs/Noobi.ai) 开发。`dev` 是波波工坊开发分支，`main` 保留上游同步；IP 角色名为「波波」。
-
 
 <p align="center">
   <strong>Turn one game idea into a reviewed, playable Web or Godot game.</strong><br>
@@ -27,7 +25,7 @@
   <a href="README.zh-CN.md"><strong>简体中文</strong></a>
 </p>
 
-![波波工坊 studio illustration](src/renderer/assets/bobo/studio.png)
+![波波工坊 studio illustration](docs/images/bobo-workbench.png)
 
 波波工坊 gives Codex a bounded game-production loop instead of asking one agent to improvise everything in a single pass. A read-only Planner scopes the work, an Implementer builds inside an isolated project directory, an independent Reviewer checks the result, and the host builds and plays the production output before completion. Failed review, build or playtest checks return to the same Implementer for up to three repair rounds.
 
@@ -66,7 +64,7 @@ On first launch, open **Settings → Codex account** and sign in. 波波工坊 u
 If Codex cannot be located automatically, point 波波工坊 at a binary explicitly:
 
 ```bash
-NOOBI_CODEX_BIN=/absolute/path/to/codex npm run dev
+BOBO_CODEX_BIN=/absolute/path/to/codex npm run dev
 ```
 
 ## From idea to playable project
@@ -116,7 +114,7 @@ Good first directions include a new provider adapter, Windows/Linux packaging, s
 - playable loopback preview, project files, and a unified asset library
 - Agent-selected Web or Godot 4 workspace with environment and export-template checks
 - host-managed timing and animation contracts without a user-facing FPS strategy selector
-- Noobi crew characters, role-based motion, selectable studio scenes and an animated fishing background
+- Bobo crew characters, role-based motion, selectable studio scenes and an animated fishing background
 - persistent projects and resumable Codex Implementer threads
 
 ### Media and extension layer

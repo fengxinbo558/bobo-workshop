@@ -6,7 +6,7 @@ import { CodexAppServer } from '../src/main/codexAppServer.js';
 import { createWorkspaceTemplate } from '../src/main/workspaceTemplate.js';
 import { prepareSmokeHome } from './smokeHome.js';
 
-const workspace = await mkdtemp(join(tmpdir(), 'noobi-image-smoke-'));
+const workspace = await mkdtemp(join(tmpdir(), 'bobo-image-smoke-'));
 const smokeHome = await prepareSmokeHome();
 const runtime = new CodexAppServer({ codexHome: smokeHome.path });
 const assetStore = new AssetStore();

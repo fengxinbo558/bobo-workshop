@@ -1,7 +1,7 @@
 import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import React, { type KeyboardEvent } from 'react';
 
-import type { NoobiPackId } from '../../shared/contracts';
+import type { BoboPackId } from '../../shared/contracts';
 import classicAvatar from '../assets/bobo/planner.png';
 import classicScene from '../assets/bobo/studio.png';
 import helloKittyAvatar from '../assets/bobo/engineer.png';
@@ -13,8 +13,8 @@ import starforgeScene from '../assets/bobo/studio.png';
 import twilightAvatar from '../assets/bobo/artist.png';
 import twilightScene from '../assets/bobo/studio.png';
 
-export interface NoobiPackOption {
-  id: NoobiPackId;
+export interface BoboPackOption {
+  id: BoboPackId;
   name: string;
   eyebrow: string;
   description: string;
@@ -25,7 +25,7 @@ export interface NoobiPackOption {
   avatarImage: string;
 }
 
-export const NOOBI_PACK_OPTIONS: readonly NoobiPackOption[] = [
+export const BOBO_PACK_OPTIONS: readonly BoboPackOption[] = [
   {
     id: 'classic',
     name: '奶油工坊',
@@ -83,7 +83,7 @@ export const NOOBI_PACK_OPTIONS: readonly NoobiPackOption[] = [
   },
 ] as const;
 
-export function noobiPackGridColumnCount(container: HTMLElement | null): number {
+export function boboPackGridColumnCount(container: HTMLElement | null): number {
   if (!container) return 1;
   const tracks = getComputedStyle(container).gridTemplateColumns
     .split(/\s+/)
@@ -91,22 +91,22 @@ export function noobiPackGridColumnCount(container: HTMLElement | null): number 
   return Math.max(1, tracks.length);
 }
 
-export function noobiPackLabel(id: NoobiPackId): string {
-  return NOOBI_PACK_OPTIONS.find((option) => option.id === id)?.name ?? '奶油工坊';
+export function boboPackLabel(id: BoboPackId): string {
+  return BOBO_PACK_OPTIONS.find((option) => option.id === id)?.name ?? '奶油工坊';
 }
 
-interface NoobiPackPickerProps {
-  value: NoobiPackId | null;
-  globalValue?: NoobiPackId;
+interface BoboPackPickerProps {
+  value: BoboPackId | null;
+  globalValue?: BoboPackId;
   mode: 'global' | 'project';
   variant?: 'cards' | 'compact';
   presentation?: 'bundle' | 'character';
   disabled?: boolean;
   busy?: boolean;
-  onChange: (value: NoobiPackId | null) => void;
+  onChange: (value: BoboPackId | null) => void;
 }
 
-export function NoobiPackPicker({
+export function BoboPackPicker({
   value,
   globalValue = 'classic',
   mode,
@@ -115,27 +115,27 @@ export function NoobiPackPicker({
   disabled = false,
   busy = false,
   onChange,
-}: NoobiPackPickerProps) {
+}: BoboPackPickerProps) {
   const resolvedValue = value ?? globalValue;
-  const resolvedOption = NOOBI_PACK_OPTIONS.find((option) => option.id === resolvedValue)
-    ?? NOOBI_PACK_OPTIONS[0];
+  const resolvedOption = BOBO_PACK_OPTIONS.find((option) => option.id === resolvedValue)
+    ?? BOBO_PACK_OPTIONS[0];
 
   if (variant === 'compact') {
     return (
       <label
-        className={`noobi-pack-compact is-${resolvedValue}${value === null ? ' is-inherited' : ''}`}
+        className={`bobo-pack-compact is-${resolvedValue}${value === null ? ' is-inherited' : ''}`}
         title={disabled ? 'Agent 运行期间不能切换制作场景' : '选择这个项目的 波波 形象与制作场景'}
       >
         <span
-          className="noobi-pack-compact-swatch"
+          className="bobo-pack-compact-swatch"
           aria-hidden="true"
           style={{ backgroundImage: `url(${resolvedOption.sceneImage})` }}
         >
           <img src={resolvedOption.avatarImage} alt="" draggable={false} />
         </span>
-        <span className="noobi-pack-compact-copy" aria-hidden="true">
+        <span className="bobo-pack-compact-copy" aria-hidden="true">
           <small>{mode === 'global' ? '默认场景' : value === null ? '跟随全局' : '项目场景'}</small>
-          <strong>{busy ? '保存中…' : noobiPackLabel(resolvedValue)}</strong>
+          <strong>{busy ? '保存中…' : boboPackLabel(resolvedValue)}</strong>
         </span>
         <select
           aria-label="项目 波波 形象与制作场景"
@@ -143,13 +143,13 @@ export function NoobiPackPicker({
           disabled={disabled || busy}
           onChange={(event) => {
             const nextValue = event.target.value;
-            onChange(nextValue === 'inherit' ? null : nextValue as NoobiPackId);
+            onChange(nextValue === 'inherit' ? null : nextValue as BoboPackId);
           }}
         >
           {mode === 'project' ? (
-            <option value="inherit">跟随全局（当前：{noobiPackLabel(globalValue)}）</option>
+            <option value="inherit">跟随全局（当前：{boboPackLabel(globalValue)}）</option>
           ) : null}
-          {NOOBI_PACK_OPTIONS.map((option) => (
+          {BOBO_PACK_OPTIONS.map((option) => (
             <option key={option.id} value={option.id}>{option.name} · {option.avatarLabel}</option>
           ))}
         </select>
@@ -158,16 +158,16 @@ export function NoobiPackPicker({
     );
   }
 
-  const options: Array<NoobiPackOption & { inherited?: boolean }> = mode === 'project'
+  const options: Array<BoboPackOption & { inherited?: boolean }> = mode === 'project'
     ? [{
-        ...NOOBI_PACK_OPTIONS.find((option) => option.id === globalValue)!,
+        ...BOBO_PACK_OPTIONS.find((option) => option.id === globalValue)!,
         id: globalValue,
-        name: `跟随全局 · ${noobiPackLabel(globalValue)}`,
+        name: `跟随全局 · ${boboPackLabel(globalValue)}`,
         eyebrow: 'FOLLOW GLOBAL',
         description: '项目会自动使用设置中的全局默认主题包。',
         inherited: true,
-      }, ...NOOBI_PACK_OPTIONS]
-    : [...NOOBI_PACK_OPTIONS];
+      }, ...BOBO_PACK_OPTIONS]
+    : [...BOBO_PACK_OPTIONS];
 
   function selectAt(index: number) {
     const option = options[index];
@@ -179,7 +179,7 @@ export function NoobiPackPicker({
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
     const container = event.currentTarget.parentElement;
-    const columnCount = noobiPackGridColumnCount(container);
+    const columnCount = boboPackGridColumnCount(container);
     let nextIndex = index;
     if (event.key === 'Home') nextIndex = 0;
     if (event.key === 'End') nextIndex = options.length - 1;
@@ -194,7 +194,7 @@ export function NoobiPackPicker({
 
   return (
     <div
-      className={`noobi-pack-picker mode-${mode} presentation-${presentation}`}
+      className={`bobo-pack-picker mode-${mode} presentation-${presentation}`}
       role="radiogroup"
       aria-label={presentation === 'character'
         ? '选择默认 波波 角色'
@@ -213,7 +213,7 @@ export function NoobiPackPicker({
               : `${option.name}：${option.description}`}
             data-pack-kind={presentation}
             data-pack-index={index}
-            className={`noobi-pack-card pack-${option.id}${selected ? ' is-selected' : ''}${option.inherited ? ' is-inherited' : ''}`}
+            className={`bobo-pack-card pack-${option.id}${selected ? ' is-selected' : ''}${option.inherited ? ' is-inherited' : ''}`}
             key={option.inherited ? 'inherit' : option.id}
             disabled={disabled || busy}
             tabIndex={selected || (!options.some((item) => item.inherited ? value === null : value === item.id) && index === 0) ? 0 : -1}
@@ -221,31 +221,31 @@ export function NoobiPackPicker({
             onClick={() => selectAt(index)}
           >
             <span
-              className={`noobi-pack-preview${presentation === 'character' ? ' noobi-character-preview' : ''}`}
+              className={`bobo-pack-preview${presentation === 'character' ? ' bobo-character-preview' : ''}`}
               aria-hidden="true"
             >
               {presentation === 'bundle' ? (
                 <img
-                  className="noobi-pack-scene-image"
+                  className="bobo-pack-scene-image"
                   src={option.sceneImage}
                   alt=""
                   draggable={false}
                 />
-              ) : <span className="noobi-character-pixel-grid" />}
+              ) : <span className="bobo-character-pixel-grid" />}
               <img
-                className={`noobi-pack-avatar-image${presentation === 'character' ? ' noobi-character-avatar-image' : ''}`}
+                className={`bobo-pack-avatar-image${presentation === 'character' ? ' bobo-character-avatar-image' : ''}`}
                 src={option.avatarImage}
                 alt=""
                 draggable={false}
               />
-              {option.inherited ? <Sparkles className="noobi-pack-follow-icon" size={17} /> : null}
+              {option.inherited ? <Sparkles className="bobo-pack-follow-icon" size={17} /> : null}
             </span>
-            <span className="noobi-pack-card-copy">
+            <span className="bobo-pack-card-copy">
               <small>{presentation === 'character' ? 'BOBO CHARACTER' : option.eyebrow}</small>
               <strong>{presentation === 'character' ? option.avatarLabel : option.name}</strong>
               <span>{presentation === 'character' ? option.avatarDescription : option.description}</span>
             </span>
-            <span className="noobi-pack-check" aria-hidden="true"><Check size={13} /></span>
+            <span className="bobo-pack-check" aria-hidden="true"><Check size={13} /></span>
           </button>
         );
       })}

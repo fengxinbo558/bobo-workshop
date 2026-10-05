@@ -4,8 +4,6 @@
 
 <h1 align="center">波波工坊</h1>
 
-> 波波工坊（Bobo Workshop）基于 [Innate-Labs/Noobi.ai](https://github.com/Innate-Labs/Noobi.ai) 开发。`dev` 是波波工坊开发分支，`main` 保留上游同步；IP 角色名为「波波」。
-
 
 <p align="center">
   <strong>把一句游戏创意，变成经过审查、可以游玩的 Web 或 Godot 游戏。</strong><br>
@@ -27,7 +25,7 @@
   <a href="README.md"><strong>English</strong></a>
 </p>
 
-![波波工坊 制作工作台，包含 Agent 管线、可玩预览、素材与工程文件](src/renderer/assets/bobo/studio.png)
+![波波工坊 制作工作台，包含 Agent 管线、可玩预览、素材与工程文件](docs/images/bobo-workbench.png)
 
 波波工坊 不让单个 Agent 在一次回合里即兴完成所有工作，而是把 Codex 放进一条有边界的游戏制作循环：只读 Planner 拆解任务，Implementer 在独立工程目录中实现，独立 Reviewer 检查真实结果，宿主再正式构建并自动试玩。审查、构建或体验评测未通过时，会交回同一个 Implementer，最多连续修复三轮。
 
@@ -66,7 +64,7 @@ npm run dev
 如果应用无法自动找到 Codex，可显式指定二进制：
 
 ```bash
-NOOBI_CODEX_BIN=/absolute/path/to/codex npm run dev
+BOBO_CODEX_BIN=/absolute/path/to/codex npm run dev
 ```
 
 ## 从一句创意到可玩工程
@@ -116,7 +114,7 @@ flowchart LR
 - 本地可玩预览、工程文件树与统一素材库
 - Agent 自动选择 Web 或 Godot 4，并检查 Godot 环境与 Export Templates
 - 使用宿主管理的内部时序与动画契约，不再让用户选择帧率生成策略
-- Noobi 多角色分工、动作状态、可选工坊场景和动态钓鱼背景
+- Bobo 多角色分工、动作状态、可选工坊场景和动态钓鱼背景
 - 持久化项目与可恢复的 Codex Implementer 线程
 
 ### 媒体与扩展

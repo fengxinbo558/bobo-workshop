@@ -1,3 +1,4 @@
+import { LEGACY_MEDIA_SECRET_PREFIX } from './branding.js';
 import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readFile, rename, chmod, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join } from 'node:path';
@@ -289,7 +290,7 @@ const MAX_API_KEY_LENGTH = 16_384;
 const MAX_SEALED_API_KEY_LENGTH = 128 * 1024;
 const MAX_TEXT_LENGTH = 500;
 // Newlines are forbidden in API keys, so a legacy raw key cannot be confused with a bound payload.
-const BOUND_API_KEY_PREFIX = 'noobi-media-provider-secret\nv1\n';
+const BOUND_API_KEY_PREFIX = 'bobo-media-provider-secret\nv1\n';
 
 /**
  * App-private provider persistence. Public methods expose only redacted summaries;
@@ -643,10 +644,11 @@ function openApiKey(
   } catch {
     throw new Error('Stored API key ciphertext could not be decrypted');
   }
-  if (typeof plaintext === 'string' && plaintext.startsWith(BOUND_API_KEY_PREFIX)) {
-    return {
-      apiKey: parseBoundApiKeyPayload(plaintext.slice(BOUND_API_KEY_PREFIX.length), expectedBinding),
-      legacy: false,
+  if (typeof plaintext === 'string') {
+    const prefix = [BOUND_API_KEY_PREFIX, LEGACY_MEDIA_SECRET_PREFIX].find((candidate) => plaintext.startsWith(candidate));
+    if (prefix) return {
+      apiKey: parseBoundApiKeyPayload(plaintext.slice(prefix.length), expectedBinding),
+      legacy: prefix !== BOUND_API_KEY_PREFIX,
     };
   }
   if (!allowLegacy) throw new Error('Stored API key is not bound to its provider configuration');

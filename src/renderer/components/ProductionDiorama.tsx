@@ -2,17 +2,17 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 
 import type {
-  NoobiCrewMember,
-  NoobiPackId,
-  NoobiSceneId,
-  NoobiStageMode,
+  BoboCrewMember,
+  BoboPackId,
+  BoboSceneId,
+  BoboStageMode,
   PipelineStage,
   ProjectStatus,
 } from '../../shared/contracts';
-import collaborationScene from '../assets/noobi-packs/collaboration/scene.png';
-import fishingScene from '../assets/noobi-packs/fishing/four-ip-fishing.gif';
-import type { NoobiSpriteManifest } from '../noobiAnimation';
-import { noobiProductionPack } from '../noobiProductionPacks';
+import collaborationScene from '../assets/bobo-packs/collaboration/scene.png';
+import fishingScene from '../assets/bobo-packs/fishing/four-ip-fishing.gif';
+import type { BoboSpriteManifest } from '../boboAnimation';
+import { boboProductionPack } from '../boboProductionPacks';
 import {
   WALK_ACTION,
   productionAssistantScene,
@@ -36,18 +36,18 @@ import {
   productionDepthZ,
   WORKSHOP_DEPTH_OBJECTS,
 } from '../productionMapNavigation';
-import { NoobiAnimatedSprite } from './NoobiAnimatedSprite';
+import { BoboAnimatedSprite } from './BoboAnimatedSprite';
 
 interface ProductionDioramaProps {
   stage: PipelineStage;
   status: ProjectStatus;
-  stageMode?: NoobiStageMode;
-  sceneId?: NoobiSceneId;
-  soloSceneId?: NoobiPackId;
-  packId?: NoobiPackId;
-  spriteManifest?: NoobiSpriteManifest;
+  stageMode?: BoboStageMode;
+  sceneId?: BoboSceneId;
+  soloSceneId?: BoboPackId;
+  packId?: BoboPackId;
+  spriteManifest?: BoboSpriteManifest;
   crewSize?: ProductionCrewSize;
-  crew?: readonly NoobiCrewMember[];
+  crew?: readonly BoboCrewMember[];
 }
 
 export function ProductionDiorama({
@@ -61,8 +61,8 @@ export function ProductionDiorama({
   crewSize = 4,
   crew: configuredCrew,
 }: ProductionDioramaProps) {
-  const productionPack = noobiProductionPack(packId);
-  const soloScenePack = noobiProductionPack(soloSceneId);
+  const productionPack = boboProductionPack(packId);
+  const soloScenePack = boboProductionPack(soloSceneId);
   const activeSpriteManifest = spriteManifest ?? productionPack.spriteManifest;
   const scene = useMemo(() => productionAssistantScene(stage, status), [stage, status]);
   const collaborativeRuntime = stageMode === 'crew';
@@ -112,7 +112,7 @@ export function ProductionDiorama({
     <section
       className={`production-diorama status-${status}`}
       data-stage={scene.stage}
-      data-noobi-pack={packId}
+      data-bobo-pack={packId}
       data-stage-mode={stageMode}
       data-runtime-scene={collaborativeRuntime ? sceneId : soloSceneId}
       data-station={activeMember.station}
@@ -167,7 +167,7 @@ export function ProductionDiorama({
             packId={memberPackId}
             status={status}
             manifest={configuredMember
-              ? noobiProductionPack(configuredMember.packId).spriteManifest
+              ? boboProductionPack(configuredMember.packId).spriteManifest
               : activeSpriteManifest}
             documentVisible={documentVisible}
             reducedMotion={reducedMotion}
@@ -192,9 +192,9 @@ export function ProductionDiorama({
 
 interface ProductionCrewActorProps {
   member: ProductionCrewMember;
-  packId: NoobiPackId;
+  packId: BoboPackId;
   status: ProjectStatus;
-  manifest: NoobiSpriteManifest;
+  manifest: BoboSpriteManifest;
   documentVisible: boolean;
   reducedMotion: boolean;
   onActorChange: (role: ProductionCrewRole, actor: ProductionAssistantMotionState) => void;
@@ -283,13 +283,13 @@ function ProductionCrewActor({
   const renderedPose = visibleEgg?.id === 'debug-dance'
     ? 'celebrate'
     : actor.action.pose;
-  const shadowProfile = noobiGroundShadowProfile(renderedPose, actor.phase);
+  const shadowProfile = boboGroundShadowProfile(renderedPose, actor.phase);
 
   return (
     <div
       className={`production-assistant production-crew-member phase-${actor.phase}${member.active ? ' is-primary' : ' is-support'}${visibleEgg ? ` egg-${visibleEgg.id}` : ''}`}
       data-crew-role={member.role}
-      data-noobi-member-pack={packId}
+      data-bobo-member-pack={packId}
       data-crew-active={member.active ? 'true' : 'false'}
       data-crew-station={member.station}
       data-action={actor.action.id}
@@ -306,11 +306,11 @@ function ProductionCrewActor({
     >
       <span
         className="production-assistant-shadow"
-        data-noobi-ground-shadow={member.active ? 'main' : member.role}
+        data-bobo-ground-shadow={member.active ? 'main' : member.role}
         data-shadow-profile={shadowProfile}
       />
       <div className="production-assistant-bob">
-        <NoobiAnimatedSprite
+        <BoboAnimatedSprite
           pose={renderedPose}
           manifest={manifest}
           playbackKey={`${member.role}:${actor.action.id}:${visibleEgg?.id ?? 'none'}`}
@@ -320,14 +320,14 @@ function ProductionCrewActor({
       </div>
       <span className="production-crew-role-pin">{member.badgeLabel}</span>
       {visibleEgg?.id === 'golden-acorn' ? <span className="assistant-golden-acorn" /> : null}
-      {visibleEgg?.id === 'mini-noobi' ? (
-        <span className="assistant-mini-noobi">
+      {visibleEgg?.id === 'mini-bobo' ? (
+        <span className="assistant-mini-bobo">
           <span
-            className="assistant-mini-noobi-shadow"
-            data-noobi-ground-shadow="mini"
+            className="assistant-mini-bobo-shadow"
+            data-bobo-ground-shadow="mini"
             data-shadow-profile="mini"
           />
-          <NoobiAnimatedSprite
+          <BoboAnimatedSprite
             pose="celebrate"
             manifest={manifest}
             playbackKey={`${member.role}:${visibleEgg.id}`}
@@ -345,7 +345,7 @@ function ProductionCrewActor({
 export function configuredProductionCrewMembers(
   stage: PipelineStage,
   status: ProjectStatus,
-  configuredCrew: readonly NoobiCrewMember[] | undefined,
+  configuredCrew: readonly BoboCrewMember[] | undefined,
   legacyCrewSize: ProductionCrewSize = 4,
 ): readonly ProductionCrewMember[] {
   if (!configuredCrew?.length) return productionCrewMembers(stage, status, legacyCrewSize);
@@ -361,16 +361,16 @@ export function configuredProductionCrewMembers(
     : member);
 }
 
-export type NoobiGroundShadowProfile = 'standing' | 'walking' | 'sleeping';
+export type BoboGroundShadowProfile = 'standing' | 'walking' | 'sleeping';
 
 /**
  * Keeps the contact shadow tied to locomotion instead of individual sprite crops.
  * This is exported so renderer smoke tests can verify every pose has a stable profile.
  */
-export function noobiGroundShadowProfile(
+export function boboGroundShadowProfile(
   pose: ProductionAssistantMotionState['action']['pose'],
   phase: ProductionAssistantMotionState['phase'],
-): NoobiGroundShadowProfile {
+): BoboGroundShadowProfile {
   if (pose === 'sleep') return 'sleeping';
   if (pose === 'walk' || phase === 'walking') return 'walking';
   return 'standing';

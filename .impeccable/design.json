@@ -358,7 +358,7 @@
   ],
   "narrative": {
     "northStar": "暖暖的波波创作工坊",
-    "overview": "奶油白界面承托橙色潮玩小怪兽，像与一个有耐心的创作伙伴坐在同一张工作桌前。圆润角色、木质工坊与柔和植物来自现有插画资产；界面控件保持清楚、克制，承载实际项目和制作进度。\n\n本规范记录 Electron 应用当前实现。实现依据为 `src/renderer/bobo.css`、基础 `styles.css`、`boboAssets.ts` 与 `components/BoboStudio.tsx`；截图参考 `.noobi-smoke/bobo-home.png`、`bobo-workbench.png`、`bobo-two.png`、`bobo-solo.png`。它记录视觉系统，不证明完整游戏生成流程已通过端到端验证。",
+    "overview": "奶油白界面承托橙色潮玩小怪兽，像与一个有耐心的创作伙伴坐在同一张工作桌前。圆润角色、木质工坊与柔和植物来自现有插画资产；界面控件保持清楚、克制，承载实际项目和制作进度。\n\n本规范记录 Electron 应用当前实现。实现依据为 `src/renderer/bobo.css`、基础 `styles.css`、`boboAssets.ts` 与 `components/BoboStudio.tsx`；截图参考 `.bobo-smoke/bobo-home.png`、`bobo-workbench.png`、`bobo-two.png`、`bobo-solo.png`。它记录视觉系统，不证明完整游戏生成流程已通过端到端验证。",
     "keyCharacteristics": [
       "奶油白分层表面、暖棕正文、橙色操作与选中态。",
       "潮玩角色承担身份，文字明确表达角色和运行状态。",

@@ -136,7 +136,7 @@ describe('AssetPlanStore', () => {
 });
 
 async function makeFixture(): Promise<{ root: string; storageFile: string }> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-asset-plan-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-asset-plan-'));
   roots.push(root);
   return { root, storageFile: join(root, 'private', 'asset-plans.json') };
 }

@@ -1,3 +1,4 @@
+import { BOBO_BRANDING_VERSION, applyLegacyEnvironmentAliases } from './branding.js';
 import { auditGeneratedBranding } from './branding.js';
 import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readFile, realpath } from 'node:fs/promises';
@@ -30,7 +31,7 @@ import type {
   MediaCapability,
   MediaProviderSetting,
   MediaProviderTestResult,
-  NoobiCrewMember,
+  BoboCrewMember,
   PipelineStage,
   PromptTemplateId,
   PromptTemplateSetting,
@@ -45,13 +46,13 @@ import type {
   SkillSetting,
 } from '../shared/contracts.js';
 import {
-  DEFAULT_NOOBI_CREW,
-  isNoobiCrew,
-  isNoobiPackId,
-  isNoobiSceneId,
-  isNoobiStageMode,
-  NOOBI_PACK_IDS,
-  NOOBI_SCENE_IDS,
+  DEFAULT_BOBO_CREW,
+  isBoboCrew,
+  isBoboPackId,
+  isBoboSceneId,
+  isBoboStageMode,
+  BOBO_PACK_IDS,
+  BOBO_SCENE_IDS,
 } from '../shared/contracts.js';
 import { AssetStore } from './assetStore.js';
 import { AssetPlanStore } from './assetPlanStore.js';
@@ -123,8 +124,9 @@ import {
 } from './workspaceTemplate.js';
 
 const moduleDirectory = dirname(fileURLToPath(import.meta.url));
-const smokeCapture = process.env.NOOBI_SMOKE_CAPTURE?.trim() || null;
-if (smokeCapture) app.setPath('userData', resolve('.noobi-smoke/user-data'));
+applyLegacyEnvironmentAliases();
+const smokeCapture = process.env.BOBO_SMOKE_CAPTURE?.trim() || null;
+if (smokeCapture) app.setPath('userData', resolve('.bobo-smoke/user-data'));
 
 app.setName('波波工坊');
 // Keep the existing profile path so renaming preserves accounts and projects.
@@ -256,10 +258,10 @@ async function launch(): Promise<void> {
       return { id: project.id, root: project.root };
     },
     onAssetsChanged: (projectId, assets) => {
-      broadcast('noobi:event:assets', { projectId, assets });
+      broadcast('bobo:event:assets', { projectId, assets });
     },
     onAssetPlansChanged: (projectId, assetPlans) => {
-      broadcast('noobi:event:asset-plans', { projectId, assetPlans });
+      broadcast('bobo:event:asset-plans', { projectId, assetPlans });
     },
     onGeneratedAsset: async (projectId, asset, provider) => {
       const isImage = asset.kind === 'image';
@@ -307,9 +309,9 @@ async function launch(): Promise<void> {
 async function upgradeExistingProjectBranding(): Promise<void> {
   for (const project of await projectStore.list()) {
     try {
-      const path = join(project.root, '.noobi', 'project.json');
+      const path = join(project.root, '.bobo', 'project.json');
       const metadata = JSON.parse(await readFile(path, 'utf8'));
-      if (metadata.brandingVersion === 1) continue;
+      if (metadata.brandingVersion === BOBO_BRANDING_VERSION) continue;
       if (metadata.id !== project.id) throw new Error('Project identity mismatch');
       await synchronizeWorkspaceHostPolicy(project.root, project);
       await synchronizeBoboStarterBranding(project.root);
@@ -354,7 +356,7 @@ async function createWindow(): Promise<void> {
     if (mainWindow === window) mainWindow = null;
   });
 
-  const rendererUrl = process.env.NOOBI_RENDERER_URL;
+  const rendererUrl = process.env.BOBO_RENDERER_URL;
   if (rendererUrl) await window.loadURL(rendererUrl);
   else await window.loadFile(join(moduleDirectory, '../renderer/index.html'));
 
@@ -364,10 +366,10 @@ async function createWindow(): Promise<void> {
 function bindRuntimeEvents(): void {
   runtime.on('status', (status) => {
     if (status.state !== 'ready') approvalBroker.invalidateAll();
-    broadcast('noobi:event:runtime', runtimeStatusForUi(status));
+    broadcast('bobo:event:runtime', runtimeStatusForUi(status));
   });
   runtime.on('diagnostic', (message: string) => {
-    if (process.env.NOOBI_DEBUG === '1') process.stderr.write(`[codex] ${message}\n`);
+    if (process.env.BOBO_DEBUG === '1') process.stderr.write(`[codex] ${message}\n`);
   });
   runtime.on('serverRequest', (request) => {
     if (!mediaToolBroker.handle(request)) approvalBroker.handle(request);
@@ -383,7 +385,7 @@ function bindRuntimeEvents(): void {
     if (!route) return;
     if (route.role === 'implementer' && notification.method === 'item/completed') {
       const task = ingestGeneratedImage(notification, route.projectId).catch((error) => {
-        if (process.env.NOOBI_DEBUG === '1') {
+        if (process.env.BOBO_DEBUG === '1') {
           process.stderr.write(`[assets] ${asError(error).message}\n`);
         }
       });
@@ -398,10 +400,10 @@ function bindRuntimeEvents(): void {
     }
   });
 
-  approvalBroker.on('approval', (approval) => broadcast('noobi:event:approval', approval));
-  approvalBroker.on('closed', (token: string) => broadcast('noobi:event:approval-closed', token));
+  approvalBroker.on('approval', (approval) => broadcast('bobo:event:approval', approval));
+  approvalBroker.on('closed', (token: string) => broadcast('bobo:event:approval-closed', token));
   approvalBroker.on('diagnostic', (message: string) => {
-    if (process.env.NOOBI_DEBUG === '1') process.stderr.write(`[approval] ${message}\n`);
+    if (process.env.BOBO_DEBUG === '1') process.stderr.write(`[approval] ${message}\n`);
   });
   approvalBroker.on('expired', (approval) => {
     if (!approval.projectId) return;
@@ -459,7 +461,7 @@ function bindHarnessEvents(): void {
 }
 
 function bindIpc(): void {
-  handle('noobi:bootstrap', async (): Promise<BootstrapPayload> => {
+  handle('bobo:bootstrap', async (): Promise<BootstrapPayload> => {
     const projects = await projectStore.list();
     const settings = await projectStore.getSettings();
     await runtime.start().catch(() => runtime.status);
@@ -469,16 +471,16 @@ function bindIpc(): void {
     return { projects, settings, runtime: runtimeStatusForUi(runtime.status), events };
   });
 
-  handle('noobi:runtime:refresh', async () => runtimeStatusForUi(await runtime.refresh()));
-  handle('noobi:runtime:login', async () => {
+  handle('bobo:runtime:refresh', async () => runtimeStatusForUi(await runtime.refresh()));
+  handle('bobo:runtime:login', async () => {
     const result = await runtime.startLogin();
     if (result.authUrl && /^https:\/\//iu.test(result.authUrl)) {
       await shell.openExternal(result.authUrl);
     }
     return result;
   });
-  handle('noobi:runtime:logout', async () => runtimeStatusForUi(await runtime.logout()));
-  handle('noobi:dialog:directory', async () => {
+  handle('bobo:runtime:logout', async () => runtimeStatusForUi(await runtime.logout()));
+  handle('bobo:dialog:directory', async () => {
     const settings = await projectStore.getSettings();
     const options: Electron.OpenDialogOptions = {
       title: '选择默认项目存放位置',
@@ -490,7 +492,7 @@ function bindIpc(): void {
       : await dialog.showOpenDialog(options);
     return result.canceled ? null : result.filePaths[0] ?? null;
   });
-  handle('noobi:dialog:project-directory', async () => {
+  handle('bobo:dialog:project-directory', async () => {
     const settings = await projectStore.getSettings();
     while (true) {
       const options: Electron.OpenDialogOptions = {
@@ -527,7 +529,7 @@ function bindIpc(): void {
     }
   });
 
-  handle('noobi:project:create', async (
+  handle('bobo:project:create', async (
     _event,
     input: CreateProjectInput,
     attachmentPaths: unknown = [],
@@ -602,7 +604,7 @@ function bindIpc(): void {
           stage: 'assets',
           lastError: message,
         });
-        broadcast('noobi:event:project', failed);
+        broadcast('bobo:event:project', failed);
         return failed;
       }
     }
@@ -618,23 +620,23 @@ function bindIpc(): void {
         return failed;
       }
     }
-    broadcast('noobi:event:project', project);
+    broadcast('bobo:event:project', project);
     return project;
   });
 
-  handle('noobi:project:rename', (_event, projectId: string, name: unknown) => {
+  handle('bobo:project:rename', (_event, projectId: string, name: unknown) => {
     const id = validateProjectId(projectId);
     if (typeof name !== 'string') throw new Error('游戏名称必须是文字');
     if (projectDeletionReservations.has(id)) throw new Error('项目正在删除');
     return updateProject(id, { name });
   });
-  handle('noobi:project:pin', async (_event, projectId: string, pinned: boolean) => {
+  handle('bobo:project:pin', async (_event, projectId: string, pinned: boolean) => {
     if (typeof pinned !== 'boolean') throw new Error('无效的置顶状态');
     const id = validateProjectId(projectId);
     if (projectDeletionReservations.has(id)) throw new Error('项目正在删除');
     return updateProject(id, { pinned });
   });
-  handle('noobi:project:delete', async (_event, projectId: string) => {
+  handle('bobo:project:delete', async (_event, projectId: string) => {
     const id = validateProjectId(projectId);
     if (projectDeletionReservations.has(id)) throw new Error('项目正在删除');
     projectDeletionReservations.add(id);
@@ -653,7 +655,7 @@ function bindIpc(): void {
         assetPlanStore.removeProject(project.id),
         imageGenerationAttestations.removeProject(project.id),
       ]);
-      if (process.env.NOOBI_DEBUG === '1') {
+      if (process.env.BOBO_DEBUG === '1') {
         cleanup.forEach((result) => {
           if (result.status === 'rejected') {
             process.stderr.write(`[project-delete] sidecar cleanup failed: ${asError(result.reason).message}\n`);
@@ -671,7 +673,7 @@ function bindIpc(): void {
     }
   });
 
-  handle('noobi:project:run', async (_event, input: RunProjectInput) => {
+  handle('bobo:project:run', async (_event, input: RunProjectInput) => {
     validateRunInput(input);
     let project = await projectStore.get(input.projectId);
     if (isProjectBusyForMutation(project.id)) {
@@ -771,7 +773,7 @@ function bindIpc(): void {
     }
   });
 
-  handle('noobi:project:stop', async (_event, projectId: string) => {
+  handle('bobo:project:stop', async (_event, projectId: string) => {
     validateProjectId(projectId);
     await harness.stop(projectId);
     const project = await projectStore.get(projectId);
@@ -779,7 +781,7 @@ function bindIpc(): void {
       ? updateProject(projectId, { status: 'stopped', activeTurnId: null })
       : project;
   });
-  handle('noobi:project:reveal', async (_event, projectId: string) => {
+  handle('bobo:project:reveal', async (_event, projectId: string) => {
     const id = validateProjectId(projectId);
     const release = acquireProjectFilesystemAccess(id);
     try {
@@ -793,7 +795,7 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:assets:import', async (_event, projectId: string) => {
+  handle('bobo:project:assets:import', async (_event, projectId: string) => {
     const id = validateProjectId(projectId);
     const release = acquireProjectFilesystemAccess(id);
     try {
@@ -823,7 +825,7 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:assets:import-paths', async (_event, projectId: string, paths: unknown) => {
+  handle('bobo:project:assets:import-paths', async (_event, projectId: string, paths: unknown) => {
     const id = validateProjectId(projectId);
     const release = acquireProjectFilesystemAccess(id);
     try {
@@ -848,14 +850,14 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:asset-plan:retry', async (_event, projectId: string, planId: string) => {
+  handle('bobo:project:asset-plan:retry', async (_event, projectId: string, planId: string) => {
     const project = await projectStore.get(validateProjectId(projectId));
     if (isProjectBusyForMutation(project.id)) {
       throw new Error('Agent 正在写入项目，请等待当前任务结束后再重新生成素材');
     }
     const queued = await assetPlanStore.queue(project.id, validateAssetPlanId(planId));
     const assetPlans = await assetPlanStore.list(project.id);
-    broadcast('noobi:event:asset-plans', { projectId: project.id, assetPlans });
+    broadcast('bobo:event:asset-plans', { projectId: project.id, assetPlans });
     emitAgentEvent({
       id: randomUUID(),
       projectId: project.id,
@@ -868,7 +870,7 @@ function bindIpc(): void {
     });
     return queued;
   });
-  handle('noobi:project:inspect', async (_event, projectId: string): Promise<ProjectInspectorPayload> => {
+  handle('bobo:project:inspect', async (_event, projectId: string): Promise<ProjectInspectorPayload> => {
     const id = validateProjectId(projectId);
     const release = acquireProjectFilesystemAccess(id);
     try {
@@ -904,7 +906,7 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:experience:evaluate', async (_event, projectId: string) => {
+  handle('bobo:project:experience:evaluate', async (_event, projectId: string) => {
     const project = await projectStore.get(validateProjectId(projectId));
     if (isProjectBusyForMutation(project.id)) {
       throw new Error('Agent 正在写入或启动项目，请等待当前任务结束后再进行体验评测');
@@ -925,11 +927,11 @@ function bindIpc(): void {
       }
     }
   });
-  handle('noobi:project:experience:cancel', (_event, projectId: string) => {
+  handle('bobo:project:experience:cancel', (_event, projectId: string) => {
     const id = validateProjectId(projectId);
     manualExperienceControllers.get(id)?.abort();
   });
-  handle('noobi:project:read', async (_event, projectId: string, relativePath: string) => {
+  handle('bobo:project:read', async (_event, projectId: string, relativePath: string) => {
     const id = validateProjectId(projectId);
     if (typeof relativePath !== 'string' || relativePath.length > 4_000) {
       throw new Error('无效的项目文件路径');
@@ -941,7 +943,7 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:icon', async (_event, projectId: string): Promise<ProjectIconData | null> => {
+  handle('bobo:project:icon', async (_event, projectId: string): Promise<ProjectIconData | null> => {
     const id = validateProjectId(projectId);
     const release = acquireProjectFilesystemAccess(id);
     try {
@@ -957,42 +959,42 @@ function bindIpc(): void {
       release();
     }
   });
-  handle('noobi:project:noobi-pack:save', (
+  handle('bobo:project:bobo-pack:save', (
     _event,
     projectId: string,
     packId: unknown,
   ) => {
     const id = validateProjectId(projectId);
-    if (packId !== null && !isNoobiPackId(packId)) {
+    if (packId !== null && !isBoboPackId(packId)) {
       throw new Error('无效的 BoBo 主题包');
     }
-    return updateProject(id, { noobiPackOverrideId: packId });
+    return updateProject(id, { boboPackOverrideId: packId });
   });
-  handle('noobi:project:noobi-crew:save', (
+  handle('bobo:project:bobo-crew:save', (
     _event,
     projectId: string,
     crew: unknown,
   ) => {
     const id = validateProjectId(projectId);
-    if (crew !== null && !isNoobiCrew(crew)) throw new Error('无效的 BoBo 协作编队');
+    if (crew !== null && !isBoboCrew(crew)) throw new Error('无效的 BoBo 协作编队');
     return updateProject(id, {
-      noobiCrewOverride: crew === null
+      boboCrewOverride: crew === null
         ? null
-        : crew.map(({ packId, role }: NoobiCrewMember) => ({ packId, role })),
+        : crew.map(({ packId, role }: BoboCrewMember) => ({ packId, role })),
     });
   });
-  handle('noobi:settings:save', (_event, patch: Partial<AppSettings>) =>
+  handle('bobo:settings:save', (_event, patch: Partial<AppSettings>) =>
     projectStore.saveSettings(validateSettingsPatch(patch)),
   );
-  handle('noobi:environment:get', () => environmentStatusSnapshot());
-  handle('noobi:environment:refresh', async () => {
+  handle('bobo:environment:get', () => environmentStatusSnapshot());
+  handle('bobo:environment:refresh', async () => {
     await Promise.all([
       godotEnvironmentService.refresh(),
       runtime.refresh().catch(() => runtime.status),
     ]);
     return environmentStatusSnapshot();
   });
-  handle('noobi:environment:godot:choose', async () => {
+  handle('bobo:environment:godot:choose', async () => {
     const status = await godotEnvironmentService.getStatus();
     const options: Electron.OpenDialogOptions = {
       title: '选择 Godot 4 可执行文件或 Godot.app',
@@ -1009,14 +1011,14 @@ function bindIpc(): void {
       : await dialog.showOpenDialog(options);
     return result.canceled ? null : result.filePaths[0] ?? null;
   });
-  handle('noobi:environment:godot:save', async (_event, binaryPath: string | null) => {
+  handle('bobo:environment:godot:save', async (_event, binaryPath: string | null) => {
     if (binaryPath !== null && typeof binaryPath !== 'string') {
       throw new Error('Godot 可执行文件路径无效');
     }
     await godotEnvironmentService.saveBinaryPath(binaryPath);
     return environmentStatusSnapshot();
   });
-  handle('noobi:extensions:get', async (): Promise<ExtensionSettingsSnapshot> => {
+  handle('bobo:extensions:get', async (): Promise<ExtensionSettingsSnapshot> => {
     const [skills, mcpServers, promptTemplates] = await Promise.all([
       listSkillSettings(),
       listMcpSettings(),
@@ -1029,7 +1031,7 @@ function bindIpc(): void {
       promptTemplates,
     };
   });
-  handle('noobi:media-provider:save', async (_event, input: SaveMediaProviderInput) => {
+  handle('bobo:media-provider:save', async (_event, input: SaveMediaProviderInput) => {
     const normalized = validateMediaProviderInput(input);
     // Reuse secrets only for the exact same preset. Carrying an omitted key
     // from one vendor to another could disclose it to the wrong endpoint.
@@ -1048,10 +1050,10 @@ function bindIpc(): void {
       setActive: normalized.enabled,
     });
     mediaProviderTests.delete(normalized.capability);
-    broadcast('noobi:event:runtime', runtimeStatusForUi(runtime.status));
+    broadcast('bobo:event:runtime', runtimeStatusForUi(runtime.status));
     return mediaProviderSetting(saved);
   });
-  handle('noobi:media-provider:test', async (_event, capability: MediaCapability) => {
+  handle('bobo:media-provider:test', async (_event, capability: MediaCapability) => {
     const kind = validateMediaCapability(capability);
     const started = Date.now();
     const provider = activeMediaProvider(kind);
@@ -1085,8 +1087,8 @@ function bindIpc(): void {
     mediaProviderTests.set(kind, result);
     return result;
   });
-  handle('noobi:skills:list', () => listSkillSettings());
-  handle('noobi:skills:set-enabled', async (_event, input: { id: string; enabled: boolean }) => {
+  handle('bobo:skills:list', () => listSkillSettings());
+  handle('bobo:skills:set-enabled', async (_event, input: { id: string; enabled: boolean }) => {
     if (!input || typeof input !== 'object' || typeof input.id !== 'string' || typeof input.enabled !== 'boolean') {
       throw new Error('无效的 Skill 设置');
     }
@@ -1104,25 +1106,25 @@ function bindIpc(): void {
     if (!result) throw new Error('Skill 状态刷新失败');
     return result;
   });
-  handle('noobi:mcp:list', () => listMcpSettings());
-  handle('noobi:mcp:save', async (_event, input: SaveMcpServerInput) => {
+  handle('bobo:mcp:list', () => listMcpSettings());
+  handle('bobo:mcp:save', async (_event, input: SaveMcpServerInput) => {
     await mcpConfigManager.save(input);
     const result = (await listMcpSettings()).find((server) => server.id === input.id);
     if (!result) throw new Error('MCP Server 保存后未出现在 Codex 配置中');
     return result;
   });
-  handle('noobi:mcp:remove', async (_event, id: string) => {
+  handle('bobo:mcp:remove', async (_event, id: string) => {
     await mcpConfigManager.remove(id);
   });
-  handle('noobi:prompts:list', () => listPromptSettings());
-  handle('noobi:prompts:save', async (_event, input: {
+  handle('bobo:prompts:list', () => listPromptSettings());
+  handle('bobo:prompts:save', async (_event, input: {
     id: PromptTemplateId;
     content: string;
     enabled: boolean;
   }) => promptTemplateStore.save(input));
-  handle('noobi:prompts:reset', (_event, id: PromptTemplateId) => promptTemplateStore.reset(id));
+  handle('bobo:prompts:reset', (_event, id: PromptTemplateId) => promptTemplateStore.reset(id));
   handle(
-    'noobi:approval:resolve',
+    'bobo:approval:resolve',
     (_event, token: string, decision: ApprovalDecision, answers?: ApprovalAnswers): void => {
       if (typeof token !== 'string' || token.length > 200) throw new Error('无效的审批令牌');
       if (!['accept', 'acceptForSession', 'decline', 'cancel'].includes(decision)) {
@@ -1140,7 +1142,7 @@ async function importProjectAssetPaths(
 ): Promise<GameAssetRecord[]> {
   await assetStore.importFiles(project.id, project.root, [...paths]);
   const assets = await assetStore.list(project.id, project.root);
-  broadcast('noobi:event:assets', { projectId: project.id, assets });
+  broadcast('bobo:event:assets', { projectId: project.id, assets });
   emitAgentEvent({
     id: randomUUID(),
     projectId: project.id,
@@ -1400,7 +1402,7 @@ async function environmentStatusSnapshot(): Promise<EnvironmentStatusSnapshot> {
 }
 
 function codexEnvironmentTool(status: RuntimeStatus): EnvironmentToolStatus {
-  const configuredPath = process.env.NOOBI_CODEX_BIN?.trim() || null;
+  const configuredPath = process.env.BOBO_CODEX_BIN?.trim() || null;
   const state: EnvironmentToolStatus['state'] = status.state === 'error'
     ? 'error'
     : !status.binaryPath
@@ -1706,7 +1708,7 @@ async function validateProjectDelivery(
 
   try {
     const assetPlans = await assetPlanStore.reconcile(project.id, project.root, assets);
-    broadcast('noobi:event:asset-plans', { projectId: project.id, assetPlans });
+    broadcast('bobo:event:asset-plans', { projectId: project.id, assetPlans });
     const unresolvedRequired = assetPlans.filter((plan) => plan.required && plan.status !== 'ready');
     if (unresolvedRequired.length > 0) {
       findings.push(
@@ -1806,7 +1808,7 @@ async function validateProjectDelivery(
         .join('；');
       findings.push(
         `PLAYTEST_EXPERIENCE: 自动试玩评分 ${Math.round(experienceReport.score)}/100。${failed || experienceReport.summary || '存在未通过的体验步骤。'} `
-          + '检查 artifacts/playtest/latest/report.json 及其截图，修复真实控制、反馈、动画、暂停/恢复、重开或运行错误，并保持 .noobi/playtest.json 与正式构建一致。',
+          + '检查 artifacts/playtest/latest/report.json 及其截图，修复真实控制、反馈、动画、暂停/恢复、重开或运行错误，并保持 .bobo/playtest.json 与正式构建一致。',
       );
     }
   } else {
@@ -2041,10 +2043,10 @@ async function ingestGeneratedImage(
   if (matchingPlan) {
     await assetPlanStore.generated(projectId, matchingPlan.id, asset, 'codex-imagegen');
     const assetPlans = await assetPlanStore.list(projectId);
-    broadcast('noobi:event:asset-plans', { projectId, assetPlans });
+    broadcast('bobo:event:asset-plans', { projectId, assetPlans });
   }
   const assets = await assetStore.list(projectId, project.root);
-  broadcast('noobi:event:assets', { projectId, assets });
+  broadcast('bobo:event:assets', { projectId, assets });
   emitAgentEvent({
     id: randomUUID(),
     projectId,
@@ -2062,7 +2064,7 @@ async function updateProject(
   patch: Parameters<ProjectStore['update']>[1],
 ): Promise<ProjectRecord> {
   const project = await projectStore.update(projectId, patch);
-  broadcast('noobi:event:project', project);
+  broadcast('bobo:event:project', project);
   return project;
 }
 
@@ -2104,7 +2106,7 @@ async function ensureProjectLocation(
     try {
       const relocated = await projectStore.relocate(project.id, selectedDirectory);
       await Promise.allSettled([previews.stop(project.id), playtestPreviews.stop(project.id)]);
-      broadcast('noobi:event:project', relocated);
+      broadcast('bobo:event:project', relocated);
       return relocated;
     } catch (error) {
       const messageOptions: Electron.MessageBoxOptions = {
@@ -2139,7 +2141,7 @@ async function backfillProjectIcons(): Promise<void> {
         const icon = await generateProceduralProjectIcon(project);
         await updateProject(project.id, { icon });
       } catch (error) {
-        if (process.env.NOOBI_DEBUG === '1') {
+        if (process.env.BOBO_DEBUG === '1') {
           process.stderr.write(`[project-icon] backfill failed for ${project.id}: ${asError(error).message}\n`);
         }
       } finally {
@@ -2147,7 +2149,7 @@ async function backfillProjectIcons(): Promise<void> {
       }
     }
   } catch (error) {
-    if (process.env.NOOBI_DEBUG === '1') {
+    if (process.env.BOBO_DEBUG === '1') {
       process.stderr.write(`[project-icon] backfill failed: ${asError(error).message}\n`);
     }
   }
@@ -2162,7 +2164,7 @@ async function withProceduralIcon(project: ProjectRecord): Promise<ProjectRecord
     const icon = await generateProceduralProjectIcon(project);
     return await projectStore.update(project.id, { icon });
   } catch (error) {
-    if (process.env.NOOBI_DEBUG === '1') {
+    if (process.env.BOBO_DEBUG === '1') {
       process.stderr.write(`[project-icon] procedural generation failed: ${asError(error).message}\n`);
     }
     return project;
@@ -2207,7 +2209,7 @@ async function maybeGenerateGameIcon(projectId: string): Promise<void> {
       method: 'project/icon-generated',
     });
   } catch (error) {
-    if (process.env.NOOBI_DEBUG === '1') {
+    if (process.env.BOBO_DEBUG === '1') {
       process.stderr.write(`[project-icon] generation failed: ${asError(error).message}\n`);
     }
   } finally {
@@ -2217,9 +2219,9 @@ async function maybeGenerateGameIcon(projectId: string): Promise<void> {
 
 function emitAgentEvent(event: AgentEvent): void {
   void eventLog.append(event).catch((error) => {
-    if (process.env.NOOBI_DEBUG === '1') process.stderr.write(`[event-log] ${asError(error).message}\n`);
+    if (process.env.BOBO_DEBUG === '1') process.stderr.write(`[event-log] ${asError(error).message}\n`);
   });
-  broadcast('noobi:event:agent', event);
+  broadcast('bobo:event:agent', event);
 }
 
 function handle(
@@ -2238,7 +2240,7 @@ function assertTrustedRenderer(event: IpcMainInvokeEvent): void {
     throw new Error('Rejected IPC from an untrusted renderer');
   }
   const source = event.senderFrame.url;
-  const expected = process.env.NOOBI_RENDERER_URL;
+  const expected = process.env.BOBO_RENDERER_URL;
   if (expected ? !source.startsWith(expected) : !source.startsWith('file:')) {
     throw new Error('Rejected IPC from an unexpected origin');
   }
@@ -2260,8 +2262,8 @@ async function ensureSmokeProject(): Promise<void> {
       model: null,
     });
   }
-  const smokeStage = process.env.NOOBI_SMOKE_STAGE?.trim();
-  const smokeStatus = process.env.NOOBI_SMOKE_STATUS?.trim();
+  const smokeStage = process.env.BOBO_SMOKE_STAGE?.trim();
+  const smokeStatus = process.env.BOBO_SMOKE_STATUS?.trim();
   const validStages: readonly PipelineStage[] = [
     'brief', 'scaffold', 'gdd', 'assets', 'world', 'code', 'verify', 'complete',
   ];
@@ -2271,42 +2273,42 @@ async function ensureSmokeProject(): Promise<void> {
   const smokePatch: {
     stage?: PipelineStage;
     status?: ProjectStatus;
-    noobiPackOverrideId?: ProjectRecord['noobiPackOverrideId'];
-    noobiCrewOverride?: ProjectRecord['noobiCrewOverride'];
+    boboPackOverrideId?: ProjectRecord['boboPackOverrideId'];
+    boboCrewOverride?: ProjectRecord['boboCrewOverride'];
   } = {};
   if (validStages.includes(smokeStage as PipelineStage)) smokePatch.stage = smokeStage as PipelineStage;
   if (validStatuses.includes(smokeStatus as ProjectStatus)) smokePatch.status = smokeStatus as ProjectStatus;
-  const smokePack = process.env.NOOBI_SMOKE_PACK?.trim();
-  if (isNoobiPackId(smokePack)) {
-    smokePatch.noobiPackOverrideId = smokePack;
-    const smokeCrew = DEFAULT_NOOBI_CREW.map((member) => ({ ...member }));
+  const smokePack = process.env.BOBO_SMOKE_PACK?.trim();
+  if (isBoboPackId(smokePack)) {
+    smokePatch.boboPackOverrideId = smokePack;
+    const smokeCrew = DEFAULT_BOBO_CREW.map((member) => ({ ...member }));
     if (!smokeCrew.some((member) => member.packId === smokePack)) {
       smokeCrew[0] = { packId: smokePack, role: 'planner' };
     }
-    smokePatch.noobiCrewOverride = smokeCrew;
+    smokePatch.boboCrewOverride = smokeCrew;
   }
-  if (process.env.NOOBI_SMOKE_CREW_SIZE === '2') smokePatch.noobiCrewOverride = [DEFAULT_NOOBI_CREW[0]!, DEFAULT_NOOBI_CREW[3]!];
-  else if (process.env.NOOBI_SMOKE_CREW === '1') smokePatch.noobiCrewOverride = null;
+  if (process.env.BOBO_SMOKE_CREW_SIZE === '2') smokePatch.boboCrewOverride = [DEFAULT_BOBO_CREW[0]!, DEFAULT_BOBO_CREW[3]!];
+  else if (process.env.BOBO_SMOKE_CREW === '1') smokePatch.boboCrewOverride = null;
   if (Object.keys(smokePatch).length > 0) {
     project = await projectStore.update(project.id, smokePatch);
   }
-  const smokeScene = process.env.NOOBI_SMOKE_SCENE?.trim();
-  if (isNoobiSceneId(smokeScene)) {
+  const smokeScene = process.env.BOBO_SMOKE_SCENE?.trim();
+  if (isBoboSceneId(smokeScene)) {
     await projectStore.saveSettings({
-      defaultNoobiSceneId: smokeScene,
-      defaultNoobiStageMode: 'crew',
+      defaultBoboSceneId: smokeScene,
+      defaultBoboStageMode: 'crew',
     });
-  } else if (process.env.NOOBI_SMOKE_CREW === '1') {
-    await projectStore.saveSettings({ defaultNoobiStageMode: 'crew' });
-  } else if (process.env.NOOBI_SMOKE_VIEW === 'settings-noobi'
-    || process.env.NOOBI_SMOKE_VIEW === 'workbench') {
+  } else if (process.env.BOBO_SMOKE_CREW === '1') {
+    await projectStore.saveSettings({ defaultBoboStageMode: 'crew' });
+  } else if (process.env.BOBO_SMOKE_VIEW === 'settings-bobo'
+    || process.env.BOBO_SMOKE_VIEW === 'workbench') {
     await projectStore.saveSettings({
-      defaultNoobiStageMode: 'solo',
-      defaultNoobiSoloSceneId: 'classic',
-      defaultNoobiPackId: 'classic',
+      defaultBoboStageMode: 'solo',
+      defaultBoboSoloSceneId: 'classic',
+      defaultBoboPackId: 'classic',
     });
   }
-  if (process.env.NOOBI_SMOKE_TAB === 'assets') {
+  if (process.env.BOBO_SMOKE_TAB === 'assets') {
     const plan = await assetPlanStore.upsert({
       id: 'smoke-card-art',
       projectId: project.id,
@@ -2326,7 +2328,7 @@ async function ensureSmokeProject(): Promise<void> {
 }
 
 async function captureSmoke(window: BrowserWindow, target: string): Promise<void> {
-  if (process.env.NOOBI_SMOKE_NARROW === '1') {
+  if (process.env.BOBO_SMOKE_NARROW === '1') {
     window.setSize(760, 800, false);
   }
   await new Promise((resolvePromise) => setTimeout(resolvePromise, 2_500));
@@ -2341,7 +2343,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     const state = await window.webContents.executeJavaScript(`document.body.innerText.slice(0, 800)`, true);
     throw new Error(`Renderer did not reach the Bobo app: ${state}`);
   }
-  const smokeTheme = process.env.NOOBI_SMOKE_THEME;
+  const smokeTheme = process.env.BOBO_SMOKE_THEME;
   if (smokeTheme === 'light' || smokeTheme === 'dark') {
     await window.webContents.executeJavaScript(
       `if (document.documentElement.dataset.theme !== ${JSON.stringify(smokeTheme)}) {
@@ -2351,7 +2353,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     );
     await delay(300);
   }
-  if (process.env.NOOBI_SMOKE_COLLAPSED === '1') {
+  if (process.env.BOBO_SMOKE_COLLAPSED === '1') {
     const collapsed = await window.webContents.executeJavaScript(
       `(() => {
         const trigger = document.querySelector('[aria-label="收起首页侧栏"]');
@@ -2400,7 +2402,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     );
     await delay(200);
   }
-  if (process.env.NOOBI_SMOKE_PROMPT_PROGRESS === '1') {
+  if (process.env.BOBO_SMOKE_PROMPT_PROGRESS === '1') {
     const samples: string[] = [];
     for (let attempt = 0; attempt < 50; attempt += 1) {
       const placeholder = await window.webContents.executeJavaScript(
@@ -2422,7 +2424,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       `BoBo rotating prompt passed; samples=${samples.length}; min=${Math.min(...lengths)}; max=${Math.max(...lengths)}\n`,
     );
   }
-  if (process.env.NOOBI_SMOKE_MODEL_MENU === '1') {
+  if (process.env.BOBO_SMOKE_MODEL_MENU === '1') {
     let opened = false;
     for (let attempt = 0; attempt < 20 && !opened; attempt += 1) {
       opened = await window.webContents.executeJavaScript(
@@ -2474,7 +2476,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     }
     process.stdout.write(`BoBo model picker opened ${JSON.stringify(menu)}\n`);
   }
-  if (process.env.NOOBI_SMOKE_VIEW === 'settings-noobi') {
+  if (process.env.BOBO_SMOKE_VIEW === 'settings-bobo') {
     await window.webContents.executeJavaScript(
       `document.querySelector('.project-item')?.click()`,
       true,
@@ -2502,7 +2504,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     const selectedSection = await window.webContents.executeJavaScript(
       `(() => {
         const trigger = Array.from(document.querySelectorAll('.settings-nav button'))
-          .find((node) => node.textContent?.includes('BoBo 工坊'));
+          .find((node) => node.textContent?.includes('波波工坊'));
         if (!(trigger instanceof HTMLButtonElement)) return false;
         trigger.click();
         return true;
@@ -2513,16 +2515,16 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     await delay(500);
     const crewCards = await window.webContents.executeJavaScript(
       `(() => {
-        const cards = Array.from(document.querySelectorAll('.noobi-crew-card'));
-        const buttons = Array.from(document.querySelectorAll('.noobi-crew-card-main'));
-        const images = Array.from(document.querySelectorAll('.noobi-crew-card img'));
-        const roleSlots = Array.from(document.querySelectorAll('.noobi-crew-role-slot.is-filled'));
-        const roleSelects = Array.from(document.querySelectorAll('.noobi-crew-role-control select'));
+        const cards = Array.from(document.querySelectorAll('.bobo-crew-card'));
+        const buttons = Array.from(document.querySelectorAll('.bobo-crew-card-main'));
+        const images = Array.from(document.querySelectorAll('.bobo-crew-card img'));
+        const roleSlots = Array.from(document.querySelectorAll('.bobo-crew-role-slot.is-filled'));
+        const roleSelects = Array.from(document.querySelectorAll('.bobo-crew-role-control select'));
         const characterCards = Array.from(document.querySelectorAll('[data-pack-kind="character"]'));
-        const characterImages = Array.from(document.querySelectorAll('[data-pack-kind="character"] .noobi-character-avatar-image'));
-        const soloSceneCards = Array.from(document.querySelectorAll('.noobi-scene-card[data-scene-kind="solo"]'));
-        const multiplayerSceneCards = Array.from(document.querySelectorAll('.noobi-scene-card[data-scene-kind="multiplayer"]'));
-        const sceneImages = Array.from(document.querySelectorAll('.noobi-scene-card img'));
+        const characterImages = Array.from(document.querySelectorAll('[data-pack-kind="character"] .bobo-character-avatar-image'));
+        const soloSceneCards = Array.from(document.querySelectorAll('.bobo-scene-card[data-scene-kind="solo"]'));
+        const multiplayerSceneCards = Array.from(document.querySelectorAll('.bobo-scene-card[data-scene-kind="multiplayer"]'));
+        const sceneImages = Array.from(document.querySelectorAll('.bobo-scene-card img'));
         return {
           cards: cards.length,
           selected: buttons.filter((button) => button.getAttribute('aria-pressed') === 'true').length,
@@ -2541,7 +2543,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
           animatedScenes: multiplayerSceneCards.filter((card) => card.getAttribute('data-motion') === 'animated').length,
           sceneImages: sceneImages.length,
           loadedSceneImages: sceneImages.filter((image) => image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0).length,
-          activeMode: document.querySelector('.noobi-mode-panel.is-active')?.classList.contains('noobi-solo-panel') ? 'solo' : 'crew',
+          activeMode: document.querySelector('.bobo-mode-panel.is-active')?.classList.contains('bobo-solo-panel') ? 'solo' : 'crew',
         };
       })()`,
       true,
@@ -2565,9 +2567,9 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       loadedSceneImages: number;
       activeMode: string;
     };
-    const expectedPackCount = NOOBI_PACK_IDS.length;
+    const expectedPackCount = BOBO_PACK_IDS.length;
     const expectedImageCount = expectedPackCount * 2;
-    const expectedCrewCount = DEFAULT_NOOBI_CREW.length;
+    const expectedCrewCount = DEFAULT_BOBO_CREW.length;
     if (crewCards.cards !== expectedPackCount
       || crewCards.selected !== expectedCrewCount
       || crewCards.images !== expectedImageCount
@@ -2580,25 +2582,25 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       || crewCards.loadedCharacterImages !== expectedPackCount
       || crewCards.soloScenes !== 1
       || crewCards.selectedSoloScenes !== 1
-      || crewCards.multiplayerScenes !== NOOBI_SCENE_IDS.length
+      || crewCards.multiplayerScenes !== BOBO_SCENE_IDS.length
       || crewCards.selectedMultiplayerScenes !== 0
       || crewCards.animatedScenes !== 0
-      || crewCards.sceneImages !== 1 + NOOBI_SCENE_IDS.length
-      || crewCards.loadedSceneImages !== 1 + NOOBI_SCENE_IDS.length
+      || crewCards.sceneImages !== 1 + BOBO_SCENE_IDS.length
+      || crewCards.loadedSceneImages !== 1 + BOBO_SCENE_IDS.length
       || crewCards.activeMode !== 'solo') {
       throw new Error(`BoBo crew cards did not render correctly: ${JSON.stringify(crewCards)}`);
     }
     process.stdout.write(
       `BoBo workshop settings rendered one solo character, ${crewCards.soloScenes} solo scenes, and ${crewCards.multiplayerScenes} multiplayer scenes\n`,
     );
-    const settingsScrollY = Number.parseInt(process.env.NOOBI_SMOKE_SETTINGS_SCROLL_Y ?? '', 10);
+    const settingsScrollY = Number.parseInt(process.env.BOBO_SMOKE_SETTINGS_SCROLL_Y ?? '', 10);
     if (Number.isFinite(settingsScrollY)) {
       await window.webContents.executeJavaScript(
         `document.querySelector('.settings-page')?.scrollTo({ top: ${Math.max(0, settingsScrollY)}, behavior: 'instant' })`,
         true,
       );
       await delay(250);
-    } else if (process.env.NOOBI_SMOKE_SETTINGS_TOP !== '1') {
+    } else if (process.env.BOBO_SMOKE_SETTINGS_TOP !== '1') {
       await window.webContents.executeJavaScript(
         `document.querySelector('.settings-page')?.scrollTo({ top: 99999, behavior: 'instant' })`,
         true,
@@ -2608,7 +2610,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       await delay(250);
     }
   }
-  if (process.env.NOOBI_SMOKE_VIEW === 'workbench') {
+  if (process.env.BOBO_SMOKE_VIEW === 'workbench') {
     await window.webContents.executeJavaScript(
       `document.querySelector('.project-item')?.click()`,
       true,
@@ -2618,15 +2620,15 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       `document.querySelector('.preview-pane iframe') instanceof HTMLIFrameElement`,
       true,
     ) as boolean;
-    if (process.env.NOOBI_SMOKE_STATUS === 'stopped') {
+    if (process.env.BOBO_SMOKE_STATUS === 'stopped') {
       const resumeVisible = await window.webContents.executeJavaScript(
         `Boolean(document.querySelector('.composer-action.is-resume[aria-label="继续制作"]'))`,
         true,
       ) as boolean;
       if (!resumeVisible) throw new Error('Stopped project did not show the resume action');
     }
-    const expectedScene = process.env.NOOBI_SMOKE_SCENE?.trim();
-    if (isNoobiSceneId(expectedScene)) {
+    const expectedScene = process.env.BOBO_SMOKE_SCENE?.trim();
+    if (isBoboSceneId(expectedScene)) {
       const sceneState = await window.webContents.executeJavaScript(
         `(() => {
           const scene = document.querySelector('.production-diorama');
@@ -2663,9 +2665,9 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
         throw new Error(`BoBo runtime background did not load correctly: ${JSON.stringify(sceneState)}`);
       }
       process.stdout.write(`BoBo runtime background loaded: ${sceneState.id}\n`);
-    } else if (process.env.NOOBI_SMOKE_EXPERIENCE_REPORT === 'expand' && hasPlayablePreview) {
+    } else if (process.env.BOBO_SMOKE_EXPERIENCE_REPORT === 'expand' && hasPlayablePreview) {
       process.stdout.write('BoBo workbench loaded a playable game preview\n');
-    } else if (process.env.NOOBI_SMOKE_CREW !== '1') {
+    } else if (process.env.BOBO_SMOKE_CREW !== '1') {
       const soloState = await window.webContents.executeJavaScript(
         `(() => {
           const scene = document.querySelector('.production-diorama');
@@ -2702,7 +2704,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       process.stdout.write('BoBo solo default loaded one character in the classic studio\n');
     }
   }
-  if (process.env.NOOBI_SMOKE_PROJECT_RAIL === '1') {
+  if (process.env.BOBO_SMOKE_PROJECT_RAIL === '1') {
     const opened = await window.webContents.executeJavaScript(
       `(() => {
         const trigger = document.querySelector(
@@ -2748,7 +2750,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     }
     process.stdout.write(`BoBo project rail opened ${JSON.stringify(railState)}\n`);
   }
-  if (process.env.NOOBI_SMOKE_PROJECT_MENU === '1') {
+  if (process.env.BOBO_SMOKE_PROJECT_MENU === '1') {
     const opened = await window.webContents.executeJavaScript(
       `(() => {
         const trigger = document.querySelector('.project-item-more');
@@ -2785,7 +2787,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     }
     process.stdout.write(`BoBo project action menu opened ${JSON.stringify(menuState)}\n`);
   }
-  if (process.env.NOOBI_SMOKE_GEAR_ALIGNMENT === '1') {
+  if (process.env.BOBO_SMOKE_GEAR_ALIGNMENT === '1') {
     const alignment = await window.webContents.executeJavaScript(
       `(() => {
         const rail = document.querySelector('.project-rail.mode-workbench');
@@ -2813,35 +2815,35 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     }
     process.stdout.write(`BoBo collapsed settings icon aligned ${JSON.stringify(alignment)}\n`);
   }
-  if (process.env.NOOBI_SMOKE_CREW === '1') {
+  if (process.env.BOBO_SMOKE_CREW === '1') {
     const state = await window.webContents.executeJavaScript(`(() => {
       const scene = document.querySelector('.bobo-studio');
       const actors = [...(scene?.querySelectorAll('.bobo-station') ?? [])];
       return {
         count: actors.length,
         roles: new Set(actors.map(a => a.dataset.crewRole)).size,
-        packs: new Set(actors.map(a => a.dataset.noobiMemberPack)).size,
+        packs: new Set(actors.map(a => a.dataset.boboMemberPack)).size,
         loaded: actors.filter(a => { const i = a.querySelector('img'); return i?.complete && i.naturalWidth > 0; }).length,
         active: actors.filter(a => a.dataset.active === 'true').length,
         activeRole: actors.find(a => a.dataset.active === 'true')?.dataset.crewRole,
         overflow: document.documentElement.scrollWidth > innerWidth
       };
     })()`, true) as {count: number; roles: number; packs: number; loaded: number; active: number; activeRole: string; overflow: boolean};
-    const running = process.env.NOOBI_SMOKE_STATUS === 'running';
-    const expectedCount = process.env.NOOBI_SMOKE_CREW_SIZE === '2' ? 2 : 4;
+    const running = process.env.BOBO_SMOKE_STATUS === 'running';
+    const expectedCount = process.env.BOBO_SMOKE_CREW_SIZE === '2' ? 2 : 4;
     if (state.count !== expectedCount || state.roles !== expectedCount || state.packs !== expectedCount || state.loaded !== expectedCount || state.active !== (running ? 1 : 0) || state.overflow
-      || (running && process.env.NOOBI_SMOKE_STAGE === 'verify' && state.activeRole !== 'tester')) {
+      || (running && process.env.BOBO_SMOKE_STAGE === 'verify' && state.activeRole !== 'tester')) {
       throw new Error(`Bobo crew failed: ${JSON.stringify(state)}`);
     }
     process.stdout.write(`Bobo crew verified: ${JSON.stringify(state)}\n`);
   }
-  const expectedPack = process.env.NOOBI_SMOKE_PACK?.trim();
-  if (isNoobiPackId(expectedPack)) {
+  const expectedPack = process.env.BOBO_SMOKE_PACK?.trim();
+  if (isBoboPackId(expectedPack)) {
     const initialFrame = await window.webContents.executeJavaScript(
       `(() => {
         const scene = document.querySelector('.production-diorama');
-        const actor = document.querySelector('.production-crew-member[data-noobi-member-pack="${expectedPack}"]');
-        const sprite = actor?.querySelector('.noobi-pixel-sprite');
+        const actor = document.querySelector('.production-crew-member[data-bobo-member-pack="${expectedPack}"]');
+        const sprite = actor?.querySelector('.bobo-pixel-sprite');
         const shadow = actor?.querySelector('.production-assistant-shadow');
         if (!(scene instanceof HTMLElement)
           || !(actor instanceof HTMLElement)
@@ -2849,7 +2851,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
           || !(shadow instanceof HTMLElement)) return null;
         const shadowStyle = getComputedStyle(shadow);
         return {
-          pack: actor.dataset.noobiMemberPack ?? '',
+          pack: actor.dataset.boboMemberPack ?? '',
           manifest: sprite.dataset.manifest ?? '',
           frame: sprite.dataset.frameIndex ?? '',
           count: Number(sprite.dataset.frameCount ?? 0),
@@ -2885,7 +2887,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     for (let attempt = 0; attempt < 25 && !frameChanged; attempt += 1) {
       await delay(80);
       const currentFrame = await window.webContents.executeJavaScript(
-        `document.querySelector('.production-crew-member[data-noobi-member-pack="${expectedPack}"] .noobi-pixel-sprite')?.getAttribute('data-frame-index') ?? ''`,
+        `document.querySelector('.production-crew-member[data-bobo-member-pack="${expectedPack}"] .bobo-pixel-sprite')?.getAttribute('data-frame-index') ?? ''`,
         true,
       ) as string;
       frameChanged = currentFrame !== initialFrame.frame;
@@ -2897,9 +2899,9 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
       `BoBo production pack ${expectedPack} loaded ${initialFrame.manifest} with ${initialFrame.count} keyed frames and ${initialFrame.shadowProfile} ground shadow\n`,
     );
   }
-  if (process.env.NOOBI_SMOKE_ASSISTANT_MOTION === '1') {
+  if (process.env.BOBO_SMOKE_ASSISTANT_MOTION === '1') {
     const initial = await readSmokeAssistantState(window);
-    if (!initial || initial.stage !== process.env.NOOBI_SMOKE_STAGE) {
+    if (!initial || initial.stage !== process.env.BOBO_SMOKE_STAGE) {
       throw new Error(`Production assistant did not reach the requested stage: ${JSON.stringify(initial)}`);
     }
     let changed = false;
@@ -2915,7 +2917,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     if (!changed) throw new Error(`Production assistant did not change action or position: ${JSON.stringify(initial)}`);
     process.stdout.write(`BoBo production assistant moved from ${initial.action} at ${initial.station}\n`);
   }
-  if (process.env.NOOBI_SMOKE_RENAME_TITLE === '1') {
+  if (process.env.BOBO_SMOKE_RENAME_TITLE === '1') {
     const workbenchBrandCanExpand = await window.webContents.executeJavaScript(
       `(() => {
         const brand = document.querySelector('.project-rail.mode-workbench .brand');
@@ -2949,7 +2951,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     })`,
     true,
   );
-  if (process.env.NOOBI_SMOKE_TAB === 'assets') {
+  if (process.env.BOBO_SMOKE_TAB === 'assets') {
     await window.webContents.executeJavaScript(
       `Array.from(document.querySelectorAll('.inspector-tabs button'))
         .find((node) => node.textContent?.includes('素材'))?.click()`,
@@ -2957,7 +2959,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     );
     await delay(350);
   }
-  if (process.env.NOOBI_SMOKE_EXPERIENCE_REPORT === 'expand') {
+  if (process.env.BOBO_SMOKE_EXPERIENCE_REPORT === 'expand') {
     let reportControlsReady = false;
     for (let attempt = 0; attempt < 20 && !reportControlsReady; attempt += 1) {
       reportControlsReady = await window.webContents.executeJavaScript(
@@ -3041,7 +3043,7 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
   const { writeFile } = await import('node:fs/promises');
   await writeFile(output, image.toPNG());
   process.stdout.write(`BoBo UI smoke captured ${output}\n`);
-  if (process.env.NOOBI_SMOKE_HOLD === '1') {
+  if (process.env.BOBO_SMOKE_HOLD === '1') {
     process.stdout.write('BoBo UI smoke window left open for inspection\n');
     return;
   }
@@ -3167,24 +3169,24 @@ function validateSettingsPatch(value: Partial<AppSettings>): Partial<AppSettings
     'defaultWorkspace',
     'defaultModel',
     'defaultEffort',
-    'defaultNoobiStageMode',
-    'defaultNoobiSoloSceneId',
-    'defaultNoobiSceneId',
-    'defaultNoobiPackId',
-    'defaultNoobiCrew',
+    'defaultBoboStageMode',
+    'defaultBoboSoloSceneId',
+    'defaultBoboSceneId',
+    'defaultBoboPackId',
+    'defaultBoboCrew',
     'theme',
   ]);
   for (const key of Object.keys(value)) if (!allowed.has(key)) throw new Error(`未知设置：${key}`);
-  if (value.defaultNoobiStageMode !== undefined
-    && !isNoobiStageMode(value.defaultNoobiStageMode)) {
+  if (value.defaultBoboStageMode !== undefined
+    && !isBoboStageMode(value.defaultBoboStageMode)) {
     throw new Error('无效的 BoBo 舞台模式');
   }
-  if (value.defaultNoobiSoloSceneId !== undefined
-    && !isNoobiPackId(value.defaultNoobiSoloSceneId)) {
+  if (value.defaultBoboSoloSceneId !== undefined
+    && !isBoboPackId(value.defaultBoboSoloSceneId)) {
     throw new Error('无效的 BoBo 单人场景');
   }
-  if (value.defaultNoobiSceneId !== undefined
-    && !isNoobiSceneId(value.defaultNoobiSceneId)) {
+  if (value.defaultBoboSceneId !== undefined
+    && !isBoboSceneId(value.defaultBoboSceneId)) {
     throw new Error('无效的 BoBo 场景');
   }
   return value;

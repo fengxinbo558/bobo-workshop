@@ -7,9 +7,9 @@ import {
   pixelTransitionCellDelay,
 } from './PixelPageTransition';
 import {
-  NOOBI_TRANSITION_SCENE_COUNT,
-  noobiTransitionSceneIndex,
-} from './noobiTransitionScenes';
+  BOBO_TRANSITION_SCENE_COUNT,
+  boboTransitionSceneIndex,
+} from './boboTransitionScenes';
 
 describe('pixel page transition wave', () => {
   it('moves forward from the top-left toward the bottom-right', () => {
@@ -34,14 +34,14 @@ describe('pixel page transition wave', () => {
 
 describe('BoBo transition scene rotation', () => {
   it('ships nine scenes and advances one scene per transition run', () => {
-    expect(NOOBI_TRANSITION_SCENE_COUNT).toBe(9);
-    expect(noobiTransitionSceneIndex(1)).toBe(0);
-    expect(noobiTransitionSceneIndex(9)).toBe(8);
-    expect(noobiTransitionSceneIndex(10)).toBe(0);
+    expect(BOBO_TRANSITION_SCENE_COUNT).toBe(9);
+    expect(boboTransitionSceneIndex(1)).toBe(0);
+    expect(boboTransitionSceneIndex(9)).toBe(8);
+    expect(boboTransitionSceneIndex(10)).toBe(0);
   });
 
   it('uses the first scene for an initial or invalid run id', () => {
-    expect(noobiTransitionSceneIndex(0)).toBe(0);
-    expect(noobiTransitionSceneIndex(Number.NaN)).toBe(0);
+    expect(boboTransitionSceneIndex(0)).toBe(0);
+    expect(boboTransitionSceneIndex(Number.NaN)).toBe(0);
   });
 });

@@ -8,7 +8,7 @@ async function launch() {
     await import('./playtest-smoke.mjs');
   } catch (error) {
     const message = error instanceof Error ? error.stack ?? error.message : String(error);
-    const resultPath = process.env.NOOBI_PLAYTEST_SMOKE_RESULT?.trim();
+    const resultPath = process.env.BOBO_PLAYTEST_SMOKE_RESULT?.trim();
     if (resultPath) {
       writeFileSync(resultPath, `${JSON.stringify({ ok: false, state: 'bootstrap-error', error: message }, null, 2)}\n`);
     }

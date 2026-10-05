@@ -195,7 +195,7 @@ function inferCommandStage(command: string, fallback: PipelineStage): PipelineSt
     || /godot[^\n]*(?:--headless|--editor-pid)/u.test(normalized)) {
     return 'verify';
   }
-  if (/\b(?:imagegen|image_generation|generate[_ -]?(?:image|audio|music|model)|(?:bobo|noobi)_(?:image|audio|music|model3d)(?:_[a-z]+)?|blender)\b/u.test(normalized)) {
+  if (/\b(?:imagegen|image_generation|generate[_ -]?(?:image|audio|music|model)|bobo_(?:image|audio|music|model3d)(?:_[a-z]+)?|blender)\b/u.test(normalized)) {
     return 'assets';
   }
   if (/\b(?:npm|pnpm|yarn)\s+(?:install|init)\b/u.test(normalized)

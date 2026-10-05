@@ -389,7 +389,7 @@ export class MediaGenerationService {
     metadata: PersistMetadata,
   ): Promise<GameAssetRecord> {
     const before = new Set((await this.#options.assetStore.list(project.id, project.root)).map((asset) => asset.relativePath));
-    const temporaryRoot = await mkdtemp(join(tmpdir(), 'noobi-media-generation-'));
+    const temporaryRoot = await mkdtemp(join(tmpdir(), 'bobo-media-generation-'));
     const hashPrefix = createHash('sha256').update(generated.bytes).digest('hex').slice(0, 12);
     const temporaryPath = join(temporaryRoot, `${safeStem(metadata.name)}-${hashPrefix}-${randomUUID()}${generated.extension}`);
     try {

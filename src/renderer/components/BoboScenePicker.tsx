@@ -2,17 +2,17 @@ import { Check, MonitorPlay } from 'lucide-react';
 import React, { type KeyboardEvent } from 'react';
 
 import type {
-  NoobiPackId,
-  NoobiSceneId,
+  BoboPackId,
+  BoboSceneId,
 } from '../../shared/contracts';
 import collaborationScene from '../assets/bobo/studio.png';
 import fishingScene from '../assets/bobo/home-hero.png';
 import {
-  NOOBI_PACK_OPTIONS,
-  noobiPackGridColumnCount,
-} from './NoobiPackPicker';
+  BOBO_PACK_OPTIONS,
+  boboPackGridColumnCount,
+} from './BoboPackPicker';
 
-export interface NoobiSceneOption<Id extends string = string> {
+export interface BoboSceneOption<Id extends string = string> {
   id: Id;
   eyebrow: string;
   name: string;
@@ -22,8 +22,8 @@ export interface NoobiSceneOption<Id extends string = string> {
   animated: boolean;
 }
 
-export const NOOBI_SOLO_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiPackId>[] =
-  NOOBI_PACK_OPTIONS.filter((option) => option.id === 'classic').map((option) => ({
+export const BOBO_SOLO_SCENE_OPTIONS: readonly BoboSceneOption<BoboPackId>[] =
+  BOBO_PACK_OPTIONS.filter((option) => option.id === 'classic').map((option) => ({
     id: option.id,
     eyebrow: option.eyebrow,
     name: '共享工坊',
@@ -33,7 +33,7 @@ export const NOOBI_SOLO_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiPackId>[] 
     animated: false,
   }));
 
-export const NOOBI_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiSceneId>[] = [
+export const BOBO_SCENE_OPTIONS: readonly BoboSceneOption<BoboSceneId>[] = [
   {
     id: 'collaboration',
     eyebrow: 'COLLABORATION WORKSHOP',
@@ -52,34 +52,34 @@ export const NOOBI_SCENE_OPTIONS: readonly NoobiSceneOption<NoobiSceneId>[] = [
     badges: ['温暖场景', '波波陪伴'],
     animated: false,
   },
-] as const satisfies readonly NoobiSceneOption<NoobiSceneId>[];
+] as const satisfies readonly BoboSceneOption<BoboSceneId>[];
 
 interface PickerShellProps<Id extends string> {
   value: Id | null;
-  options: readonly NoobiSceneOption<Id>[];
+  options: readonly BoboSceneOption<Id>[];
   variant: 'solo' | 'multiplayer';
   disabled: boolean;
   busy: boolean;
   onChange: (sceneId: Id) => void;
 }
 
-interface NoobiSoloScenePickerProps {
-  value: NoobiPackId;
+interface BoboSoloScenePickerProps {
+  value: BoboPackId;
   disabled?: boolean;
   busy?: boolean;
-  onChange: (sceneId: NoobiPackId) => void;
+  onChange: (sceneId: BoboPackId) => void;
 }
 
-export function NoobiSoloScenePicker({
+export function BoboSoloScenePicker({
   value,
   disabled = false,
   busy = false,
   onChange,
-}: NoobiSoloScenePickerProps) {
+}: BoboSoloScenePickerProps) {
   return (
-    <NoobiScenePickerShell
-      value={NOOBI_SOLO_SCENE_OPTIONS.some(option => option.id === value) ? value : 'classic'}
-      options={NOOBI_SOLO_SCENE_OPTIONS}
+    <BoboScenePickerShell
+      value={BOBO_SOLO_SCENE_OPTIONS.some(option => option.id === value) ? value : 'classic'}
+      options={BOBO_SOLO_SCENE_OPTIONS}
       variant="solo"
       disabled={disabled}
       busy={busy}
@@ -88,23 +88,23 @@ export function NoobiSoloScenePicker({
   );
 }
 
-interface NoobiScenePickerProps {
-  value: NoobiSceneId | null;
+interface BoboScenePickerProps {
+  value: BoboSceneId | null;
   disabled?: boolean;
   busy?: boolean;
-  onChange: (sceneId: NoobiSceneId) => void;
+  onChange: (sceneId: BoboSceneId) => void;
 }
 
-export function NoobiScenePicker({
+export function BoboScenePicker({
   value,
   disabled = false,
   busy = false,
   onChange,
-}: NoobiScenePickerProps) {
+}: BoboScenePickerProps) {
   return (
-    <NoobiScenePickerShell
+    <BoboScenePickerShell
       value={value}
-      options={NOOBI_SCENE_OPTIONS}
+      options={BOBO_SCENE_OPTIONS}
       variant="multiplayer"
       disabled={disabled}
       busy={busy}
@@ -113,7 +113,7 @@ export function NoobiScenePicker({
   );
 }
 
-function NoobiScenePickerShell<Id extends string>({
+function BoboScenePickerShell<Id extends string>({
   value,
   options,
   variant,
@@ -130,7 +130,7 @@ function NoobiScenePickerShell<Id extends string>({
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
     const container = event.currentTarget.parentElement;
-    const columnCount = noobiPackGridColumnCount(container);
+    const columnCount = boboPackGridColumnCount(container);
     let nextIndex = index;
     if (event.key === 'Home') nextIndex = 0;
     if (event.key === 'End') nextIndex = options.length - 1;
@@ -149,13 +149,13 @@ function NoobiScenePickerShell<Id extends string>({
 
   return (
     <section
-      className={`noobi-scene-picker variant-${variant}`}
+      className={`bobo-scene-picker variant-${variant}`}
       data-scene-kind={variant}
       aria-label={solo ? '波波 单人工作室' : '波波 多人运行背景'}
       aria-busy={busy}
     >
-      <header className="noobi-scene-heading">
-        <span className="noobi-scene-heading-icon" aria-hidden="true"><MonitorPlay size={18} /></span>
+      <header className="bobo-scene-heading">
+        <span className="bobo-scene-heading-icon" aria-hidden="true"><MonitorPlay size={18} /></span>
         <div>
           <small>{solo ? '02 / SOLO WORKSPACE' : 'MULTIPLAYER STAGE'}</small>
           <strong>{solo ? '再选择一个单人工作室' : '最后选择多人工作的舞台'}</strong>
@@ -166,7 +166,7 @@ function NoobiScenePickerShell<Id extends string>({
       </header>
 
       <div
-        className="noobi-scene-grid"
+        className="bobo-scene-grid"
         role="radiogroup"
         aria-label={solo ? '选择单人工作室' : '选择多人运行背景'}
       >
@@ -178,7 +178,7 @@ function NoobiScenePickerShell<Id extends string>({
               role="radio"
               aria-checked={selected}
               aria-label={`${option.name}：${option.description}；${option.badges.join('，')}`}
-              className={`noobi-pack-card noobi-scene-card${selected ? ' is-selected' : ''}`}
+              className={`bobo-pack-card bobo-scene-card${selected ? ' is-selected' : ''}`}
               data-scene-id={option.id}
               data-scene-index={index}
               data-scene-kind={variant}
@@ -189,26 +189,26 @@ function NoobiScenePickerShell<Id extends string>({
               onKeyDown={(event) => handleArrowKey(event, index)}
               onClick={() => onChange(option.id)}
             >
-              <span className="noobi-pack-preview noobi-scene-preview" aria-hidden="true">
+              <span className="bobo-pack-preview bobo-scene-preview" aria-hidden="true">
                 <img
-                  className="noobi-pack-scene-image"
+                  className="bobo-pack-scene-image"
                   src={option.image}
                   alt=""
                   draggable={false}
                 />
-                <span className="noobi-scene-live-badge">
+                <span className="bobo-scene-live-badge">
                   <i /> {solo ? 'SOLO MAP' : option.animated ? 'LIVE LOOP' : 'CREW MAP'}
                 </span>
               </span>
-              <span className="noobi-pack-card-copy noobi-scene-card-copy">
+              <span className="bobo-pack-card-copy bobo-scene-card-copy">
                 <small>{option.eyebrow}</small>
                 <strong>{option.name}</strong>
                 <span>{option.description}</span>
-                <span className="noobi-scene-card-meta" aria-hidden="true">
+                <span className="bobo-scene-card-meta" aria-hidden="true">
                   {option.badges.map((badge) => <em key={badge}>{badge}</em>)}
                 </span>
               </span>
-              <span className="noobi-pack-check" aria-hidden="true"><Check size={13} /></span>
+              <span className="bobo-pack-check" aria-hidden="true"><Check size={13} /></span>
             </button>
           );
         })}

@@ -108,7 +108,7 @@ export interface GameplayPlaytestManifest {
 }
 
 /**
- * A parsed, host-approved action from `.noobi/playtest.json`. Only the finite
+ * A parsed, host-approved action from `.bobo/playtest.json`. Only the finite
  * input vocabulary above is accepted; no JavaScript or workspace command can
  * be supplied through this structure.
  */
@@ -371,17 +371,17 @@ export function parseLoopbackPreviewUrl(value: string): URL {
 
 export async function readGameplayPlaytestManifest(projectRoot: string): Promise<GameplayPlaytestManifest> {
   const root = await resolveSafeProjectRoot(projectRoot);
-  const path = join(root, '.noobi', 'playtest.json');
+  const path = join(root, '.bobo', 'playtest.json');
   const text = await readBoundedNoFollowFile(path, 256 * 1024, root).catch((error: NodeJS.ErrnoException) => {
-    if (error.code === 'ENOENT') throw new Error('缺少 .noobi/playtest.json 自动试玩配置');
+    if (error.code === 'ENOENT') throw new Error('缺少 .bobo/playtest.json 自动试玩配置');
     if (error.message.startsWith('试玩配置')) throw error;
-    throw new Error(`无法安全读取 .noobi/playtest.json${error.code ? ` (${error.code})` : ''}`);
+    throw new Error(`无法安全读取 .bobo/playtest.json${error.code ? ` (${error.code})` : ''}`);
   });
   let value: unknown;
   try {
     value = JSON.parse(text);
   } catch {
-    throw new Error('.noobi/playtest.json 不是有效 UTF-8 JSON');
+    throw new Error('.bobo/playtest.json 不是有效 UTF-8 JSON');
   }
   const manifest = parseGameplayPlaytestManifest(value);
   await validateManifestAgainstWorkspace(root, manifest);
@@ -1067,7 +1067,7 @@ function hiddenPlaytestWindowOptions(): BrowserWindowConstructorOptions {
       backgroundThrottling: false,
       offscreen: true,
       spellcheck: false,
-      partition: `noobi-playtest-${randomUUID()}`,
+      partition: `bobo-playtest-${randomUUID()}`,
     },
   };
 }
@@ -2223,7 +2223,7 @@ async function safeWriteProjectFile(
   }
   const temporary = join(
     dirname(target),
-    `.${basename(target)}.noobi-${randomUUID()}.tmp`,
+    `.${basename(target)}.bobo-${randomUUID()}.tmp`,
   );
   const flags = constants.O_WRONLY
     | constants.O_CREAT

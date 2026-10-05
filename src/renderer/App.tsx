@@ -115,7 +115,7 @@ export function App() {
   const loadBootstrap = useCallback(async () => {
     setLoadingError('');
     try {
-      const state = await window.noobi.bootstrap();
+      const state = await window.bobo.bootstrap();
       setBootstrap(state);
       setProjects(state.projects);
       setSettings(state.settings);
@@ -133,7 +133,7 @@ export function App() {
   useEffect(() => {
     void loadBootstrap();
 
-    const stopAgentEvents = window.noobi.onAgentEvent((event) => {
+    const stopAgentEvents = window.bobo.onAgentEvent((event) => {
       setEvents((current) => ({
         ...current,
         [event.projectId]: mergeEvent(current[event.projectId] ?? [], event),
@@ -143,22 +143,22 @@ export function App() {
       }
     });
 
-    const stopProjects = window.noobi.onProjectChanged((project) => {
+    const stopProjects = window.bobo.onProjectChanged((project) => {
       setProjects((current) => upsertProject(current, project));
     });
 
-    const stopRuntime = window.noobi.onRuntimeChanged((status) => {
+    const stopRuntime = window.bobo.onRuntimeChanged((status) => {
       setRuntime(status);
     });
 
-    const stopApprovals = window.noobi.onApproval((approval) => {
+    const stopApprovals = window.bobo.onApproval((approval) => {
       setApprovals((current) =>
         current.some((item) => item.token === approval.token)
           ? current
           : [...current, approval],
       );
     });
-    const stopApprovalClosed = window.noobi.onApprovalClosed((token) => {
+    const stopApprovalClosed = window.bobo.onApprovalClosed((token) => {
       setApprovals((current) => current.filter((item) => item.token !== token));
     });
 
@@ -283,7 +283,7 @@ export function App() {
   ) {
     if (!ensureRunReady()) return;
     try {
-      const running = await window.noobi.runProject({
+      const running = await window.bobo.runProject({
         projectId: project.id,
         prompt,
         model,
@@ -301,7 +301,7 @@ export function App() {
     setError('');
     let projectDirectory: string | null = null;
     try {
-      projectDirectory = await window.noobi.chooseProjectDirectory();
+      projectDirectory = await window.bobo.chooseProjectDirectory();
     } catch (reason) {
       setError(toMessage(reason));
       return;
@@ -311,7 +311,7 @@ export function App() {
     setHomeLaunching(true);
     setLaunchTransition('running');
     try {
-      const project = await window.noobi.createProject({
+      const project = await window.bobo.createProject({
         idea: input.idea,
         projectDirectory,
         model: input.model,
@@ -355,7 +355,7 @@ export function App() {
   async function revealProject(projectId: string) {
     setError('');
     try {
-      const relocated = await window.noobi.revealProject(projectId);
+      const relocated = await window.bobo.revealProject(projectId);
       if (relocated) setProjects((current) => upsertProject(current, relocated));
     } catch (reason) {
       setError(toMessage(reason));
@@ -365,7 +365,7 @@ export function App() {
   async function stopProject() {
     if (!selected) return;
     try {
-      const project = await window.noobi.stopProject(selected.id);
+      const project = await window.bobo.stopProject(selected.id);
       setProjects((current) => upsertProject(current, project));
     } catch (reason) {
       setError(toMessage(reason));
@@ -376,7 +376,7 @@ export function App() {
     if (!selected || !settings || selected.status === 'running') return;
     setError('');
     try {
-      await window.noobi.retryAssetPlan(selected.id, plan.id);
+      await window.bobo.retryAssetPlan(selected.id, plan.id);
       setRefreshSignal((value) => value + 1);
       await runProject(
         `重新生成并完整接入素材工单 ${plan.id}（${plan.kind} / ${plan.name}）。必须使用该 planId 调用对应的 波波 素材工具；生成成功后更新生产代码中的真实引用，运行构建和玩法验证，直到宿主验收通过。不要停留在占位或仅生成未接入状态。`,
@@ -394,7 +394,7 @@ export function App() {
     const theme = settings.theme === 'dark' ? 'light' : 'dark';
     setSettings((current) => (current ? { ...current, theme } : current));
     try {
-      setSettings(await window.noobi.saveSettings({ theme }));
+      setSettings(await window.bobo.saveSettings({ theme }));
     } catch (reason) {
       setError(toMessage(reason));
     }
@@ -405,7 +405,7 @@ export function App() {
     setProjectActionBusy(true);
     setError('');
     try {
-      const project = await window.noobi.renameProject(renameTarget.id, name);
+      const project = await window.bobo.renameProject(renameTarget.id, name);
       setProjects((current) => upsertProject(current, project));
       setRenameTarget(null);
     } catch (reason) {
@@ -418,7 +418,7 @@ export function App() {
   async function toggleProjectPinned(project: ProjectRecord) {
     setError('');
     try {
-      const updated = await window.noobi.setProjectPinned(project.id, !project.pinned);
+      const updated = await window.bobo.setProjectPinned(project.id, !project.pinned);
       setProjects((current) => upsertProject(current, updated));
     } catch (reason) {
       setError(toMessage(reason));
@@ -431,7 +431,7 @@ export function App() {
     setProjectActionBusy(true);
     setError('');
     try {
-      await window.noobi.deleteProject(projectId);
+      await window.bobo.deleteProject(projectId);
       setProjects((current) => current.filter((project) => project.id !== projectId));
       setEvents((current) => {
         const next = { ...current };
@@ -451,7 +451,7 @@ export function App() {
     decision: ApprovalDecision,
     answers?: ApprovalAnswers,
   ) {
-    await window.noobi.resolveApproval(token, decision, answers);
+    await window.bobo.resolveApproval(token, decision, answers);
     setApprovals((current) => current.filter((item) => item.token !== token));
   }
 
@@ -603,7 +603,7 @@ export function App() {
                   {PROJECT_STATUS_LABELS[selected.status]}
                 </span>
               </header>
-              <BoboStudio stage={studioStage ?? selected.stage} status={selected.status} crew={selected.noobiCrewOverride ?? settings.defaultNoobiCrew} stageMode={settings.defaultNoobiStageMode} packId={selected.noobiPackOverrideId ?? settings.defaultNoobiPackId} soloSceneId={settings.defaultNoobiSoloSceneId} sceneId={settings.defaultNoobiSceneId} />
+              <BoboStudio stage={studioStage ?? selected.stage} status={selected.status} crew={selected.boboCrewOverride ?? settings.defaultBoboCrew} stageMode={settings.defaultBoboStageMode} packId={selected.boboPackOverrideId ?? settings.defaultBoboPackId} soloSceneId={settings.defaultBoboSoloSceneId} sceneId={settings.defaultBoboSceneId} />
               <EventStream project={selected} events={selectedEvents} />
               <Composer
                 key={selected.id}

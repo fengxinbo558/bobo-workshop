@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Noobi.ai is currently a developer preview without versioned public releases. Security fixes target the latest commit on `main`.
+波波工坊 is currently a developer preview without versioned public releases. Security fixes target the latest commit on `dev`.
 
 ## Reporting a vulnerability
 
@@ -10,7 +10,7 @@ Please do not disclose a suspected vulnerability in a public issue, discussion o
 
 Use GitHub's private vulnerability reporting flow:
 
-<https://github.com/Innate-Labs/Noobi.ai/security/advisories/new>
+<https://github.com/fengxinbo558/bobo-workshop/security/advisories/new>
 
 Include, when available:
 
@@ -24,4 +24,4 @@ Do not include real API keys, account tokens, personal project files or third-pa
 
 ## Security model
 
-Noobi.ai treats the Electron Main process as the trusted host and the Renderer, Agent output, manifests and generated workspaces as untrusted inputs. The architecture and current trust boundaries are documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+波波工坊 treats the Electron Main process as the trusted host and the Renderer, Agent output, manifests and generated workspaces as untrusted inputs. The architecture and current trust boundaries are documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).

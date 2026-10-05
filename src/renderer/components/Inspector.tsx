@@ -38,24 +38,24 @@ import type {
   GameplayExperienceCheck,
   GameplayExperienceReport,
   PipelineStage,
-  NoobiCrewMember,
+  BoboCrewMember,
   ProjectInspectorPayload,
   ProjectRecord,
   ProjectStatus,
 } from '../../shared/contracts';
 import {
-  DEFAULT_NOOBI_CREW,
-  DEFAULT_NOOBI_SCENE_ID,
-  DEFAULT_NOOBI_SOLO_SCENE_ID,
-  DEFAULT_NOOBI_STAGE_MODE,
+  DEFAULT_BOBO_CREW,
+  DEFAULT_BOBO_SCENE_ID,
+  DEFAULT_BOBO_SOLO_SCENE_ID,
+  DEFAULT_BOBO_STAGE_MODE,
 } from '../../shared/contracts';
 import { toMessage } from '../ui';
 import { BoboStudio as ProductionDiorama } from './BoboStudio';
 import {
-  NoobiCrewPicker,
-  NOOBI_CREW_ROLE_OPTIONS,
-} from './NoobiCrewPicker';
-import { NOOBI_PACK_OPTIONS } from './NoobiPackPicker';
+  BoboCrewPicker,
+  BOBO_CREW_ROLE_OPTIONS,
+} from './BoboCrewPicker';
+import { BOBO_PACK_OPTIONS } from './BoboPackPicker';
 
 interface InspectorProps {
   project: ProjectRecord;
@@ -123,20 +123,20 @@ export function Inspector({
   );
   const showProductionScene = !payload.previewUrl
     || (project.status === 'running' && !showBuildPreview);
-  const resolvedNoobiPackId = project.noobiPackOverrideId
-    ?? settings.defaultNoobiPackId
+  const resolvedBoboPackId = project.boboPackOverrideId
+    ?? settings.defaultBoboPackId
     ?? 'classic';
-  const globalNoobiCrew = settings.defaultNoobiCrew ?? DEFAULT_NOOBI_CREW;
-  const resolvedNoobiCrew = project.noobiCrewOverride ?? globalNoobiCrew;
-  const resolvedNoobiStageMode = settings.defaultNoobiStageMode ?? DEFAULT_NOOBI_STAGE_MODE;
-  const resolvedNoobiSoloSceneId = settings.defaultNoobiSoloSceneId ?? DEFAULT_NOOBI_SOLO_SCENE_ID;
-  const resolvedNoobiSceneId = settings.defaultNoobiSceneId ?? DEFAULT_NOOBI_SCENE_ID;
-  const resolvedNoobiPack = NOOBI_PACK_OPTIONS.find((option) => option.id === resolvedNoobiPackId);
+  const globalBoboCrew = settings.defaultBoboCrew ?? DEFAULT_BOBO_CREW;
+  const resolvedBoboCrew = project.boboCrewOverride ?? globalBoboCrew;
+  const resolvedBoboStageMode = settings.defaultBoboStageMode ?? DEFAULT_BOBO_STAGE_MODE;
+  const resolvedBoboSoloSceneId = settings.defaultBoboSoloSceneId ?? DEFAULT_BOBO_SOLO_SCENE_ID;
+  const resolvedBoboSceneId = settings.defaultBoboSceneId ?? DEFAULT_BOBO_SCENE_ID;
+  const resolvedBoboPack = BOBO_PACK_OPTIONS.find((option) => option.id === resolvedBoboPackId);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      setPayload(await window.noobi.inspectProject(project.id));
+      setPayload(await window.bobo.inspectProject(project.id));
       setPreviewRevision((value) => value + 1);
     } catch (error) {
       onError(toMessage(error));
@@ -181,7 +181,7 @@ export function Inspector({
 
   useEffect(
     () =>
-      window.noobi.onAssetsChanged(({ projectId, assets }) => {
+      window.bobo.onAssetsChanged(({ projectId, assets }) => {
         if (projectId !== project.id) return;
         setPayload((current) => ({ ...current, assets }));
         // Asset events do not carry the host-owned generation gate. Reinspect so
@@ -193,7 +193,7 @@ export function Inspector({
 
   useEffect(
     () =>
-      window.noobi.onAssetPlansChanged(({ projectId, assetPlans }) => {
+      window.bobo.onAssetPlansChanged(({ projectId, assetPlans }) => {
         if (projectId !== project.id) return;
         setPayload((current) => ({ ...current, assetPlans }));
       }),
@@ -209,11 +209,11 @@ export function Inspector({
     }
   }
 
-  async function selectNoobiCrew(noobiCrewOverride: readonly NoobiCrewMember[] | null) {
+  async function selectBoboCrew(boboCrewOverride: readonly BoboCrewMember[] | null) {
     if (project.status === 'running' || crewSaving) return;
     setCrewSaving(true);
     try {
-      onProjectUpdated(await window.noobi.saveProjectNoobiCrew(project.id, noobiCrewOverride));
+      onProjectUpdated(await window.bobo.saveProjectBoboCrew(project.id, boboCrewOverride));
     } catch (error) {
       onError(toMessage(error));
     } finally {
@@ -224,7 +224,7 @@ export function Inspector({
   async function openFile(relativePath: string) {
     try {
       setSelectedFile(
-        await window.noobi.readProjectFile(project.id, relativePath),
+        await window.bobo.readProjectFile(project.id, relativePath),
       );
     } catch (error) {
       onError(toMessage(error));
@@ -235,7 +235,7 @@ export function Inspector({
     setAssetNotice(null);
     setImporting(true);
     try {
-      const assets = await window.noobi.importProjectAssets(project.id);
+      const assets = await window.bobo.importProjectAssets(project.id);
       setPayload((current) => ({ ...current, assets }));
     } catch (error) {
       onError(toMessage(error));
@@ -248,7 +248,7 @@ export function Inspector({
     experienceCancelRequested.current = false;
     setEvaluatingExperience(true);
     try {
-      const experienceReport = await window.noobi.evaluateProjectExperience(project.id);
+      const experienceReport = await window.bobo.evaluateProjectExperience(project.id);
       setPayload((current) => ({ ...current, experienceReport }));
       setPreviewRevision((value) => value + 1);
     } catch (error) {
@@ -262,7 +262,7 @@ export function Inspector({
   async function cancelExperience() {
     experienceCancelRequested.current = true;
     try {
-      await window.noobi.cancelProjectExperience(project.id);
+      await window.bobo.cancelProjectExperience(project.id);
     } catch (error) {
       experienceCancelRequested.current = false;
       onError(toMessage(error));
@@ -285,7 +285,7 @@ export function Inspector({
     const ignoredCount = files.length - images.length;
     setImporting(true);
     try {
-      const assets = await window.noobi.importDroppedProjectAssets(project.id, images);
+      const assets = await window.bobo.importDroppedProjectAssets(project.id, images);
       setPayload((current) => ({ ...current, assets }));
       setTab('assets');
       setAssetNotice({
@@ -388,20 +388,20 @@ export function Inspector({
             />
           ) : null}
           {tab === 'preview' ? (
-            resolvedNoobiStageMode === 'crew' ? (
+            resolvedBoboStageMode === 'crew' ? (
               <button
                 className="inspector-crew-toggle"
                 type="button"
                 ref={crewToggleRef}
                 aria-expanded={crewEditorOpen}
-                aria-controls="project-noobi-crew-editor"
+                aria-controls="project-bobo-crew-editor"
                 title="编辑项目 波波制作编队"
                 onClick={() => setCrewEditorOpen((open) => !open)}
               >
                 <Users size={13} aria-hidden="true" />
                 <span className="inspector-crew-avatars" aria-hidden="true">
-                  {resolvedNoobiCrew.map((member) => {
-                    const pack = NOOBI_PACK_OPTIONS.find((option) => option.id === member.packId);
+                  {resolvedBoboCrew.map((member) => {
+                    const pack = BOBO_PACK_OPTIONS.find((option) => option.id === member.packId);
                     return pack ? (
                       <i data-role={member.role} key={member.packId}>
                         <img src={pack.avatarImage} alt="" draggable={false} />
@@ -409,11 +409,11 @@ export function Inspector({
                     ) : null;
                   })}
                 </span>
-                <strong>{resolvedNoobiCrew.length}人</strong>
+                <strong>{resolvedBoboCrew.length}人</strong>
               </button>
             ) : (
-              <div className="inspector-solo-indicator" aria-label={`单人搭档：${resolvedNoobiPack?.avatarLabel ?? 'BoBo'}`}>
-                {resolvedNoobiPack ? <img src={resolvedNoobiPack.avatarImage} alt="" draggable={false} /> : null}
+              <div className="inspector-solo-indicator" aria-label={`单人搭档：${resolvedBoboPack?.avatarLabel ?? 'BoBo'}`}>
+                {resolvedBoboPack ? <img src={resolvedBoboPack.avatarImage} alt="" draggable={false} /> : null}
                 <span>
                   <small>SOLO</small>
                   <strong>单人</strong>
@@ -467,10 +467,10 @@ export function Inspector({
         </div>
       </div>
 
-      {tab === 'preview' && resolvedNoobiStageMode === 'crew' && crewEditorOpen ? (
+      {tab === 'preview' && resolvedBoboStageMode === 'crew' && crewEditorOpen ? (
         <aside
           className="inspector-crew-panel"
-          id="project-noobi-crew-editor"
+          id="project-bobo-crew-editor"
           aria-label="项目 波波制作编队"
           onKeyDown={(event) => {
             if (event.key !== 'Escape') return;
@@ -483,15 +483,15 @@ export function Inspector({
             <div>
               <small>PROJECT CREW</small>
               <strong>项目制作编队</strong>
-              <span>{project.noobiCrewOverride === null ? '当前跟随全局默认编队' : '当前使用项目专属编队'}</span>
+              <span>{project.boboCrewOverride === null ? '当前跟随全局默认编队' : '当前使用项目专属编队'}</span>
             </div>
             <div>
               <button
                 className="crew-inherit-button"
                 type="button"
-                aria-pressed={project.noobiCrewOverride === null}
-                disabled={project.status === 'running' || crewSaving || project.noobiCrewOverride === null}
-                onClick={() => void selectNoobiCrew(null)}
+                aria-pressed={project.boboCrewOverride === null}
+                disabled={project.status === 'running' || crewSaving || project.boboCrewOverride === null}
+                onClick={() => void selectBoboCrew(null)}
               >
                 跟随全局
               </button>
@@ -505,21 +505,21 @@ export function Inspector({
               </button>
             </div>
           </header>
-          <NoobiCrewPicker
-            value={resolvedNoobiCrew}
+          <BoboCrewPicker
+            value={resolvedBoboCrew}
             disabled={project.status === 'running'}
             busy={crewSaving}
             label="项目 波波制作编队"
-            onChange={(crew) => void selectNoobiCrew(crew)}
+            onChange={(crew) => void selectBoboCrew(crew)}
           />
           <footer>
             {project.status === 'running'
               ? 'Agent 工作期间编队已锁定；停止本轮后可以调整。'
-              : project.noobiCrewOverride === null
+              : project.boboCrewOverride === null
                 ? '修改任意角色或岗位后，会自动建立项目专属编队。'
-                : `${resolvedNoobiCrew.map((member) => {
-                    const role = NOOBI_CREW_ROLE_OPTIONS.find((item) => item.id === member.role);
-                    const pack = NOOBI_PACK_OPTIONS.find((item) => item.id === member.packId);
+                : `${resolvedBoboCrew.map((member) => {
+                    const role = BOBO_CREW_ROLE_OPTIONS.find((item) => item.id === member.role);
+                    const pack = BOBO_PACK_OPTIONS.find((item) => item.id === member.packId);
                     return `${role?.label ?? member.role} · ${pack?.avatarLabel ?? member.packId}`;
                   }).join('　')}`}
           </footer>
@@ -541,7 +541,7 @@ export function Inspector({
           {!showProductionScene && payload.previewUrl ? (
             <iframe
               key={`${payload.previewUrl}:${previewRevision}`}
-              src={`${payload.previewUrl}?noobi=${previewRevision}`}
+              src={`${payload.previewUrl}?bobo=${previewRevision}`}
               title={`${project.name} 游戏预览`}
               sandbox="allow-scripts allow-same-origin allow-pointer-lock"
             />
@@ -549,12 +549,12 @@ export function Inspector({
             <div className="preview-empty"><MonitorPlay size={40} /><strong>游戏预览会显示在这里</strong><p>从左侧开始制作，构建完成后可以直接试玩。</p></div>
           ) : (
             <ProductionDiorama
-              key={`${resolvedNoobiStageMode}:${resolvedNoobiPackId}:${resolvedNoobiSoloSceneId}:${resolvedNoobiSceneId}`}
-              stageMode={resolvedNoobiStageMode}
-              packId={resolvedNoobiPackId}
-              crew={resolvedNoobiCrew}
-              sceneId={resolvedNoobiSceneId}
-              soloSceneId={resolvedNoobiSoloSceneId}
+              key={`${resolvedBoboStageMode}:${resolvedBoboPackId}:${resolvedBoboSoloSceneId}:${resolvedBoboSceneId}`}
+              stageMode={resolvedBoboStageMode}
+              packId={resolvedBoboPackId}
+              crew={resolvedBoboCrew}
+              sceneId={resolvedBoboSceneId}
+              soloSceneId={resolvedBoboSoloSceneId}
               stage={activityStage}
               status={project.status}
             />

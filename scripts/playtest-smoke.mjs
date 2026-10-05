@@ -10,8 +10,8 @@ import {
 } from '../dist/main/gameplayExperienceEvaluator.js';
 import { PreviewServer } from '../dist/main/previewServer.js';
 
-const smokeResultPath = process.env.NOOBI_PLAYTEST_SMOKE_RESULT?.trim() || null;
-const keepSmokeWorkspace = process.env.NOOBI_PLAYTEST_SMOKE_KEEP === '1';
+const smokeResultPath = process.env.BOBO_PLAYTEST_SMOKE_RESULT?.trim() || null;
+const keepSmokeWorkspace = process.env.BOBO_PLAYTEST_SMOKE_KEEP === '1';
 
 const GAME_HTML = `<!doctype html>
 <html lang="en">
@@ -76,7 +76,7 @@ const GAME_HTML = `<!doctype html>
         context.beginPath(); context.arc(x, 280 + bob, 36 + (1 - pulse) * 80, 0, Math.PI * 2); context.stroke();
       }
       context.fillStyle = '#f6f2e8'; context.font = '700 24px sans-serif';
-      context.fillText('NOOBI PLAYTEST', 28, 44);
+      context.fillText('BOBO PLAYTEST', 28, 44);
       context.font = '18px sans-serif';
       context.fillText('Enter start · D move · Space action · Esc pause · R restart', 28, 78);
       if (mode !== 'playing') {
@@ -132,12 +132,12 @@ const preview = new PreviewServer();
 
 try {
   await app.whenReady();
-  root = await mkdtemp(join(tmpdir(), 'noobi-playtest-smoke-'));
+  root = await mkdtemp(join(tmpdir(), 'bobo-playtest-smoke-'));
   await mkdir(join(root, 'dist'), { recursive: true });
-  await mkdir(join(root, '.noobi'), { recursive: true });
+  await mkdir(join(root, '.bobo'), { recursive: true });
   await writeFile(join(root, 'dist/index.html'), GAME_HTML);
   await writeFile(
-    join(root, '.noobi/playtest.json'),
+    join(root, '.bobo/playtest.json'),
     `${JSON.stringify(playtestManifest(new Date().toISOString()), null, 2)}\n`,
   );
   const previewUrl = await preview.start('playtest-smoke', root, {

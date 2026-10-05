@@ -1,7 +1,7 @@
 declare module 'three-stdlib' {
   import type { AnimationClip, BufferGeometry, Object3D } from 'three';
 
-  export interface NoobiGltfExporterOptions {
+  export interface BoboGltfExporterOptions {
     animations?: AnimationClip[];
     binary?: boolean;
     onlyVisible?: boolean;
@@ -11,7 +11,7 @@ declare module 'three-stdlib' {
   export class GLTFExporter {
     parseAsync(
       input: Object3D | Object3D[],
-      options?: NoobiGltfExporterOptions,
+      options?: BoboGltfExporterOptions,
     ): Promise<ArrayBuffer | Record<string, unknown>>;
   }
 

@@ -42,7 +42,7 @@ function parseArguments(args) {
     const [, inputPath, outputDirectory, ...remainingArguments] = args;
     if (!inputPath || !outputDirectory) {
       throw new Error(
-        'Usage: extract-noobi-sprites.cjs --action-sheet '
+        'Usage: extract-bobo-sprites.cjs --action-sheet '
         + '<sheet.png> <output-directory> [file-prefix=sprite] '
         + '[--base-layout <sprite-layout.json>]',
       );
@@ -77,11 +77,11 @@ function parseArguments(args) {
   }
 
   if (args[0] === '--pair') {
-    const [, sheetA, sheetB, outputDirectory, filePrefix = 'noobi-sprite'] = args;
+    const [, sheetA, sheetB, outputDirectory, filePrefix = 'bobo-sprite'] = args;
     if (!sheetA || !sheetB || !outputDirectory) {
       throw new Error(
-        'Usage: extract-noobi-sprites.cjs --pair '
-        + '<sheet-a.png> <sheet-b.png> <output-directory> [file-prefix=noobi-sprite]',
+        'Usage: extract-bobo-sprites.cjs --pair '
+        + '<sheet-a.png> <sheet-b.png> <output-directory> [file-prefix=bobo-sprite]',
       );
     }
     return {
@@ -96,14 +96,14 @@ function parseArguments(args) {
     };
   }
 
-  const [inputPath, outputDirectory, filePrefix = 'noobi-sprite', frameSuffix = ''] = args;
+  const [inputPath, outputDirectory, filePrefix = 'bobo-sprite', frameSuffix = ''] = args;
   if (!inputPath || !outputDirectory) {
     throw new Error(
-      'Usage: extract-noobi-sprites.cjs <sheet.png> <output-directory> '
-      + '[file-prefix=noobi-sprite] [frame-suffix]\n'
-      + '   or: extract-noobi-sprites.cjs --pair '
-      + '<sheet-a.png> <sheet-b.png> <output-directory> [file-prefix=noobi-sprite]\n'
-      + '   or: extract-noobi-sprites.cjs --action-sheet '
+      'Usage: extract-bobo-sprites.cjs <sheet.png> <output-directory> '
+      + '[file-prefix=bobo-sprite] [frame-suffix]\n'
+      + '   or: extract-bobo-sprites.cjs --pair '
+      + '<sheet-a.png> <sheet-b.png> <output-directory> [file-prefix=bobo-sprite]\n'
+      + '   or: extract-bobo-sprites.cjs --action-sheet '
       + '<sheet.png> <output-directory> [file-prefix=sprite] '
       + '[--base-layout <sprite-layout.json>]',
     );
@@ -364,7 +364,7 @@ function scaleConstraintForPrimaryBounds(primaryBounds, canvas = OUTPUT_CANVAS) 
 }
 
 function computeUniformPackScale(primaryBoundsList, canvas = OUTPUT_CANVAS) {
-  if (primaryBoundsList.length === 0) throw new Error('Cannot scale an empty Noobi pack');
+  if (primaryBoundsList.length === 0) throw new Error('Cannot scale an empty Bobo pack');
   return Math.min(
     1,
     ...primaryBoundsList.map((bounds) => scaleConstraintForPrimaryBounds(bounds, canvas)),
@@ -403,7 +403,7 @@ function computePoseScaleFactors(frames) {
 }
 
 function computeUniformPackBaseScale(frames, poseScaleFactors, canvas = OUTPUT_CANVAS) {
-  if (frames.length === 0) throw new Error('Cannot scale an empty Noobi pack');
+  if (frames.length === 0) throw new Error('Cannot scale an empty Bobo pack');
   return Math.min(
     1,
     ...frames.map((frame) => {

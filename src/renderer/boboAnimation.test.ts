@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import type { NoobiAnimation, NoobiSpriteManifest } from './noobiAnimation';
+import type { BoboAnimation, BoboSpriteManifest } from './boboAnimation';
 import {
-  advanceNoobiFrame,
-  noobiFrameAtElapsed,
-  noobiManifestSources,
-  noobiRestFrameIndex,
-  normalizedNoobiFrameDuration,
-} from './noobiAnimation';
+  advanceBoboFrame,
+  boboFrameAtElapsed,
+  boboManifestSources,
+  boboRestFrameIndex,
+  normalizedBoboFrameDuration,
+} from './boboAnimation';
 
-const animation = (overrides: Partial<NoobiAnimation> = {}): NoobiAnimation => ({
+const animation = (overrides: Partial<BoboAnimation> = {}): BoboAnimation => ({
   id: 'test',
   loop: true,
   restFrame: 0,
@@ -24,26 +24,26 @@ const animation = (overrides: Partial<NoobiAnimation> = {}): NoobiAnimation => (
 describe('BoBo sprite animation timeline', () => {
   it('honors the duration of every keyframe instead of assuming a uniform interval', () => {
     const clip = animation();
-    expect(noobiFrameAtElapsed(clip, 0)).toBe(0);
-    expect(noobiFrameAtElapsed(clip, 99)).toBe(0);
-    expect(noobiFrameAtElapsed(clip, 100)).toBe(1);
-    expect(noobiFrameAtElapsed(clip, 319)).toBe(1);
-    expect(noobiFrameAtElapsed(clip, 320)).toBe(2);
-    expect(noobiFrameAtElapsed(clip, 400)).toBe(0);
+    expect(boboFrameAtElapsed(clip, 0)).toBe(0);
+    expect(boboFrameAtElapsed(clip, 99)).toBe(0);
+    expect(boboFrameAtElapsed(clip, 100)).toBe(1);
+    expect(boboFrameAtElapsed(clip, 319)).toBe(1);
+    expect(boboFrameAtElapsed(clip, 320)).toBe(2);
+    expect(boboFrameAtElapsed(clip, 400)).toBe(0);
   });
 
   it('advances looping clips and settles non-looping clips on their authored rest frame', () => {
-    expect(advanceNoobiFrame(animation(), 2)).toEqual({ frameIndex: 0, finished: false });
-    expect(advanceNoobiFrame(animation({ loop: false, restFrame: 1 }), 2))
+    expect(advanceBoboFrame(animation(), 2)).toEqual({ frameIndex: 0, finished: false });
+    expect(advanceBoboFrame(animation({ loop: false, restFrame: 1 }), 2))
       .toEqual({ frameIndex: 1, finished: true });
-    expect(noobiFrameAtElapsed(animation({ loop: false, restFrame: 1 }), 800)).toBe(1);
+    expect(boboFrameAtElapsed(animation({ loop: false, restFrame: 1 }), 800)).toBe(1);
   });
 
   it('clamps malformed durations and rest frame indexes to safe values', () => {
-    expect(normalizedNoobiFrameDuration({ src: 'bad.png', durationMs: Number.NaN })).toBe(40);
-    expect(normalizedNoobiFrameDuration({ src: 'fast.png', durationMs: 2 })).toBe(40);
-    expect(noobiRestFrameIndex(animation({ restFrame: 99 }))).toBe(2);
-    expect(noobiRestFrameIndex(animation({ restFrame: -4 }))).toBe(0);
+    expect(normalizedBoboFrameDuration({ src: 'bad.png', durationMs: Number.NaN })).toBe(40);
+    expect(normalizedBoboFrameDuration({ src: 'fast.png', durationMs: 2 })).toBe(40);
+    expect(boboRestFrameIndex(animation({ restFrame: 99 }))).toBe(2);
+    expect(boboRestFrameIndex(animation({ restFrame: -4 }))).toBe(0);
   });
 
   it('returns each manifest image once so the renderer can preload complete packs', () => {
@@ -70,8 +70,8 @@ describe('BoBo sprite animation timeline', () => {
         wait: clip,
         walk: clip,
       },
-    } satisfies NoobiSpriteManifest;
+    } satisfies BoboSpriteManifest;
 
-    expect(noobiManifestSources(manifest)).toEqual(['a.png', 'b.png', 'c.png']);
+    expect(boboManifestSources(manifest)).toEqual(['a.png', 'b.png', 'c.png']);
   });
 });

@@ -28,11 +28,11 @@ const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, '..');
 const DEFAULT_BACKGROUND = join(
   REPOSITORY_ROOT,
-  'src/renderer/assets/noobi-packs/fishing/scene.png',
+  'src/renderer/assets/bobo-packs/fishing/scene.png',
 );
 const DEFAULT_OUTPUT = join(
   REPOSITORY_ROOT,
-  'src/renderer/assets/noobi-packs/fishing/four-ip-fishing.gif',
+  'src/renderer/assets/bobo-packs/fishing/four-ip-fishing.gif',
 );
 const DEFAULT_PACKS = ['classic', 'twilight', 'hellokitty', 'starforge'];
 const KNOWN_PACKS = new Set(DEFAULT_PACKS);
@@ -354,9 +354,9 @@ Usage:
 
 Options:
   -b, --background <png>    Pixel-art background PNG
-                            (default: src/renderer/assets/noobi-packs/fishing/scene.png)
+                            (default: src/renderer/assets/bobo-packs/fishing/scene.png)
   -o, --output <gif>        Output GIF
-                            (default: src/renderer/assets/noobi-packs/fishing/four-ip-fishing.gif)
+                            (default: src/renderer/assets/bobo-packs/fishing/four-ip-fishing.gif)
       --width <px>          Output width; aspect ratio is preserved
                             (default: source width capped at 960px)
       --frames <count>      Frames in the loop (default: 32)
@@ -389,16 +389,16 @@ async function main() {
     packId,
     layout: join(
       REPOSITORY_ROOT,
-      `src/renderer/assets/noobi-packs/fishing/frames/${packId}/sprite-layout.json`,
+      `src/renderer/assets/bobo-packs/fishing/frames/${packId}/sprite-layout.json`,
     ),
     frames: [
       join(
         REPOSITORY_ROOT,
-        `src/renderer/assets/noobi-packs/fishing/frames/${packId}/sprite-fishing-a.png`,
+        `src/renderer/assets/bobo-packs/fishing/frames/${packId}/sprite-fishing-a.png`,
       ),
       join(
         REPOSITORY_ROOT,
-        `src/renderer/assets/noobi-packs/fishing/frames/${packId}/sprite-fishing-b.png`,
+        `src/renderer/assets/bobo-packs/fishing/frames/${packId}/sprite-fishing-b.png`,
       ),
     ],
     fallbackHandAnchors: FISHING_HAND_ANCHORS[packId],
@@ -518,7 +518,7 @@ async function main() {
     outputHeight,
   });
 
-  const frameDirectory = await mkdtemp(join(tmpdir(), 'noobi-fishing-gif-'));
+  const frameDirectory = await mkdtemp(join(tmpdir(), 'bobo-fishing-gif-'));
   const temporaryOutput = join(
     dirname(options.output),
     `.${basename(options.output)}.${process.pid}.tmp.gif`,
@@ -585,7 +585,7 @@ function parseArguments(args) {
     positions: DEFAULT_POSITIONS.map((point) => ({ ...point })),
     bobbers: DEFAULT_BOBBERS.map((point) => ({ ...point })),
     colors: 160,
-    ffmpeg: process.env.NOOBI_FFMPEG || 'ffmpeg',
+    ffmpeg: process.env.BOBO_FFMPEG || 'ffmpeg',
     dryRun: false,
     help: false,
   };

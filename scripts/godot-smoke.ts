@@ -5,7 +5,7 @@ import { GodotEnvironmentService } from '../src/main/godotEnvironmentService.js'
 import { PreviewServer } from '../src/main/previewServer.js';
 import { ProjectStore } from '../src/main/projectStore.js';
 
-const root = await mkdtemp(join(tmpdir(), 'noobi-godot-smoke-'));
+const root = await mkdtemp(join(tmpdir(), 'bobo-godot-smoke-'));
 
 try {
   const environment = new GodotEnvironmentService({

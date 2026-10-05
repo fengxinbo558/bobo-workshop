@@ -18,9 +18,9 @@ import type {
   MediaCapability,
   MediaProviderSetting,
   MediaProviderTestResult,
-  NoobiCrewMember,
-  NoobiPackId,
-  NoobiApi,
+  BoboCrewMember,
+  BoboPackId,
+  BoboApi,
   PromptTemplateId,
   PromptTemplateSetting,
   ProjectInspectorPayload,
@@ -39,14 +39,14 @@ function subscribe<T>(channel: string, listener: (payload: T) => void): () => vo
   return () => ipcRenderer.removeListener(channel, wrapped);
 }
 
-const api: NoobiApi = {
-  bootstrap: () => ipcRenderer.invoke('noobi:bootstrap') as Promise<BootstrapPayload>,
-  refreshRuntime: () => ipcRenderer.invoke('noobi:runtime:refresh') as Promise<RuntimeStatus>,
-  startLogin: () => ipcRenderer.invoke('noobi:runtime:login') as Promise<LoginStartResult>,
-  logout: () => ipcRenderer.invoke('noobi:runtime:logout') as Promise<RuntimeStatus>,
-  chooseDirectory: () => ipcRenderer.invoke('noobi:dialog:directory') as Promise<string | null>,
+const api: BoboApi = {
+  bootstrap: () => ipcRenderer.invoke('bobo:bootstrap') as Promise<BootstrapPayload>,
+  refreshRuntime: () => ipcRenderer.invoke('bobo:runtime:refresh') as Promise<RuntimeStatus>,
+  startLogin: () => ipcRenderer.invoke('bobo:runtime:login') as Promise<LoginStartResult>,
+  logout: () => ipcRenderer.invoke('bobo:runtime:logout') as Promise<RuntimeStatus>,
+  chooseDirectory: () => ipcRenderer.invoke('bobo:dialog:directory') as Promise<string | null>,
   chooseProjectDirectory: () =>
-    ipcRenderer.invoke('noobi:dialog:project-directory') as Promise<string | null>,
+    ipcRenderer.invoke('bobo:dialog:project-directory') as Promise<string | null>,
   createProject: (input: CreateProjectInput, files: readonly unknown[] = []) => {
     if (!Array.isArray(files) || files.length > 50) {
       return Promise.reject(new Error('一次最多上传 50 个附件'));
@@ -58,22 +58,22 @@ const api: NoobiApi = {
       return Promise.reject(new Error('无法读取上传文件的本地路径'));
     }
     if (paths.length !== files.length) return Promise.reject(new Error('上传文件缺少本地路径'));
-    return ipcRenderer.invoke('noobi:project:create', input, paths) as Promise<ProjectRecord>;
+    return ipcRenderer.invoke('bobo:project:create', input, paths) as Promise<ProjectRecord>;
   },
   renameProject: (projectId: string, name: string) =>
-    ipcRenderer.invoke('noobi:project:rename', projectId, name) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:rename', projectId, name) as Promise<ProjectRecord>,
   setProjectPinned: (projectId: string, pinned: boolean) =>
-    ipcRenderer.invoke('noobi:project:pin', projectId, pinned) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:pin', projectId, pinned) as Promise<ProjectRecord>,
   deleteProject: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:delete', projectId) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:delete', projectId) as Promise<ProjectRecord>,
   runProject: (input: RunProjectInput) =>
-    ipcRenderer.invoke('noobi:project:run', input) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:run', input) as Promise<ProjectRecord>,
   stopProject: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:stop', projectId) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:stop', projectId) as Promise<ProjectRecord>,
   revealProject: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:reveal', projectId) as Promise<ProjectRecord | null>,
+    ipcRenderer.invoke('bobo:project:reveal', projectId) as Promise<ProjectRecord | null>,
   importProjectAssets: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:assets:import', projectId) as Promise<GameAssetRecord[]>,
+    ipcRenderer.invoke('bobo:project:assets:import', projectId) as Promise<GameAssetRecord[]>,
   importDroppedProjectAssets: (projectId: string, files: readonly unknown[]) => {
     if (!Array.isArray(files) || files.length === 0 || files.length > 50) {
       return Promise.reject(new Error('一次只能拖入 1–50 张图片'));
@@ -85,69 +85,69 @@ const api: NoobiApi = {
       return Promise.reject(new Error('无法读取拖入文件的本地路径'));
     }
     if (paths.length !== files.length) return Promise.reject(new Error('拖入文件缺少本地路径'));
-    return ipcRenderer.invoke('noobi:project:assets:import-paths', projectId, paths) as Promise<GameAssetRecord[]>;
+    return ipcRenderer.invoke('bobo:project:assets:import-paths', projectId, paths) as Promise<GameAssetRecord[]>;
   },
   retryAssetPlan: (projectId: string, planId: string) =>
-    ipcRenderer.invoke('noobi:project:asset-plan:retry', projectId, planId) as Promise<AssetPlanRecord>,
+    ipcRenderer.invoke('bobo:project:asset-plan:retry', projectId, planId) as Promise<AssetPlanRecord>,
   inspectProject: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:inspect', projectId) as Promise<ProjectInspectorPayload>,
+    ipcRenderer.invoke('bobo:project:inspect', projectId) as Promise<ProjectInspectorPayload>,
   evaluateProjectExperience: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:experience:evaluate', projectId) as Promise<GameplayExperienceReport>,
+    ipcRenderer.invoke('bobo:project:experience:evaluate', projectId) as Promise<GameplayExperienceReport>,
   cancelProjectExperience: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:experience:cancel', projectId) as Promise<void>,
+    ipcRenderer.invoke('bobo:project:experience:cancel', projectId) as Promise<void>,
   readProjectFile: (projectId: string, relativePath: string) =>
-    ipcRenderer.invoke('noobi:project:read', projectId, relativePath) as Promise<FileReadResult>,
+    ipcRenderer.invoke('bobo:project:read', projectId, relativePath) as Promise<FileReadResult>,
   getProjectIcon: (projectId: string) =>
-    ipcRenderer.invoke('noobi:project:icon', projectId) as Promise<ProjectIconData | null>,
-  saveProjectNoobiPack: (projectId: string, packId: NoobiPackId | null) =>
-    ipcRenderer.invoke('noobi:project:noobi-pack:save', projectId, packId) as Promise<ProjectRecord>,
-  saveProjectNoobiCrew: (projectId: string, crew: readonly NoobiCrewMember[] | null) =>
-    ipcRenderer.invoke('noobi:project:noobi-crew:save', projectId, crew) as Promise<ProjectRecord>,
+    ipcRenderer.invoke('bobo:project:icon', projectId) as Promise<ProjectIconData | null>,
+  saveProjectBoboPack: (projectId: string, packId: BoboPackId | null) =>
+    ipcRenderer.invoke('bobo:project:bobo-pack:save', projectId, packId) as Promise<ProjectRecord>,
+  saveProjectBoboCrew: (projectId: string, crew: readonly BoboCrewMember[] | null) =>
+    ipcRenderer.invoke('bobo:project:bobo-crew:save', projectId, crew) as Promise<ProjectRecord>,
   saveSettings: (patch: Partial<AppSettings>) =>
-    ipcRenderer.invoke('noobi:settings:save', patch) as Promise<AppSettings>,
+    ipcRenderer.invoke('bobo:settings:save', patch) as Promise<AppSettings>,
   getEnvironmentStatus: () =>
-    ipcRenderer.invoke('noobi:environment:get') as Promise<EnvironmentStatusSnapshot>,
+    ipcRenderer.invoke('bobo:environment:get') as Promise<EnvironmentStatusSnapshot>,
   refreshEnvironmentStatus: () =>
-    ipcRenderer.invoke('noobi:environment:refresh') as Promise<EnvironmentStatusSnapshot>,
+    ipcRenderer.invoke('bobo:environment:refresh') as Promise<EnvironmentStatusSnapshot>,
   chooseGodotExecutable: () =>
-    ipcRenderer.invoke('noobi:environment:godot:choose') as Promise<string | null>,
+    ipcRenderer.invoke('bobo:environment:godot:choose') as Promise<string | null>,
   saveGodotExecutable: (binaryPath: string | null) =>
-    ipcRenderer.invoke('noobi:environment:godot:save', binaryPath) as Promise<EnvironmentStatusSnapshot>,
+    ipcRenderer.invoke('bobo:environment:godot:save', binaryPath) as Promise<EnvironmentStatusSnapshot>,
   getExtensionSettings: () =>
-    ipcRenderer.invoke('noobi:extensions:get') as Promise<ExtensionSettingsSnapshot>,
+    ipcRenderer.invoke('bobo:extensions:get') as Promise<ExtensionSettingsSnapshot>,
   saveMediaProvider: (input: SaveMediaProviderInput) =>
-    ipcRenderer.invoke('noobi:media-provider:save', input) as Promise<MediaProviderSetting>,
+    ipcRenderer.invoke('bobo:media-provider:save', input) as Promise<MediaProviderSetting>,
   testMediaProvider: (capability: MediaCapability) =>
-    ipcRenderer.invoke('noobi:media-provider:test', capability) as Promise<MediaProviderTestResult>,
-  listSkills: () => ipcRenderer.invoke('noobi:skills:list') as Promise<SkillSetting[]>,
+    ipcRenderer.invoke('bobo:media-provider:test', capability) as Promise<MediaProviderTestResult>,
+  listSkills: () => ipcRenderer.invoke('bobo:skills:list') as Promise<SkillSetting[]>,
   setSkillEnabled: (input: { id: string; enabled: boolean }) =>
-    ipcRenderer.invoke('noobi:skills:set-enabled', input) as Promise<SkillSetting>,
-  listMcpServers: () => ipcRenderer.invoke('noobi:mcp:list') as Promise<McpServerSetting[]>,
+    ipcRenderer.invoke('bobo:skills:set-enabled', input) as Promise<SkillSetting>,
+  listMcpServers: () => ipcRenderer.invoke('bobo:mcp:list') as Promise<McpServerSetting[]>,
   saveMcpServer: (input: SaveMcpServerInput) =>
-    ipcRenderer.invoke('noobi:mcp:save', input) as Promise<McpServerSetting>,
-  removeMcpServer: (id: string) => ipcRenderer.invoke('noobi:mcp:remove', id) as Promise<void>,
+    ipcRenderer.invoke('bobo:mcp:save', input) as Promise<McpServerSetting>,
+  removeMcpServer: (id: string) => ipcRenderer.invoke('bobo:mcp:remove', id) as Promise<void>,
   listPromptTemplates: () =>
-    ipcRenderer.invoke('noobi:prompts:list') as Promise<PromptTemplateSetting[]>,
+    ipcRenderer.invoke('bobo:prompts:list') as Promise<PromptTemplateSetting[]>,
   savePromptTemplate: (input: { id: PromptTemplateId; content: string; enabled: boolean }) =>
-    ipcRenderer.invoke('noobi:prompts:save', input) as Promise<PromptTemplateSetting>,
+    ipcRenderer.invoke('bobo:prompts:save', input) as Promise<PromptTemplateSetting>,
   resetPromptTemplate: (id: PromptTemplateId) =>
-    ipcRenderer.invoke('noobi:prompts:reset', id) as Promise<PromptTemplateSetting>,
+    ipcRenderer.invoke('bobo:prompts:reset', id) as Promise<PromptTemplateSetting>,
   resolveApproval: (token: string, decision: ApprovalDecision, answers?: ApprovalAnswers) =>
-    ipcRenderer.invoke('noobi:approval:resolve', token, decision, answers) as Promise<void>,
+    ipcRenderer.invoke('bobo:approval:resolve', token, decision, answers) as Promise<void>,
   onAgentEvent: (listener: (event: AgentEvent) => void) =>
-    subscribe('noobi:event:agent', listener),
+    subscribe('bobo:event:agent', listener),
   onProjectChanged: (listener: (project: ProjectRecord) => void) =>
-    subscribe('noobi:event:project', listener),
+    subscribe('bobo:event:project', listener),
   onRuntimeChanged: (listener: (status: RuntimeStatus) => void) =>
-    subscribe('noobi:event:runtime', listener),
+    subscribe('bobo:event:runtime', listener),
   onApproval: (listener: (approval: ApprovalRequest) => void) =>
-    subscribe('noobi:event:approval', listener),
+    subscribe('bobo:event:approval', listener),
   onApprovalClosed: (listener: (token: string) => void) =>
-    subscribe('noobi:event:approval-closed', listener),
+    subscribe('bobo:event:approval-closed', listener),
   onAssetsChanged: (listener: (payload: { projectId: string; assets: GameAssetRecord[] }) => void) =>
-    subscribe('noobi:event:assets', listener),
+    subscribe('bobo:event:assets', listener),
   onAssetPlansChanged: (listener: (payload: { projectId: string; assetPlans: AssetPlanRecord[] }) => void) =>
-    subscribe('noobi:event:asset-plans', listener),
+    subscribe('bobo:event:asset-plans', listener),
 };
 
-contextBridge.exposeInMainWorld('noobi', Object.freeze(api));
+contextBridge.exposeInMainWorld('bobo', Object.freeze(api));

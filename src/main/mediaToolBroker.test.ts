@@ -86,7 +86,7 @@ describe('media tool broker', () => {
     });
   });
 
-  it.each(['bobo_asset_list', 'noobi_asset_list'])('lists only compact public asset fields via %s', async (toolName) => {
+  it.each(['bobo_asset_list', 'bobo_asset_list'])('lists only compact public asset fields via %s', async (toolName) => {
     const responses: Array<{ id: string | number; result: unknown }> = [];
     const assets = Array.from({ length: 100 }, (_, index) => fakeAsset(index));
     const assetStore = {
@@ -169,7 +169,7 @@ describe('media tool broker', () => {
   });
 
   it('creates and registers a short procedural WAV through a dynamic call', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-media-broker-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-media-broker-'));
     roots.push(root);
     const project: MediaToolProject = { id: 'project-audio', root };
     const responses: Array<{ id: string | number; result: unknown }> = [];
@@ -208,7 +208,7 @@ describe('media tool broker', () => {
   });
 
   it('rejects traversal and invalid names without exposing absolute paths', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-media-safe-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-media-safe-'));
     roots.push(root);
     const responses: Array<{ id: string | number; result: unknown }> = [];
     const broker = brokerWith({
@@ -388,7 +388,7 @@ describe('media tool broker', () => {
   });
 
   it('returns a registered Three.js GLB through the same 3D tool when no provider exists', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-model-broker-fallback-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-model-broker-fallback-'));
     roots.push(root);
     const project = { id: 'project-model-fallback', root };
     const responses: Array<{ id: string | number; result: unknown }> = [];
@@ -765,7 +765,7 @@ function brokerWith(options: {
 }
 
 async function makePlanStore(): Promise<AssetPlanStore> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-plan-broker-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-plan-broker-'));
   roots.push(root);
   const store = new AssetPlanStore(join(root, 'asset-plans.json'));
   await store.init();

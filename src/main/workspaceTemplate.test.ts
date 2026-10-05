@@ -4,9 +4,9 @@ import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   createWorkspaceTemplate,
-  NOOBI_HOST_RUNTIME_POLICY_END,
-  NOOBI_HOST_RUNTIME_POLICY_START,
-  NOOBI_HOST_RUNTIME_POLICY_VERSION,
+  BOBO_HOST_RUNTIME_POLICY_END,
+  BOBO_HOST_RUNTIME_POLICY_START,
+  BOBO_HOST_RUNTIME_POLICY_VERSION,
   synchronizeGodotPresentationPolicy,
   synchronizeWorkspaceHostPolicy,
 } from './workspaceTemplate.js';
@@ -21,7 +21,7 @@ afterEach(async () => {
 
 describe('createWorkspaceTemplate', () => {
   it('creates a neutral project scaffold with local Agent instructions', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-template-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-template-'));
     temporaryRoots.push(root);
     await createWorkspaceTemplate(root, {
       id: 'project-template',
@@ -51,7 +51,7 @@ describe('createWorkspaceTemplate', () => {
     });
 
     const playtest = JSON.parse(
-      await readFile(join(root, '.noobi/playtest.json'), 'utf8'),
+      await readFile(join(root, '.bobo/playtest.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(playtest).toMatchObject({
       schemaVersion: 1,
@@ -115,7 +115,7 @@ describe('createWorkspaceTemplate', () => {
     expect(agents).toContain('host automatically prioritizes an active 3D API');
     expect(agents).toContain('built-in Three.js exporter');
     expect(agents).toContain('playable vertical slices');
-    expect(agents).toContain('`.noobi/playtest.json`');
+    expect(agents).toContain('`.bobo/playtest.json`');
     expect(agents).toContain('all five common action mappings');
     expect(agents).toContain('key, pointer, look, drag, and wait');
     expect(agents).toContain('artifacts/playtest/latest/report.json');
@@ -124,9 +124,9 @@ describe('createWorkspaceTemplate', () => {
     expect(agents).toContain('targetFps=120');
     expect(agents).toContain('does not require 120 unique bitmap poses');
     expect(agents).toContain('Replace, resample, retag, or reselect');
-    expect(agents.startsWith(NOOBI_HOST_RUNTIME_POLICY_START)).toBe(true);
-    expect(occurrences(agents, NOOBI_HOST_RUNTIME_POLICY_START)).toBe(1);
-    expect(agents).toContain('`.noobi/project.json` field `targetFrameRate=120` is authoritative');
+    expect(agents.startsWith(BOBO_HOST_RUNTIME_POLICY_START)).toBe(true);
+    expect(occurrences(agents, BOBO_HOST_RUNTIME_POLICY_START)).toBe(1);
+    expect(agents).toContain('`.bobo/project.json` field `targetFrameRate=120` is authoritative');
     expectManagedMediaPolicy(agents);
 
     const skill = await readFile(
@@ -165,8 +165,8 @@ describe('createWorkspaceTemplate', () => {
     expect(skill).toContain('Never duplicate frames merely to claim 120 FPS');
     expect(skill).toContain('bounded fixed-step accumulator at 120 Hz');
     expect(skill.startsWith('---\nname: bobo-game-builder')).toBe(true);
-    expect(occurrences(skill, NOOBI_HOST_RUNTIME_POLICY_START)).toBe(1);
-    expect(skill.indexOf(NOOBI_HOST_RUNTIME_POLICY_START)).toBeLessThan(
+    expect(occurrences(skill, BOBO_HOST_RUNTIME_POLICY_START)).toBe(1);
+    expect(skill.indexOf(BOBO_HOST_RUNTIME_POLICY_START)).toBeLessThan(
       skill.indexOf('# BoBo Game Builder'),
     );
     expectManagedMediaPolicy(skill);
@@ -185,7 +185,7 @@ describe('createWorkspaceTemplate', () => {
     expect(design).toContain('Selected target: **120 FPS**');
     expect(design).toContain('target-specific animation asset is tagged for 120 FPS');
     expect(design).toContain('## Player experience journey');
-    expect(design).toContain('`.noobi/playtest.json` matches the production controls');
+    expect(design).toContain('`.bobo/playtest.json` matches the production controls');
     expect(design).toContain('`artifacts/playtest/latest/report.json` passes every declared step');
 
     const readme = await readFile(join(root, 'README.md'), 'utf8');
@@ -193,11 +193,11 @@ describe('createWorkspaceTemplate', () => {
     expect(readme).toContain('verify and reuse the existing frame set/sprite sheet');
     expect(readme).toContain('Actual rigged 3D characters use real GLB animation clips');
     expect(readme).toContain('This project targets **120 FPS**');
-    expect(readme).toContain('executable experience route in `.noobi/playtest.json`');
+    expect(readme).toContain('executable experience route in `.bobo/playtest.json`');
     expect(readme).toContain('BoBo owns the resulting `artifacts/playtest/latest/report.json`');
 
     const metadata = JSON.parse(
-      await readFile(join(root, '.noobi/project.json'), 'utf8'),
+      await readFile(join(root, '.bobo/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(metadata.targetFrameRate).toBe(120);
     expect(metadata.starter).toBe('bobo-browser-neutral');
@@ -219,7 +219,7 @@ describe('createWorkspaceTemplate', () => {
   });
 
   it('keeps Three.js as an offline GLB authoring fallback for Godot workspaces', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-godot-model-route-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-godot-model-route-'));
     temporaryRoots.push(root);
     await createWorkspaceTemplate(root, {
       id: 'project-godot-model-route',
@@ -234,7 +234,7 @@ describe('createWorkspaceTemplate', () => {
     const agents = await readFile(join(root, 'AGENTS.md'), 'utf8');
     const skill = await readFile(join(root, '.codex/skills/bobo-game-builder/SKILL.md'), 'utf8');
     const metadata = JSON.parse(
-      await readFile(join(root, '.noobi/project.json'), 'utf8'),
+      await readFile(join(root, '.bobo/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     const starter = await readFile(join(root, 'scripts/main.gd'), 'utf8');
     expect(metadata.starter).toBe('bobo-godot-4-neutral');
@@ -253,7 +253,7 @@ describe('createWorkspaceTemplate', () => {
   });
 
   it('migrates Godot boot branding settings safely and idempotently', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-godot-branding-policy-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-godot-branding-policy-'));
     temporaryRoots.push(root);
     await writeFile(join(root, 'project.godot'), [
       'config_version=5',
@@ -290,7 +290,7 @@ describe('createWorkspaceTemplate', () => {
   });
 
   it('atomically synchronizes authoritative FPS metadata and managed policy blocks without replacing user content', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-policy-sync-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-policy-sync-'));
     temporaryRoots.push(root);
     const project = {
       id: 'project-policy-sync',
@@ -315,7 +315,7 @@ describe('createWorkspaceTemplate', () => {
     });
 
     const metadata = JSON.parse(
-      await readFile(join(root, '.noobi/project.json'), 'utf8'),
+      await readFile(join(root, '.bobo/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(metadata).toMatchObject({
       id: project.id,
@@ -327,16 +327,16 @@ describe('createWorkspaceTemplate', () => {
     const agentsAfter = await readFile(agentsPath, 'utf8');
     const skillAfter = await readFile(skillPath, 'utf8');
     for (const content of [agentsAfter, skillAfter]) {
-      expect(occurrences(content, NOOBI_HOST_RUNTIME_POLICY_START)).toBe(1);
-      expect(occurrences(content, NOOBI_HOST_RUNTIME_POLICY_END)).toBe(1);
+      expect(occurrences(content, BOBO_HOST_RUNTIME_POLICY_START)).toBe(1);
+      expect(occurrences(content, BOBO_HOST_RUNTIME_POLICY_END)).toBe(1);
       expect(content).toContain('Current host-selected target: **120 FPS**');
       expect(content).toContain('`targetFrameRate=120` is authoritative');
       expect(content).toContain('overrides any lower, potentially stale text');
       expectManagedMediaPolicy(content);
     }
-    expect(agentsAfter.startsWith(NOOBI_HOST_RUNTIME_POLICY_START)).toBe(true);
+    expect(agentsAfter.startsWith(BOBO_HOST_RUNTIME_POLICY_START)).toBe(true);
     expect(skillAfter.startsWith('---\nname: bobo-game-builder')).toBe(true);
-    expect(skillAfter.indexOf(NOOBI_HOST_RUNTIME_POLICY_START)).toBeLessThan(
+    expect(skillAfter.indexOf(BOBO_HOST_RUNTIME_POLICY_START)).toBeLessThan(
       skillAfter.indexOf('# BoBo Game Builder'),
     );
     expect(withoutManagedPolicy(agentsAfter)).toBe(withoutManagedPolicy(agentsBefore));
@@ -353,7 +353,7 @@ describe('createWorkspaceTemplate', () => {
   });
 
   it('migrates the versioned media contract into legacy instructions without replacing user content', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-policy-legacy-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-policy-legacy-'));
     temporaryRoots.push(root);
     const project = {
       id: 'project-policy-legacy',
@@ -386,25 +386,25 @@ describe('createWorkspaceTemplate', () => {
     const agentsAfter = await readFile(agentsPath, 'utf8');
     const skillAfter = await readFile(skillPath, 'utf8');
     for (const content of [agentsAfter, skillAfter]) {
-      expect(occurrences(content, NOOBI_HOST_RUNTIME_POLICY_START)).toBe(1);
-      expect(occurrences(content, NOOBI_HOST_RUNTIME_POLICY_END)).toBe(1);
+      expect(occurrences(content, BOBO_HOST_RUNTIME_POLICY_START)).toBe(1);
+      expect(occurrences(content, BOBO_HOST_RUNTIME_POLICY_END)).toBe(1);
       expectManagedMediaPolicy(content);
     }
-    expect(agentsAfter.startsWith(NOOBI_HOST_RUNTIME_POLICY_START)).toBe(true);
+    expect(agentsAfter.startsWith(BOBO_HOST_RUNTIME_POLICY_START)).toBe(true);
     expect(agentsAfter.endsWith(legacyAgents)).toBe(true);
-    expect(skillAfter.startsWith(`${skillFrontMatter}\n\n${NOOBI_HOST_RUNTIME_POLICY_START}`)).toBe(true);
+    expect(skillAfter.startsWith(`${skillFrontMatter}\n\n${BOBO_HOST_RUNTIME_POLICY_START}`)).toBe(true);
     expect(skillAfter.endsWith(legacySkillBody)).toBe(true);
     expect(occurrences(agentsAfter, 'USER_AGENTS_LEGACY_SENTINEL')).toBe(1);
     expect(occurrences(skillAfter, 'USER_SKILL_LEGACY_SENTINEL')).toBe(1);
     const metadata = JSON.parse(
-      await readFile(join(root, '.noobi/project.json'), 'utf8'),
+      await readFile(join(root, '.bobo/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(metadata.targetFrameRate).toBe(60);
   });
 
   it('fails closed on a workspace symlink before changing authoritative metadata', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-policy-symlink-'));
-    const externalRoot = await mkdtemp(join(tmpdir(), 'noobi-policy-external-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-policy-symlink-'));
+    const externalRoot = await mkdtemp(join(tmpdir(), 'bobo-policy-external-'));
     temporaryRoots.push(root, externalRoot);
     const project = {
       id: 'project-policy-symlink',
@@ -427,13 +427,13 @@ describe('createWorkspaceTemplate', () => {
 
     expect(await readFile(externalAgents, 'utf8')).toBe('EXTERNAL_SENTINEL\n');
     const metadata = JSON.parse(
-      await readFile(join(root, '.noobi/project.json'), 'utf8'),
+      await readFile(join(root, '.bobo/project.json'), 'utf8'),
     ) as Record<string, unknown>;
     expect(metadata.targetFrameRate).toBe(30);
   });
 
   it('refuses to overwrite an existing workspace template', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'noobi-template-'));
+    const root = await mkdtemp(join(tmpdir(), 'bobo-template-'));
     temporaryRoots.push(root);
     const project = {
       id: 'project-existing',
@@ -454,9 +454,9 @@ function occurrences(source: string, needle: string): number {
 
 function expectManagedMediaPolicy(source: string): void {
   const policy = managedPolicyOf(source);
-  expect(policy).toContain(`managed, v${NOOBI_HOST_RUNTIME_POLICY_VERSION}`);
+  expect(policy).toContain(`managed, v${BOBO_HOST_RUNTIME_POLICY_VERSION}`);
   expect(policy).toContain(
-    `Managed host policy version: \`${NOOBI_HOST_RUNTIME_POLICY_VERSION}\``,
+    `Managed host policy version: \`${BOBO_HOST_RUNTIME_POLICY_VERSION}\``,
   );
   expect(policy).toContain('enabled MiniMax Music service');
   expect(policy).toContain('at least one MiniMax-generated music track');
@@ -473,26 +473,26 @@ function expectManagedMediaPolicy(source: string): void {
   expect(policy).toContain('### Interaction-motion acceptance');
   expect(policy).toContain('must span rendered frames');
   expect(policy).toContain('### Experience playtest acceptance');
-  expect(policy).toContain('`.noobi/playtest.json` at schemaVersion 1');
+  expect(policy).toContain('`.bobo/playtest.json` at schemaVersion 1');
   expect(policy).toContain('start, move, primary, pause, and restart');
   expect(policy).toContain('`artifacts/playtest/` is host-owned immutable evidence');
   expect(policy).toContain('host playtest as pending');
 }
 
 function managedPolicyOf(source: string): string {
-  const start = source.indexOf(NOOBI_HOST_RUNTIME_POLICY_START);
-  const end = source.indexOf(NOOBI_HOST_RUNTIME_POLICY_END, start);
+  const start = source.indexOf(BOBO_HOST_RUNTIME_POLICY_START);
+  const end = source.indexOf(BOBO_HOST_RUNTIME_POLICY_END, start);
   if (start < 0 || end < 0) throw new Error('Managed policy is missing in test fixture');
-  return source.slice(start, end + NOOBI_HOST_RUNTIME_POLICY_END.length);
+  return source.slice(start, end + BOBO_HOST_RUNTIME_POLICY_END.length);
 }
 
 function withoutManagedPolicy(source: string): string {
   let result = source;
   while (true) {
-    const start = result.indexOf(NOOBI_HOST_RUNTIME_POLICY_START);
+    const start = result.indexOf(BOBO_HOST_RUNTIME_POLICY_START);
     if (start < 0) return result;
-    const end = result.indexOf(NOOBI_HOST_RUNTIME_POLICY_END, start);
+    const end = result.indexOf(BOBO_HOST_RUNTIME_POLICY_END, start);
     if (end < 0) throw new Error('Malformed managed policy in test fixture');
-    result = result.slice(0, start) + result.slice(end + NOOBI_HOST_RUNTIME_POLICY_END.length);
+    result = result.slice(0, start) + result.slice(end + BOBO_HOST_RUNTIME_POLICY_END.length);
   }
 }

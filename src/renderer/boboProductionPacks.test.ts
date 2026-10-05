@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { NOOBI_PACK_IDS } from '../shared/contracts';
-import { noobiManifestSources } from './noobiAnimation';
-import { noobiProductionPack } from './noobiProductionPacks';
+import { BOBO_PACK_IDS } from '../shared/contracts';
+import { boboManifestSources } from './boboAnimation';
+import { boboProductionPack } from './boboProductionPacks';
 
 describe('BoBo production packs', () => {
   it('ships a matching scene and complete animation manifest for every selectable pack', () => {
-    for (const packId of NOOBI_PACK_IDS) {
-      const pack = noobiProductionPack(packId);
+    for (const packId of BOBO_PACK_IDS) {
+      const pack = boboProductionPack(packId);
       expect(pack.id).toBe(packId);
       expect(pack.sceneImage).toMatch(/\.png$/);
       expect(Object.keys(pack.spriteManifest.animations)).toHaveLength(16);
-      expect(noobiManifestSources(pack.spriteManifest).length).toBeGreaterThanOrEqual(30);
+      expect(boboManifestSources(pack.spriteManifest).length).toBeGreaterThanOrEqual(30);
       expect(pack.spriteManifest.canvas).toEqual({
         width: 252,
         height: 336,
@@ -21,7 +21,7 @@ describe('BoBo production packs', () => {
   });
 
   it('uses authored multi-keyframe clips for movement and every production action', () => {
-    const manifest = noobiProductionPack('classic').spriteManifest;
+    const manifest = boboProductionPack('classic').spriteManifest;
     expect(manifest.animations.walk.frames).toHaveLength(4);
     expect(manifest.animations.work.frames).toHaveLength(4);
     expect(manifest.animations.paint.frames).toHaveLength(5);

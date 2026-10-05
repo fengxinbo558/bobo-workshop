@@ -55,8 +55,8 @@ export function EnvironmentSettings({ onMessage }: EnvironmentSettingsProps) {
     setError('');
     try {
       const result = refresh
-        ? await window.noobi.refreshEnvironmentStatus()
-        : await window.noobi.getEnvironmentStatus();
+        ? await window.bobo.refreshEnvironmentStatus()
+        : await window.bobo.getEnvironmentStatus();
       setSnapshot(result);
       if (refresh) onMessage(environmentRefreshMessage(result));
     } catch (reason) {
@@ -76,9 +76,9 @@ export function EnvironmentSettings({ onMessage }: EnvironmentSettingsProps) {
     setBusy('choosing');
     setError('');
     try {
-      const binaryPath = await window.noobi.chooseGodotExecutable();
+      const binaryPath = await window.bobo.chooseGodotExecutable();
       if (!binaryPath) return;
-      const result = await window.noobi.saveGodotExecutable(binaryPath);
+      const result = await window.bobo.saveGodotExecutable(binaryPath);
       setSnapshot(result);
       onMessage(result.canCreateGodotProjects
         ? 'Godot 可执行文件已配置并通过检查。'
@@ -96,7 +96,7 @@ export function EnvironmentSettings({ onMessage }: EnvironmentSettingsProps) {
     setBusy('resetting');
     setError('');
     try {
-      const result = await window.noobi.saveGodotExecutable(null);
+      const result = await window.bobo.saveGodotExecutable(null);
       setSnapshot(result);
       onMessage('已恢复自动查找 Godot。');
     } catch (reason) {

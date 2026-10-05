@@ -1,3 +1,4 @@
+import { brandEnvironmentValue } from './branding.js';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
@@ -514,9 +515,10 @@ async function automaticCandidates(
   homeDirectory: string,
 ): Promise<GodotCandidate[]> {
   const candidates: GodotCandidate[] = [];
-  if (environment.NOOBI_GODOT_BIN) {
+  const configuredBinary = brandEnvironmentValue('BOBO_GODOT_BIN', environment);
+  if (configuredBinary) {
     try {
-      candidates.push(...await configuredCandidates(environment.NOOBI_GODOT_BIN, platform, 'environment'));
+      candidates.push(...await configuredCandidates(configuredBinary, platform, 'environment'));
     } catch {
       // A malformed optional override must not prevent ordinary discovery.
     }

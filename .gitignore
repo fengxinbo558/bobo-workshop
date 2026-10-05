@@ -4,7 +4,7 @@ release/
 coverage/
 *.log
 .DS_Store
-.noobi-smoke/
+.bobo-smoke/
 
 # Local credentials and machine-specific state
 .env*
@@ -15,7 +15,7 @@ coverage/
 *.pfx
 credentials*.json
 service-account*.json
-.noobi-private/
+.bobo-private/
 *.tsbuildinfo
 *.tmp
 

@@ -18,14 +18,17 @@ it('creates both engine templates with the approved BoBo icon and clean public b
   expect(instructions).toContain('BoBo / 波波工坊');
   expect(instructions).toContain('bobo_image_generate');
   expect(instructions).not.toMatch(/Noobi|NOOBI|noobi-game-builder|noobi_image_generate/);
+  if (engine === 'web') expect(JSON.parse(await readFile(join(p, 'package.json'), 'utf8')).name).toBe('bobo-game');
+  expect(JSON.parse(await readFile(join(p, '.bobo/project.json'), 'utf8')).id).toBe(project.id);
  }
 });
 it('finds old names in exported HTML and SVG but ignores immutable historical evidence', async () => {
  const p=await root();await mkdir(join(p,'dist'));await mkdir(join(p,'artifacts'));
  await writeFile(join(p,'dist/index.html'),'<title>NOOBI.AI</title>');
  await writeFile(join(p,'dist/icon.svg'),'<svg><text>Noobi</text></svg>');
+ await writeFile(join(p,'dist/package.json'),'{"name":"noobi-game"}');
  await writeFile(join(p,'artifacts/old.json'),'"Noobi.ai"');
- expect((await auditGeneratedBranding(p)).sort()).toEqual(['dist/icon.svg','dist/index.html']);
+ expect((await auditGeneratedBranding(p)).sort()).toEqual(['dist/icon.svg','dist/index.html','dist/package.json']);
 });
 it('refuses to traverse symlinks while auditing public output', async () => {
  const p=await root();await symlink(await root(),join(p,'outside'));
@@ -47,6 +50,6 @@ it('refreshes legacy policy, starter and icon without replacing gameplay or game
  await synchronizeWorkspaceHostPolicy(p,project);await synchronizeBoboStarterBranding(p);
  expect(await auditGeneratedBranding(p)).toEqual([]);
 });
-it('preserves private compatibility paths while updating emitted tool and skill names',()=>{
- expect(rebrandHostText('Noobi.ai .noobi/project.json noobi_image_generate noobi-game-builder')).toBe('BoBo .noobi/project.json bobo_image_generate bobo-game-builder');
+it('upgrades emitted metadata paths, tool names and skill names together',()=>{
+ expect(rebrandHostText('Noobi.ai .noobi/project.json noobi_image_generate noobi-game-builder')).toBe('BoBo .bobo/project.json bobo_image_generate bobo-game-builder');
 });

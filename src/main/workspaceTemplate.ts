@@ -1,4 +1,4 @@
-import { rebrandHostText } from './branding.js';
+import { BOBO_BRANDING_VERSION, LEGACY_BUILDER_SKILL, LEGACY_RUNTIME_ICON, rebrandHostText } from './branding.js';
 import { constants } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import {
@@ -20,12 +20,12 @@ export type WorkspaceProject = Pick<
   'id' | 'name' | 'idea' | 'createdAt' | 'model' | 'targetFrameRate'
 > & { engine?: ProjectRecord['engine'] };
 
-export const NOOBI_HOST_RUNTIME_POLICY_START = '<!-- BOBO:HOST-RUNTIME-POLICY:START -->';
-export const NOOBI_HOST_RUNTIME_POLICY_END = '<!-- BOBO:HOST-RUNTIME-POLICY:END -->';
-export const NOOBI_HOST_RUNTIME_POLICY_VERSION = 5;
+export const BOBO_HOST_RUNTIME_POLICY_START = '<!-- BOBO:HOST-RUNTIME-POLICY:START -->';
+export const BOBO_HOST_RUNTIME_POLICY_END = '<!-- BOBO:HOST-RUNTIME-POLICY:END -->';
+export const BOBO_HOST_RUNTIME_POLICY_VERSION = 5;
 
 const HOST_POLICY_FILES = {
-  metadata: '.noobi/project.json',
+  metadata: '.bobo/project.json',
   agents: 'AGENTS.md',
   skill: '.codex/skills/bobo-game-builder/SKILL.md',
 } as const;
@@ -93,7 +93,7 @@ export async function synchronizeWorkspaceHostPolicy(
     readSafeWorkspaceFile(root, HOST_POLICY_FILES.agents),
     readSafeWorkspaceFile(root, HOST_POLICY_FILES.skill).catch((error) => {
       if (error.code !== 'ENOENT') throw error;
-      return readSafeWorkspaceFile(root, '.codex/skills/noobi-game-builder/SKILL.md');
+      return readSafeWorkspaceFile(root, LEGACY_BUILDER_SKILL);
     }),
   ]);
   const metadata = parseHostProjectMetadata(metadataFile.content, project.id);
@@ -137,9 +137,9 @@ export async function synchronizeGodotPresentationPolicy(workspaceRoot: string):
     'false',
   );
   // Replace only the known upstream host icon; preserve game-specific icons.
-  if (projectContent.includes('res://resources/noobi-runtime-icon.svg')) {
+  if (projectContent.includes(`res://${LEGACY_RUNTIME_ICON}`)) {
     await writeBoboIcon(root);
-    projectContent = projectContent.replaceAll('res://resources/noobi-runtime-icon.svg', `res://${BOBO_ICON_PATH}`);
+    projectContent = projectContent.replaceAll(`res://${LEGACY_RUNTIME_ICON}`, `res://${BOBO_ICON_PATH}`);
   }
   projectContent = rebrandHostText(projectContent);
   const exportContent = setGodotIniSetting(
@@ -157,7 +157,7 @@ export async function markWorkspaceBrandingVersion(workspaceRoot: string, id: st
   const root = await canonicalWorkspaceRoot(workspaceRoot);
   const file = await readSafeWorkspaceFile(root, HOST_POLICY_FILES.metadata);
   const metadata = parseHostProjectMetadata(file.content, id);
-  metadata.brandingVersion = 1;
+  metadata.brandingVersion = BOBO_BRANDING_VERSION;
   await atomicallyReplaceSafeWorkspaceFile(root, file, JSON.stringify(metadata, null, 2) + '\n');
 }
 
@@ -178,9 +178,9 @@ export async function synchronizeBoboStarterBranding(workspaceRoot: string): Pro
   await writeBoboIcon(root);
   // Archive the old host mascot outside exported resources, retaining a recoverable copy.
   try {
-    const legacy = await readSafeWorkspaceFile(root, 'resources/noobi-runtime-icon.svg');
+    const legacy = await readSafeWorkspaceFile(root, LEGACY_RUNTIME_ICON);
     await readSafeWorkspaceFile(root, HOST_POLICY_FILES.metadata);
-    const archive = resolveTemplatePath(root, '.noobi/legacy-runtime-icon.svg');
+    const archive = resolveTemplatePath(root, '.bobo/legacy-runtime-icon.svg');
     try {
       const handle = await open(archive, WRITE_EXCLUSIVE_NOFOLLOW, 0o644);
       try { await handle.writeFile(legacy.content); } finally { await handle.close(); }
@@ -201,7 +201,7 @@ function workspaceFiles(project: WorkspaceProject): Record<string, string> {
   const engine = project.engine ?? 'web';
   const metadata = {
     schemaVersion: 1,
-    brandingVersion: 1,
+    brandingVersion: BOBO_BRANDING_VERSION,
     id: project.id,
     name: project.name,
     idea: project.idea,
@@ -213,8 +213,8 @@ function workspaceFiles(project: WorkspaceProject): Record<string, string> {
   };
 
   const sharedFiles = {
-    '.noobi/project.json': `${JSON.stringify(metadata, null, 2)}\n`,
-    '.noobi/playtest.json': playtestSpec(project),
+    '.bobo/project.json': `${JSON.stringify(metadata, null, 2)}\n`,
+    '.bobo/playtest.json': playtestSpec(project),
     '.codex/skills/bobo-game-builder/SKILL.md': gameBuilderSkill(project),
     'public/assets/asset-pack.json': `${JSON.stringify(
       {
@@ -300,7 +300,7 @@ Build and iteratively improve a playable game based on this brief:
 
 ## Starter provenance
 
-When \`.noobi/project.json\` identifies \`bobo-browser-neutral\` or \`bobo-godot-4-neutral\`, the initial source, scene, HTML, styles, controls, and preview are host-generated neutral scaffolding. They are not prior user code, implemented gameplay, or product requirements. Do not infer mechanics from them or describe them as an existing game. Replace the placeholder presentation and behavior according to the product goal, while preserving useful infrastructure such as deterministic timing only when it fits the requested game.
+When \`.bobo/project.json\` identifies \`bobo-browser-neutral\` or \`bobo-godot-4-neutral\`, the initial source, scene, HTML, styles, controls, and preview are host-generated neutral scaffolding. They are not prior user code, implemented gameplay, or product requirements. Do not infer mechanics from them or describe them as an existing game. Replace the placeholder presentation and behavior according to the product goal, while preserving useful infrastructure such as deterministic timing only when it fits the requested game.
 
 ## Engine contract
 
@@ -317,7 +317,7 @@ ${engineContract(project)}
 7. The host-selected production target is **${project.targetFrameRate} FPS**. Audit engine timing, animation timing, asset metadata, and runtime variant selection against that exact target on every pass.
 8. At the Assets stage, inventory what already exists in \`public/assets/asset-pack.json\` before generating or importing anything.
 9. Run the cheapest relevant checks after each focused change and complete the engine-specific import, validation, and export checks before declaring completion.
-10. Keep \`.noobi/playtest.json\` aligned with the production entrypoint, controls, shortest complete player journey, observable feedback, pause/resume, and restart behavior.
+10. Keep \`.bobo/playtest.json\` aligned with the production entrypoint, controls, shortest complete player journey, observable feedback, pause/resume, and restart behavior.
 11. Report exactly what changed, what was verified, and any remaining limitation.
 
 ## Target frame-rate contract
@@ -347,7 +347,7 @@ ${engineContract(project)}
 
 ## Experience playtest contract
 
-- \`.noobi/playtest.json\` is the executable, project-owned description of the shortest complete player journey. Update it whenever the entrypoint, controls, rules, UI, or state flow changes.
+- \`.bobo/playtest.json\` is the executable, project-owned description of the shortest complete player journey. Update it whenever the entrypoint, controls, rules, UI, or state flow changes.
 - Keep all five common action mappings: \`start\`, \`move\`, \`primary\`, \`pause\`, and \`restart\`. Its ordered journey must prove a non-blank launch, visible movement/navigation, primary-action feedback, progress, representative failure or invalid feedback, pause/resume, a terminal state, and a restart to a fresh playable state.
 - Inputs are limited to bounded key, pointer, look, drag, and wait actions. Use look for first/third-person camera motion and drag for card, inventory, map, aiming, or touch-like gestures. Observations are limited to canvas-not-blank, screen-change, text-visible, and element-visible checks. Use only project-relative entrypoint and evidence paths; never include executable JavaScript, shell commands, URLs, absolute paths, or secrets.
 - The BoBo host exclusively owns \`artifacts/playtest/\`. Never create, edit, or fabricate its report or screenshots. When \`artifacts/playtest/latest/report.json\` exists, treat its per-step statuses, console/runtime errors, durations, and referenced screenshots as verification evidence; repair failed, stale, blank, missing, or implausibly unchanged evidence.
@@ -355,7 +355,7 @@ ${engineContract(project)}
 ## Engineering boundaries
 
 - Stay inside this workspace. Do not read or write credentials, global config, or unrelated directories.
-- Never edit \`.noobi/project.json\`; it is owned by the BoBo host.
+- Never edit \`.bobo/project.json\`; it is owned by the BoBo host.
 - Never write to \`artifacts/playtest/\`; host-generated reports and captures are immutable evidence.
 - Do not fabricate asset generation, test, or build results.
 - Ask before destructive operations, dependency installation, network access, or opening external applications.
@@ -391,7 +391,7 @@ ${engineContract(project)}
 - ${project.engine === 'godot' ? 'Use the generated Godot scene as the starter and choose Node2D/Control or Node3D composition deliberately; do not replace the engine with a browser Canvas loop.' : 'Decide whether the zero-dependency Canvas starter is sufficient as the renderer.'} Regardless of renderer, the finished game must load and visibly use a host-attested image from the configured API or Codex ImageGen fallback.
 - Perform an animation needs assessment on every request, including focused iterations. Set presentation to \`2d\`, \`2.5d\`, or \`3d\`, then choose \`generate\`, \`reuse\`, or \`not-needed\`: generate only for a real asset gap or incompatible change, reuse only with verified multi-pose/sprite-sheet or rigged-GLB clip evidence, and not-needed only when transforms, particles, camera motion, or UI transitions truthfully cover the requested feedback without pose/form changes.
 - Inventory core visual subjects separately from the mandatory single-image proof. Record stable subject/card/entity IDs and their exact path or atlas region; backgrounds and decorative art never cover missing interactive entities.
-- Define the shortest complete player-experience journey and keep it executable in \`.noobi/playtest.json\`: launch/start, move, primary action, progress, failure or invalid feedback, pause/resume, terminal result, and restart.
+- Define the shortest complete player-experience journey and keep it executable in \`.bobo/playtest.json\`: launch/start, move, primary action, progress, failure or invalid feedback, pause/resume, terminal result, and restart.
 - Treat **${project.targetFrameRate} FPS** as the host-selected production target. Locate engine timing, animation timing, current asset target tags, and variant-selection code before planning changes.
 - ${project.engine === 'godot' ? 'Use Godot scenes, InputMap actions, AnimationPlayer/AnimationTree, cameras, and physics directly; do not add Phaser or Three.js to implement the game runtime.' : 'Adopt Phaser 3 only when scenes, input mapping, animation, cameras, or physics justify the dependency.'}
 - Treat a focused change as starting at the earliest stage it affects; do not rebuild unaffected work.
@@ -469,7 +469,7 @@ ${verificationChecklist(project)}
 
 For media-heavy or 3D work, also verify asset load failures, mute/volume behavior, representative low-end performance, GLB materials from more than one camera angle, and that every manifest path resolves from a production build.
 
-Update and inspect \`.noobi/playtest.json\` before handoff. It must use schemaVersion 1, project-relative paths, the five common actions (start, move, primary, pause, restart), bounded key/pointer/look/drag/wait inputs, and only canvas-not-blank, screen-change, text-visible, or element-visible observations. Use look for camera motion and drag for card, inventory, map, aiming, or touch-like gestures. It may not contain executable JavaScript, shell commands, URLs, absolute paths, or secrets. Never write to \`artifacts/playtest/\`; that evidence belongs to the host. If \`artifacts/playtest/latest/report.json\` exists, inspect every declared journey step and referenced screenshot, and reject failures, timeouts, console/runtime errors, blank or missing captures, stale entrypoints, and implausibly unchanged before/after frames. If it does not exist yet, report host playtest as pending rather than inventing a pass.
+Update and inspect \`.bobo/playtest.json\` before handoff. It must use schemaVersion 1, project-relative paths, the five common actions (start, move, primary, pause, restart), bounded key/pointer/look/drag/wait inputs, and only canvas-not-blank, screen-change, text-visible, or element-visible observations. Use look for camera motion and drag for card, inventory, map, aiming, or touch-like gestures. It may not contain executable JavaScript, shell commands, URLs, absolute paths, or secrets. Never write to \`artifacts/playtest/\`; that evidence belongs to the host. If \`artifacts/playtest/latest/report.json\` exists, inspect every declared journey step and referenced screenshot, and reject failures, timeouts, console/runtime errors, blank or missing captures, stale entrypoints, and implausibly unchanged before/after frames. If it does not exist yet, report host playtest as pending rather than inventing a pass.
 
 Before handing off any game, verify all three generated-image acceptance conditions: the host has a private path/SHA proof from the configured API or Codex ImageGen fallback, the project-relative path resolves in the production build, and the running game visibly uses it. Manifest provider fields alone do not count. If any condition fails, continue fixing or report a blocker instead of claiming completion.
 
@@ -875,7 +875,7 @@ ${frameRateImplementation(project)}
 
 ## Player experience journey
 
-- Contract: Keep the executable route in \`.noobi/playtest.json\` at schemaVersion 1.
+- Contract: Keep the executable route in \`.bobo/playtest.json\` at schemaVersion 1.
 - Launch/start: Define the production entrypoint, ready signal, and start input.
 - Core control: Define visible movement/navigation and the primary-action feedback.
 - Loop feedback: Define observable progress plus representative failure or invalid-action feedback.
@@ -890,7 +890,7 @@ ${frameRateImplementation(project)}
 - Progress and representative failure or invalid-action feedback are observable.
 - A terminal result is reachable through the intended player loop.
 - The game can restart without reloading the page.
-- \`.noobi/playtest.json\` matches the production controls and describes one bounded end-to-end player journey through start, movement, primary action, progress/failure feedback, pause/resume, terminal result, and restart.
+- \`.bobo/playtest.json\` matches the production controls and describes one bounded end-to-end player journey through start, movement, primary action, progress/failure feedback, pause/resume, terminal result, and restart.
 - When host playtest evidence exists, \`artifacts/playtest/latest/report.json\` passes every declared step and its referenced screenshots are non-blank, present, and consistent with the observations.
 - The host has a private path/SHA attestation for an image produced by the configured API or Codex ImageGen fallback.
 - The generated image path resolves from a production build and the running game visibly renders it.
@@ -920,7 +920,7 @@ ${runInstructions(project)}
 
 Every BoBo run includes an animation needs assessment with \`generate\`, \`reuse\`, or \`not-needed\`. Generate new 2D/2.5D keyframes through the configured image API with Codex ImageGen fallback only when existing animation assets are absent or incompatible; otherwise verify and reuse the existing frame set/sprite sheet. Actual rigged 3D characters use real GLB animation clips, with generated images limited to reference or billboard work. A justified not-needed assessment must still ship visible programmatic motion or gameplay feedback. The separate requirement to register and visibly use a qualifying host-generated image remains in force.
 
-The project keeps an executable experience route in \`.noobi/playtest.json\`. It maps start, move, primary action, pause, and restart to bounded inputs, then defines observable steps for a full playable loop. BoBo owns the resulting \`artifacts/playtest/latest/report.json\` and screenshots; game code must never fabricate that evidence.
+The project keeps an executable experience route in \`.bobo/playtest.json\`. It maps start, move, primary action, pause, and restart to bounded inputs, then defines observable steps for a full playable loop. BoBo owns the resulting \`artifacts/playtest/latest/report.json\` and screenshots; game code must never fabricate that evidence.
 
 This project targets **${project.targetFrameRate} FPS**. Simulation and animation playback use deterministic elapsed-time/fixed-step timing, while actual presentation remains limited by the display. Animation assets carry target/source FPS and duration metadata and production code selects the matching variant. The target does not require ${project.targetFrameRate} unique bitmap images per second; intentional lower-rate keyframes may use timed holds or interpolation. Changing the target requires an audit and replacement/reselection of stale timing and animation variants.
 `;
@@ -1136,17 +1136,17 @@ function managedRuntimePolicy(targetFrameRate: ProjectRecord['targetFrameRate'])
   if (!isTargetFrameRate(targetFrameRate)) {
     throw new Error('Workspace host policy targetFrameRate must be 30, 60, or 120');
   }
-  return `${NOOBI_HOST_RUNTIME_POLICY_START}
-## BoBo host runtime and media policy (managed, v${NOOBI_HOST_RUNTIME_POLICY_VERSION})
+  return `${BOBO_HOST_RUNTIME_POLICY_START}
+## BoBo host runtime and media policy (managed, v${BOBO_HOST_RUNTIME_POLICY_VERSION})
 
 - Product identity is **BoBo / 波波工坊**. Use only this name for host credits, loading screens, window titles, watermarks and export metadata. Never reintroduce the upstream product name or mascot from old conversation history. Keep the game’s own user-chosen title.
 - The supplied \`resources/bobo-runtime-icon.png\` is the approved orange-and-cream BoBo mascot. Use it for host identity or create game-specific artwork; do not copy an upstream mascot. Check final screenshots, generated images, splash screens and exported icons for incorrect logos/text. No host watermark is required inside gameplay.
 - Private compatibility identifiers in dot-directories, protocols or stored settings are not a product name and must never be rendered as credits or branding.
-- Managed host policy version: \`${NOOBI_HOST_RUNTIME_POLICY_VERSION}\`.
+- Managed host policy version: \`${BOBO_HOST_RUNTIME_POLICY_VERSION}\`.
 - Current host-selected target: **${targetFrameRate} FPS**.
-- The host-owned \`.noobi/project.json\` field \`targetFrameRate=${targetFrameRate}\` is authoritative for this run.
+- The host-owned \`.bobo/project.json\` field \`targetFrameRate=${targetFrameRate}\` is authoritative for this run.
 - This managed block overrides any lower, potentially stale text about a different concrete FPS, host media routing or availability, required music, or permitted audio fallbacks. Keep the lower project instructions, but apply their timing and asset-variant rules using ${targetFrameRate} FPS and apply this block's media acceptance gate.
-- Agents must not edit \`.noobi/project.json\` or this managed block; BoBo refreshes both before each Harness run.
+- Agents must not edit \`.bobo/project.json\` or this managed block; BoBo refreshes both before each Harness run.
 
 ### Core visual coverage
 
@@ -1161,7 +1161,7 @@ function managedRuntimePolicy(targetFrameRate: ProjectRecord['targetFrameRate'])
 
 ### Experience playtest acceptance
 
-- Maintain \`.noobi/playtest.json\` at schemaVersion 1 as the executable shortest player journey. It must map real production inputs for start, move, primary, pause, and restart, then cover progress, representative failure or invalid feedback, a terminal state, and restart to a fresh playable state.
+- Maintain \`.bobo/playtest.json\` at schemaVersion 1 as the executable shortest player journey. It must map real production inputs for start, move, primary, pause, and restart, then cover progress, representative failure or invalid feedback, a terminal state, and restart to a fresh playable state.
 - Use only bounded key, pointer, look, drag, and wait inputs; safe canvas-not-blank, screen-change, text-visible, and element-visible observations; and project-relative entrypoint/evidence paths. Use look for camera motion and drag for card, inventory, map, aiming, or touch-like gestures. Never place executable JavaScript, shell commands, URLs, absolute paths, or secrets in this contract.
 - \`artifacts/playtest/\` is host-owned immutable evidence. Agents must not create or edit its report or captures. When a report exists, inspect its per-step status, console/runtime errors, timings, and referenced screenshots; failed, stale, blank, missing, or implausibly unchanged evidence requires repair. If artifacts are absent before the host gate runs, describe the host playtest as pending rather than fabricating a pass.
 
@@ -1171,7 +1171,7 @@ function managedRuntimePolicy(targetFrameRate: ProjectRecord['targetFrameRate'])
 - Satisfy that requirement by actually calling \`bobo_audio_generate\` with \`purpose=music\`. The accepted audio file must exist under \`public/assets/audio/\`, be registered in \`public/assets/asset-pack.json\` through the asset tools when available or with verified metadata otherwise, and be loaded and played by production game code during normal gameplay (after any platform-required user gesture). A tool call without accepted output, provider text, a manifest-only entry, or an unused file does not count.
 - If required music generation, ingestion, loading, or playback fails, repair/retry it or report the game as blocked. Never silently substitute procedural or synthesized audio and present that substitute as the required MiniMax music or as successful completion.
 - Programmatic or synthesized audio remains valid for generic non-vocal SFX such as impacts, footsteps, gunshots, and UI cues, including \`bobo_audio_synthesize\` or engine-native deterministic audio. Those effects may accompany the generated track but never satisfy or replace the required-music contract.
-${NOOBI_HOST_RUNTIME_POLICY_END}`;
+${BOBO_HOST_RUNTIME_POLICY_END}`;
 }
 
 function placeManagedRuntimePolicy(
@@ -1196,20 +1196,20 @@ function stripManagedRuntimePolicies(content: string): string {
   let cursor = 0;
   let result = '';
   while (true) {
-    const start = content.indexOf(NOOBI_HOST_RUNTIME_POLICY_START, cursor);
+    const start = content.indexOf(BOBO_HOST_RUNTIME_POLICY_START, cursor);
     if (start < 0) break;
-    const end = content.indexOf(NOOBI_HOST_RUNTIME_POLICY_END, start + NOOBI_HOST_RUNTIME_POLICY_START.length);
-    const nestedStart = content.indexOf(NOOBI_HOST_RUNTIME_POLICY_START, start + NOOBI_HOST_RUNTIME_POLICY_START.length);
+    const end = content.indexOf(BOBO_HOST_RUNTIME_POLICY_END, start + BOBO_HOST_RUNTIME_POLICY_START.length);
+    const nestedStart = content.indexOf(BOBO_HOST_RUNTIME_POLICY_START, start + BOBO_HOST_RUNTIME_POLICY_START.length);
     if (end < 0 || (nestedStart >= 0 && nestedStart < end)) {
       throw new Error('Workspace contains a malformed BoBo host runtime policy block');
     }
     result += content.slice(cursor, start);
-    cursor = end + NOOBI_HOST_RUNTIME_POLICY_END.length;
+    cursor = end + BOBO_HOST_RUNTIME_POLICY_END.length;
   }
   result += content.slice(cursor);
   if (
-    result.includes(NOOBI_HOST_RUNTIME_POLICY_START)
-    || result.includes(NOOBI_HOST_RUNTIME_POLICY_END)
+    result.includes(BOBO_HOST_RUNTIME_POLICY_START)
+    || result.includes(BOBO_HOST_RUNTIME_POLICY_END)
   ) {
     throw new Error('Workspace contains a malformed BoBo host runtime policy block');
   }
@@ -1427,7 +1427,7 @@ function packageSlug(name: string): string {
     .replace(/[^a-z0-9]+/gu, '-')
     .replace(/^-+|-+$/gu, '')
     .slice(0, 64);
-  return slug || 'noobi-game';
+  return slug || 'bobo-game';
 }
 
 function asMarkdownQuote(value: string): string {

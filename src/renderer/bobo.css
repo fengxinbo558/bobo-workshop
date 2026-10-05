@@ -115,8 +115,8 @@ img { image-rendering: auto; }
 .inspector-tabs button, .inspector-toolbar, .inspector-footer { font-size: 12px; }
 .inspector-tabs button.is-active { color: var(--accent); }
 .preview-empty { background: var(--panel); color: var(--muted); padding: 24px; text-align: center; }
-.noobi-pack-card img, .noobi-scene-card img, .inspector-crew-avatars img, .inspector-solo-indicator img, .launch-transition img { image-rendering: auto; }
-.noobi-pack-card, .noobi-scene-card, .noobi-crew-card { border-radius: 12px; box-shadow: none; }
+.bobo-pack-card img, .bobo-scene-card img, .inspector-crew-avatars img, .inspector-solo-indicator img, .launch-transition img { image-rendering: auto; }
+.bobo-pack-card, .bobo-scene-card, .bobo-crew-card { border-radius: 12px; box-shadow: none; }
 .settings-dialog, .modal { border-radius: 18px; }
 @media (max-width: 1100px) {
   .home-scroll { padding: 0 24px 28px; }

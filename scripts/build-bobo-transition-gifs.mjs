@@ -18,11 +18,11 @@ const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDirectory, '..');
 const sceneDirectory = join(
   projectRoot,
-  'src/renderer/assets/noobi-transition-scenes',
+  'src/renderer/assets/bobo-transition-scenes',
 );
 const spriteDirectory = join(
   projectRoot,
-  'src/renderer/assets/noobi-packs/classic/frames',
+  'src/renderer/assets/bobo-packs/classic/frames',
 );
 
 const canvasWidth = 480;
@@ -143,8 +143,8 @@ async function removeAlphaSpeckles(path) {
 
 async function buildSceneGif(scene) {
   const scenePath = join(sceneDirectory, `scene-${scene.id}.png`);
-  const previewPath = join(sceneDirectory, `noobi-${scene.id}.png`);
-  const outputPath = join(sceneDirectory, `noobi-${scene.id}.gif`);
+  const previewPath = join(sceneDirectory, `bobo-${scene.id}.png`);
+  const outputPath = join(sceneDirectory, `bobo-${scene.id}.gif`);
   const spriteAPath = join(spriteDirectory, `sprite-${scene.action}-a.png`);
   const spriteBPath = join(spriteDirectory, `sprite-${scene.action}-b.png`);
 
@@ -154,7 +154,7 @@ async function buildSceneGif(scene) {
     requireFile(spriteBPath),
   ]);
 
-  const temporaryDirectory = await mkdtemp(join(tmpdir(), `noobi-${scene.id}-`));
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), `bobo-${scene.id}-`));
 
   try {
     const normalizedScenePath = join(temporaryDirectory, 'scene.png');

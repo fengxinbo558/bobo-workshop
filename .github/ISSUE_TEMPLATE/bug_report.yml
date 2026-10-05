@@ -1,11 +1,11 @@
 name: Bug report
-description: Report a reproducible problem in Noobi.ai
+description: Report a reproducible problem in 波波工坊
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve Noobi.ai. Remove secrets and private project data before submitting.
+      value: Thanks for helping improve 波波工坊. Remove secrets and private project data before submitting.
   - type: input
     id: version
     attributes:

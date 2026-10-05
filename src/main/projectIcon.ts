@@ -15,7 +15,7 @@ import { deflateSync } from 'node:zlib';
 import type { MediaGenerationService } from './mediaGenerationService.js';
 import type { ProjectIcon, ProjectRecord } from '../shared/contracts.js';
 
-export const PROJECT_ICON_RELATIVE_PATH = '.noobi/icon.png';
+export const PROJECT_ICON_RELATIVE_PATH = '.bobo/icon.png';
 export const PROJECT_ICON_GRID_SIZE = 16;
 export const MAX_PROJECT_ICON_BYTES = 8 * 1024 * 1024;
 
@@ -77,7 +77,7 @@ export function renderProceduralIconPixels(seed: string): {
 } {
   const size = PROJECT_ICON_GRID_SIZE;
   const half = size / 2;
-  const rng = seededRandom(`noobi-icon:${seed}`);
+  const rng = seededRandom(`bobo-icon:${seed}`);
   const hue = Math.floor(rng() * 360);
   const background = hslToRgb(hue, 0.32, 0.13);
   const body = hslToRgb(hue, 0.62, 0.56);
@@ -214,7 +214,7 @@ async function verifiedIconDirectory(
   create: boolean,
 ): Promise<{ directory: string; absolute: string } | null> {
   const root = await realpath(project.root);
-  const directory = join(root, '.noobi');
+  const directory = join(root, '.bobo');
   if (create) {
     try {
       await mkdir(directory, { mode: 0o700 });

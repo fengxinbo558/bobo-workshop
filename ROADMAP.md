@@ -1,6 +1,6 @@
-# Noobi.ai roadmap
+# 波波工坊 roadmap
 
-Noobi.ai is a macOS developer preview. This roadmap describes useful directions, not delivery promises. If you want to work on a larger item, open a proposal issue first so the implementation can be scoped with the maintainers.
+波波工坊 is a macOS developer preview. This roadmap describes useful directions, not delivery promises. If you want to work on a larger item, open a proposal issue first so the implementation can be scoped with the maintainers.
 
 ## Reliability and release readiness
 

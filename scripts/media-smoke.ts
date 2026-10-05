@@ -7,7 +7,7 @@ import { MEDIA_DYNAMIC_TOOLS, MediaToolBroker } from '../src/main/mediaToolBroke
 import { createWorkspaceTemplate } from '../src/main/workspaceTemplate.js';
 import { prepareSmokeHome } from './smokeHome.js';
 
-const workspace = await mkdtemp(join(tmpdir(), 'noobi-media-smoke-'));
+const workspace = await mkdtemp(join(tmpdir(), 'bobo-media-smoke-'));
 const smokeHome = await prepareSmokeHome();
 const runtime = new CodexAppServer({ codexHome: smokeHome.path });
 const assetStore = new AssetStore();

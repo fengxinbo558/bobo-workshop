@@ -439,14 +439,14 @@ export function hideGodotBrandingInHtml(source: string): string {
     .replace(/<link\b(?=[^>]*\bid=["']-gd-engine-icon["'])[^>]*>\s*/iu, '')
     .replace(/<link\b(?=[^>]*\brel=["']apple-touch-icon["'])[^>]*\/?>\s*/iu, '');
 
-  if (withoutStaticBranding.includes('id="noobi-godot-branding-guard"')) {
+  if (withoutStaticBranding.includes('id="bobo-godot-branding-guard"')) {
     return withoutStaticBranding;
   }
 
   // Godot's Web runtime injects its default favicon after the document has
   // loaded, even when html/export_icon=false. Remove icon links synchronously
   // at the next mutation microtask so the engine logo never reaches a paint.
-  const guard = `<script id="noobi-godot-branding-guard">(()=>{const i=e=>e instanceof HTMLLinkElement&&e.rel.split(/\\s+/).includes('icon');const p=()=>document.querySelectorAll('link[rel~="icon"]').forEach(e=>e.remove());p();new MutationObserver(r=>{for(const m of r)for(const e of m.addedNodes)i(e)&&e.remove();}).observe(document.documentElement,{childList:true,subtree:true});})();</script>`;
+  const guard = `<script id="bobo-godot-branding-guard">(()=>{const i=e=>e instanceof HTMLLinkElement&&e.rel.split(/\\s+/).includes('icon');const p=()=>document.querySelectorAll('link[rel~="icon"]').forEach(e=>e.remove());p();new MutationObserver(r=>{for(const m of r)for(const e of m.addedNodes)i(e)&&e.remove();}).observe(document.documentElement,{childList:true,subtree:true});})();</script>`;
   return /<\/head>/iu.test(withoutStaticBranding)
     ? withoutStaticBranding.replace(/<\/head>/iu, `${guard}</head>`)
     : `${guard}${withoutStaticBranding}`;

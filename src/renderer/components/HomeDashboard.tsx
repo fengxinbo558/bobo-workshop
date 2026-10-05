@@ -86,7 +86,7 @@ interface HomeDashboardProps {
   onLaunch: (input: HomeLaunchInput) => Promise<void>;
   onOpenProject: (project: ProjectRecord) => void;
   onOpenRail: () => void;
-  onOpenSettings: (section?: 'account' | 'environment' | 'media' | 'noobi') => void;
+  onOpenSettings: (section?: 'account' | 'environment' | 'media' | 'bobo') => void;
   onToggleTheme: () => void;
 }
 
@@ -417,7 +417,7 @@ export function HomeDashboard({
             </div>
           )}
         </section>
-        <section className="bobo-home-crew" aria-label="我的制作伙伴"><h2>我的制作伙伴</h2><div>{Object.entries(BOBO_ROLES).map(([role, member]) => <button key={role} type="button" onClick={() => onOpenSettings('noobi')}><img src={member.image} alt="" /><strong>{member.label}</strong><span>{member.detail}</span></button>)}</div></section>
+        <section className="bobo-home-crew" aria-label="我的制作伙伴"><h2>我的制作伙伴</h2><div>{Object.entries(BOBO_ROLES).map(([role, member]) => <button key={role} type="button" onClick={() => onOpenSettings('bobo')}><img src={member.image} alt="" /><strong>{member.label}</strong><span>{member.detail}</span></button>)}</div></section>
       </div>
     </section>
   );

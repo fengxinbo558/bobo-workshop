@@ -1,4 +1,4 @@
-# Noobi 工坊信息架构
+# Bobo 工坊信息架构
 
 ## 目标
 
@@ -7,7 +7,7 @@
 ## 层级
 
 1. **单人默认**
-   - 角色：五个 Noobi 形象，单选。
+   - 角色：五个 Bobo 形象，单选。
    - 工作室：五个像素工作室，单选，且与角色独立组合。
    - 选择任一单人选项即把运行方式切回单人。
 2. **多人协作（可选）**
@@ -17,17 +17,17 @@
 
 ## 状态模型
 
-- `defaultNoobiStageMode`：当前默认运行方式，`solo` 或 `crew`。
-- `defaultNoobiPackId`：单人角色。
-- `defaultNoobiSoloSceneId`：单人工作室。
-- `defaultNoobiCrew`：多人编队与岗位。
-- `defaultNoobiSceneId`：多人舞台。
+- `defaultBoboStageMode`：当前默认运行方式，`solo` 或 `crew`。
+- `defaultBoboPackId`：单人角色。
+- `defaultBoboSoloSceneId`：单人工作室。
+- `defaultBoboCrew`：多人编队与岗位。
+- `defaultBoboSceneId`：多人舞台。
 
 单人和多人选择分别保留，因此来回切换不会丢失上一次配置。旧设置迁移为单人默认，同时保留原有角色、编队和多人舞台数据。
 
 ## 运行规则
 
-- 单人模式只渲染一个动态角色；角色素材来自 `defaultNoobiPackId`，背景来自 `defaultNoobiSoloSceneId`。
+- 单人模式只渲染一个动态角色；角色素材来自 `defaultBoboPackId`，背景来自 `defaultBoboSoloSceneId`。
 - 协作工坊按编队渲染 2–4 个角色。
 - 荷塘钓鱼使用固定四人的完整循环演出，不重复叠加编队角色。
 

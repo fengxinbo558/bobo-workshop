@@ -28,8 +28,8 @@ import type {
   FileNode,
   FileReadResult,
   GameEngine,
-  NoobiCrewMember,
-  NoobiPackId,
+  BoboCrewMember,
+  BoboPackId,
   PipelineStage,
   ProjectIcon,
   ProjectRecord,
@@ -38,23 +38,24 @@ import type {
 } from '../shared/contracts.js';
 import {
   DEFAULT_GAME_ENGINE,
-  DEFAULT_NOOBI_CREW,
-  DEFAULT_NOOBI_PACK_ID,
-  DEFAULT_NOOBI_SCENE_ID,
-  DEFAULT_NOOBI_SOLO_SCENE_ID,
-  DEFAULT_NOOBI_STAGE_MODE,
+  DEFAULT_BOBO_CREW,
+  DEFAULT_BOBO_PACK_ID,
+  DEFAULT_BOBO_SCENE_ID,
+  DEFAULT_BOBO_SOLO_SCENE_ID,
+  DEFAULT_BOBO_STAGE_MODE,
   DEFAULT_TARGET_FRAME_RATE,
-  NOOBI_CREW_MAX_SIZE,
-  NOOBI_CREW_MIN_SIZE,
-  NOOBI_PACK_IDS,
+  BOBO_CREW_MAX_SIZE,
+  BOBO_CREW_MIN_SIZE,
+  BOBO_PACK_IDS,
   isGameEngine,
-  isNoobiCrewRole,
-  isNoobiPackId,
-  isNoobiSceneId,
-  isNoobiStageMode,
+  isBoboCrewRole,
+  isBoboPackId,
+  isBoboSceneId,
+  isBoboStageMode,
   isTargetFrameRate,
 } from '../shared/contracts.js';
 import { createWorkspaceTemplate } from './workspaceTemplate.js';
+import { migrateLegacyProjectDirectory, migrateLegacyProjectStore } from './legacyMigration.js';
 
 const STORE_VERSION = 1;
 const MAX_FILE_BYTES = 1024 * 1024;
@@ -189,8 +190,8 @@ export class ProjectStore {
         stage: 'brief',
         engine: normalized.engine,
         targetFrameRate: DEFAULT_TARGET_FRAME_RATE,
-        noobiPackOverrideId: null,
-        noobiCrewOverride: null,
+        boboPackOverrideId: null,
+        boboCrewOverride: null,
         model: normalized.model,
         threadId: null,
         toolsetVersion: 0,
@@ -252,7 +253,7 @@ export class ProjectStore {
           maxRetries: 3,
           retryDelay: 100,
         }).catch((error) => {
-          if (process.env.NOOBI_DEBUG === '1') {
+          if (process.env.BOBO_DEBUG === '1') {
             process.stderr.write(
               `[project-store] staged workspace cleanup failed for ${id}: ${asError(error).message}\n`,
             );
@@ -326,6 +327,16 @@ export class ProjectStore {
     try {
       const source = await readFile(this.storageFile, 'utf8');
       const loaded = parsePersistedStore(source);
+      for (const project of loaded.store.projects) {
+        try {
+          await migrateLegacyProjectDirectory(project.root, project.id);
+        } catch (error) {
+          // One damaged or disconnected workspace must not hide the whole library.
+          // Keep its entry and original files available for repair/reconnection.
+          project.lastError = `波波工坊项目升级未完成：${asError(error).message}`;
+          loaded.needsMigration = true;
+        }
+      }
       if (loaded.needsMigration) {
         await atomicWriteJson(this.storageFile, loaded.store);
       }
@@ -546,7 +557,7 @@ async function stageVerifiedWorkspaceForDeletion(project: ProjectRecord): Promis
     throw new Error('Project workspace path does not match its canonical directory');
   }
 
-  const metadataPath = join(lexicalRoot, '.noobi', 'project.json');
+  const metadataPath = join(lexicalRoot, '.bobo', 'project.json');
   const handle = await open(metadataPath, READ_ONLY_NOFOLLOW);
   try {
     const info = await handle.stat();
@@ -566,7 +577,7 @@ async function stageVerifiedWorkspaceForDeletion(project: ProjectRecord): Promis
 
   const stagedRoot = join(
     dirname(lexicalRoot),
-    `.${basename(lexicalRoot)}.noobi-delete-${randomUUID()}`,
+    `.${basename(lexicalRoot)}.bobo-delete-${randomUUID()}`,
   );
   await rename(lexicalRoot, stagedRoot);
   return stagedRoot;
@@ -626,8 +637,8 @@ function applyProjectPatch(current: ProjectRecord, patch: ProjectPatch): Project
     'status',
     'stage',
     'targetFrameRate',
-    'noobiPackOverrideId',
-    'noobiCrewOverride',
+    'boboPackOverrideId',
+    'boboCrewOverride',
     'model',
     'threadId',
     'toolsetVersion',
@@ -659,18 +670,18 @@ function applyProjectPatch(current: ProjectRecord, patch: ProjectPatch): Project
     }
     next.targetFrameRate = patch.targetFrameRate;
   }
-  if (patch.noobiPackOverrideId !== undefined) {
-    if (patch.noobiPackOverrideId !== null && !isNoobiPackId(patch.noobiPackOverrideId)) {
+  if (patch.boboPackOverrideId !== undefined) {
+    if (patch.boboPackOverrideId !== null && !isBoboPackId(patch.boboPackOverrideId)) {
       throw new Error(
-        `Project noobiPackOverrideId must be ${NOOBI_PACK_IDS.join(', ')}, or null`,
+        `Project boboPackOverrideId must be ${BOBO_PACK_IDS.join(', ')}, or null`,
       );
     }
-    next.noobiPackOverrideId = patch.noobiPackOverrideId;
+    next.boboPackOverrideId = patch.boboPackOverrideId;
   }
-  if (patch.noobiCrewOverride !== undefined) {
-    next.noobiCrewOverride = patch.noobiCrewOverride === null
+  if (patch.boboCrewOverride !== undefined) {
+    next.boboCrewOverride = patch.boboCrewOverride === null
       ? null
-      : validatedNoobiCrew(patch.noobiCrewOverride, 'Project noobiCrewOverride');
+      : validatedBoboCrew(patch.boboCrewOverride, 'Project boboCrewOverride');
   }
   for (const field of ['model', 'threadId', 'activeTurnId', 'lastError'] as const) {
     if (patch[field] !== undefined) {
@@ -703,6 +714,8 @@ function parsePersistedStore(source: string): {
   } catch (error) {
     throw new Error(`Project store contains invalid JSON: ${asError(error).message}`);
   }
+  const brandMigration = migrateLegacyProjectStore(parsed);
+  parsed = brandMigration.value;
   if (!isRecord(parsed) || parsed.version !== STORE_VERSION || !Array.isArray(parsed.projects)) {
     throw new Error(`Unsupported or invalid project store schema (expected version ${STORE_VERSION})`);
   }
@@ -718,22 +731,22 @@ function parsePersistedStore(source: string): {
       projects,
       settings: validateSettings(parsed.settings),
     },
-    needsMigration: parsed.projects.some(
+    needsMigration: brandMigration.changed || parsed.projects.some(
       (project) => isRecord(project)
         && (
           project.targetFrameRate === undefined
           || project.engine === undefined
           || project.pinned === undefined
-          || project.noobiPackOverrideId === undefined
-          || project.noobiCrewOverride === undefined
+          || project.boboPackOverrideId === undefined
+          || project.boboCrewOverride === undefined
           || project.icon === undefined
         ),
     ) || !isRecord(parsed.settings)
-      || parsed.settings.defaultNoobiStageMode === undefined
-      || parsed.settings.defaultNoobiSoloSceneId === undefined
-      || parsed.settings.defaultNoobiSceneId === undefined
-      || parsed.settings.defaultNoobiPackId === undefined
-      || parsed.settings.defaultNoobiCrew === undefined,
+      || parsed.settings.defaultBoboStageMode === undefined
+      || parsed.settings.defaultBoboSoloSceneId === undefined
+      || parsed.settings.defaultBoboSceneId === undefined
+      || parsed.settings.defaultBoboPackId === undefined
+      || parsed.settings.defaultBoboCrew === undefined,
   };
 }
 
@@ -770,12 +783,12 @@ function validateProjectRecord(value: unknown): ProjectRecord {
     targetFrameRate: value.targetFrameRate === undefined
       ? DEFAULT_TARGET_FRAME_RATE
       : validatedTargetFrameRate(value.targetFrameRate, id),
-    noobiPackOverrideId: value.noobiPackOverrideId === undefined
+    boboPackOverrideId: value.boboPackOverrideId === undefined
       ? null
-      : validatedNoobiPackOverrideId(value.noobiPackOverrideId, id),
-    noobiCrewOverride: value.noobiCrewOverride === undefined
+      : validatedBoboPackOverrideId(value.boboPackOverrideId, id),
+    boboCrewOverride: value.boboCrewOverride === undefined
       ? null
-      : validatedNoobiCrewOverride(value.noobiCrewOverride, id),
+      : validatedBoboCrewOverride(value.boboCrewOverride, id),
     model: nullableString(value.model, `Project ${id} model`),
     threadId: nullableString(value.threadId, `Project ${id} thread id`),
     toolsetVersion: value.toolsetVersion === undefined
@@ -803,7 +816,7 @@ function validatedProjectIcon(value: unknown, projectId: string): ProjectIcon {
   } catch {
     throw new Error(`Project ${projectId} has an invalid icon path`);
   }
-  if (path !== '.noobi/icon.png') {
+  if (path !== '.bobo/icon.png') {
     throw new Error(`Project ${projectId} has an unexpected icon path`);
   }
   if (value.source !== 'procedural' && value.source !== 'ai') {
@@ -827,33 +840,33 @@ function validatedGameEngine(value: unknown, projectId: string): GameEngine {
   return value;
 }
 
-function validatedNoobiPackOverrideId(value: unknown, projectId: string): NoobiPackId | null {
-  if (value !== null && !isNoobiPackId(value)) {
+function validatedBoboPackOverrideId(value: unknown, projectId: string): BoboPackId | null {
+  if (value !== null && !isBoboPackId(value)) {
     throw new Error(`Project ${projectId} has an invalid BoBo pack override`);
   }
   return value;
 }
 
-function validatedNoobiCrewOverride(value: unknown, projectId: string): NoobiCrewMember[] | null {
-  return value === null ? null : validatedNoobiCrew(value, `Project ${projectId} BoBo crew override`);
+function validatedBoboCrewOverride(value: unknown, projectId: string): BoboCrewMember[] | null {
+  return value === null ? null : validatedBoboCrew(value, `Project ${projectId} BoBo crew override`);
 }
 
-function validatedNoobiCrew(value: unknown, field: string): NoobiCrewMember[] {
+function validatedBoboCrew(value: unknown, field: string): BoboCrewMember[] {
   if (!Array.isArray(value)) throw new Error(`${field} must be an array`);
-  if (value.length < NOOBI_CREW_MIN_SIZE || value.length > NOOBI_CREW_MAX_SIZE) {
+  if (value.length < BOBO_CREW_MIN_SIZE || value.length > BOBO_CREW_MAX_SIZE) {
     throw new Error(`${field} must contain 2 to 4 members`);
   }
-  const packIds = new Set<NoobiPackId>();
-  const roles = new Set<NoobiCrewMember['role']>();
+  const packIds = new Set<BoboPackId>();
+  const roles = new Set<BoboCrewMember['role']>();
   return value.map((candidate, index) => {
     if (!isRecord(candidate)) throw new Error(`${field} member ${index + 1} is invalid`);
     if (Object.keys(candidate).some((key) => key !== 'packId' && key !== 'role')) {
       throw new Error(`${field} members may only contain packId and role`);
     }
-    if (!isNoobiPackId(candidate.packId)) {
+    if (!isBoboPackId(candidate.packId)) {
       throw new Error(`${field} member ${index + 1} has an invalid packId`);
     }
-    if (!isNoobiCrewRole(candidate.role)) {
+    if (!isBoboCrewRole(candidate.role)) {
       throw new Error(`${field} member ${index + 1} has an invalid role`);
     }
     if (packIds.has(candidate.packId)) throw new Error(`${field} contains a duplicate packId`);
@@ -880,41 +893,41 @@ function validateSettings(value: unknown): AppSettings {
     throw new Error('Default model setting must be a non-empty string or null');
   }
   if (!isNonEmptyString(value.defaultEffort)) throw new Error('Default effort setting is invalid');
-  const defaultNoobiStageMode = value.defaultNoobiStageMode === undefined
-    ? DEFAULT_NOOBI_STAGE_MODE
-    : value.defaultNoobiStageMode;
-  if (!isNoobiStageMode(defaultNoobiStageMode)) {
+  const defaultBoboStageMode = value.defaultBoboStageMode === undefined
+    ? DEFAULT_BOBO_STAGE_MODE
+    : value.defaultBoboStageMode;
+  if (!isBoboStageMode(defaultBoboStageMode)) {
     throw new Error('Default BoBo stage mode setting is invalid');
   }
-  const defaultNoobiSoloSceneId = value.defaultNoobiSoloSceneId === undefined
-    ? DEFAULT_NOOBI_SOLO_SCENE_ID
-    : value.defaultNoobiSoloSceneId;
-  if (!isNoobiPackId(defaultNoobiSoloSceneId)) {
+  const defaultBoboSoloSceneId = value.defaultBoboSoloSceneId === undefined
+    ? DEFAULT_BOBO_SOLO_SCENE_ID
+    : value.defaultBoboSoloSceneId;
+  if (!isBoboPackId(defaultBoboSoloSceneId)) {
     throw new Error('Default BoBo solo scene setting is invalid');
   }
-  const defaultNoobiSceneId = value.defaultNoobiSceneId === undefined
-    ? DEFAULT_NOOBI_SCENE_ID
-    : value.defaultNoobiSceneId;
-  if (!isNoobiSceneId(defaultNoobiSceneId)) {
+  const defaultBoboSceneId = value.defaultBoboSceneId === undefined
+    ? DEFAULT_BOBO_SCENE_ID
+    : value.defaultBoboSceneId;
+  if (!isBoboSceneId(defaultBoboSceneId)) {
     throw new Error('Default BoBo scene setting is invalid');
   }
-  const defaultNoobiPackId = value.defaultNoobiPackId === undefined
-    ? DEFAULT_NOOBI_PACK_ID
-    : value.defaultNoobiPackId;
-  if (!isNoobiPackId(defaultNoobiPackId)) throw new Error('Default BoBo pack setting is invalid');
-  const defaultNoobiCrew = value.defaultNoobiCrew === undefined
-    ? DEFAULT_NOOBI_CREW
-    : value.defaultNoobiCrew;
+  const defaultBoboPackId = value.defaultBoboPackId === undefined
+    ? DEFAULT_BOBO_PACK_ID
+    : value.defaultBoboPackId;
+  if (!isBoboPackId(defaultBoboPackId)) throw new Error('Default BoBo pack setting is invalid');
+  const defaultBoboCrew = value.defaultBoboCrew === undefined
+    ? DEFAULT_BOBO_CREW
+    : value.defaultBoboCrew;
   if (value.theme !== 'dark' && value.theme !== 'light') throw new Error('Theme setting is invalid');
   return {
     defaultWorkspace: resolve(value.defaultWorkspace),
     defaultModel: value.defaultModel === null ? null : value.defaultModel.trim(),
     defaultEffort: value.defaultEffort.trim(),
-    defaultNoobiStageMode,
-    defaultNoobiSoloSceneId,
-    defaultNoobiSceneId,
-    defaultNoobiPackId,
-    defaultNoobiCrew: validatedNoobiCrew(defaultNoobiCrew, 'Default BoBo crew setting'),
+    defaultBoboStageMode,
+    defaultBoboSoloSceneId,
+    defaultBoboSceneId,
+    defaultBoboPackId,
+    defaultBoboCrew: validatedBoboCrew(defaultBoboCrew, 'Default BoBo crew setting'),
     theme: value.theme,
   };
 }
@@ -924,11 +937,11 @@ function defaultSettings(defaultWorkspace: string): AppSettings {
     defaultWorkspace,
     defaultModel: null,
     defaultEffort: 'medium',
-    defaultNoobiStageMode: DEFAULT_NOOBI_STAGE_MODE,
-    defaultNoobiSoloSceneId: DEFAULT_NOOBI_SOLO_SCENE_ID,
-    defaultNoobiSceneId: DEFAULT_NOOBI_SCENE_ID,
-    defaultNoobiPackId: DEFAULT_NOOBI_PACK_ID,
-    defaultNoobiCrew: DEFAULT_NOOBI_CREW.map((member) => ({ ...member })),
+    defaultBoboStageMode: DEFAULT_BOBO_STAGE_MODE,
+    defaultBoboSoloSceneId: DEFAULT_BOBO_SOLO_SCENE_ID,
+    defaultBoboSceneId: DEFAULT_BOBO_SCENE_ID,
+    defaultBoboPackId: DEFAULT_BOBO_PACK_ID,
+    defaultBoboCrew: DEFAULT_BOBO_CREW.map((member) => ({ ...member })),
     theme: 'light',
   };
 }
@@ -965,13 +978,14 @@ export async function resolveExistingProjectDirectory(
   projectId: string,
 ): Promise<string> {
   const canonical = await canonicalDirectory(directory);
-  const metadataPath = join(canonical, '.noobi', 'project.json');
+  await migrateLegacyProjectDirectory(canonical, projectId);
+  const metadataPath = join(canonical, '.bobo', 'project.json');
   let metadataInfo;
   try {
     metadataInfo = await lstat(metadataPath);
   } catch (error) {
     if (isNodeError(error, 'ENOENT')) {
-      throw new Error('所选文件夹不是 BoBo 游戏文件夹：缺少 .noobi/project.json。');
+      throw new Error('所选文件夹不是 BoBo 游戏文件夹：缺少 .bobo/project.json。');
     }
     throw error;
   }
@@ -1021,9 +1035,9 @@ function workspaceSlug(name: string): string {
     .replace(/^-+|-+$/gu, '')
     .slice(0, 60)
     .replace(/[. ]+$/gu, '');
-  const candidate = normalized || `noobi-game-${randomUUID().slice(0, 8)}`;
+  const candidate = normalized || `bobo-game-${randomUUID().slice(0, 8)}`;
   return /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/iu.test(candidate)
-    ? `noobi-${candidate}`
+    ? `bobo-${candidate}`
     : candidate;
 }
 

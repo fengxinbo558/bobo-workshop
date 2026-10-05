@@ -15,7 +15,7 @@ afterEach(async () => {
 });
 
 async function fakeProject(): Promise<ProjectRecord> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-icon-agent-test-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-icon-agent-test-'));
   roots.push(root);
   return {
     id: '99999999-8888-4777-8666-555555555555',
@@ -29,8 +29,8 @@ async function fakeProject(): Promise<ProjectRecord> {
     stage: 'brief',
     engine: 'web',
     targetFrameRate: 60,
-    noobiPackOverrideId: null,
-    noobiCrewOverride: null,
+    boboPackOverrideId: null,
+    boboCrewOverride: null,
     model: null,
     threadId: null,
     toolsetVersion: 0,

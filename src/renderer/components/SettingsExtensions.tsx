@@ -285,7 +285,7 @@ const PROVIDERS: Record<MediaCapability, ProviderPreset[]> = {
 export function useExtensionSettings(onMessage: (message: string) => void) {
   const [snapshot, setSnapshot] = useState(EMPTY_SNAPSHOT);
   const [loading, setLoading] = useState(true);
-  const api = window.noobi as typeof window.noobi & OptionalExtensionsApi;
+  const api = window.bobo as typeof window.bobo & OptionalExtensionsApi;
   const supported = typeof api.getExtensionSettings === 'function';
 
   useEffect(() => {
@@ -725,7 +725,7 @@ export function SkillsSettings({ controller }: { controller: ExtensionSettingsCo
           <div>
             <strong>{item.name}</strong>
             <span className={`source-badge source-${item.source}`}>{sourceLabel(item.source)}</span>
-            {requiredBy波波 ? <span className="source-badge noobi-required-badge">BOBO REQUIRED</span> : null}
+            {requiredBy波波 ? <span className="source-badge bobo-required-badge">BOBO REQUIRED</span> : null}
           </div>
           <p>{requiredBy波波 ? '波波 的默认图片生成与 API 失败回退依赖此 Skill；游戏制作流程中始终保持启用。' : item.description || '此 Skill 未提供说明。'}</p>
           {item.path ? <code title={item.path}>{item.path}</code> : null}

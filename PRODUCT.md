@@ -24,7 +24,7 @@ Preserve current game-creation workflows, project access, production progress, p
 
 ## Evidence on Hand
 
-src/renderer/components, src/renderer/styles.css, src/renderer/noobiProductionPacks.ts and src/renderer/assets contain current implementation. docs/images/noobi-workbench.png is an existing repository screenshot and is not verified as a current running screen. Original assets are inventoried at design/bobo-v1/original/manifest.json.
+src/renderer/components, src/renderer/styles.css, src/renderer/boboProductionPacks.ts and src/renderer/assets contain current implementation. docs/images/bobo-workbench.png records the current branded workbench. Reference assets are inventoried at design/bobo-v1/original/manifest.json.
 
 ## Open Decisions
 

@@ -13,7 +13,7 @@ const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, '..');
 const SOURCE_ROOT = join(
   REPOSITORY_ROOT,
-  'src/renderer/assets/noobi-packs/fishing/sources',
+  'src/renderer/assets/bobo-packs/fishing/sources',
 );
 const DEFAULT_SOURCES = {
   classic: join(SOURCE_ROOT, 'classic-seated-fishing-sheet.png'),
@@ -23,7 +23,7 @@ const DEFAULT_SOURCES = {
 };
 const DEFAULT_OUTPUT_ROOT = join(
   REPOSITORY_ROOT,
-  'src/renderer/assets/noobi-packs/fishing/frames',
+  'src/renderer/assets/bobo-packs/fishing/frames',
 );
 const PACKS = Object.keys(DEFAULT_SOURCES);
 const OUTPUT_CANVAS = { width: 252, height: 336, pivot: { x: 126, y: 336 } };
@@ -93,7 +93,7 @@ Options:
   --twilight <png>      Twilight 2-column source sheet
   --hellokitty <png>    Hello Kitty 2-column source sheet
   --starforge <png>     Starforge 2-column source sheet
-  --output-root <dir>   Output root (default: src/renderer/assets/noobi-packs/fishing/frames)
+  --output-root <dir>   Output root (default: src/renderer/assets/bobo-packs/fishing/frames)
   --help                Show this help
 
 Each sheet must have an even width. It is split into exact left/right halves,

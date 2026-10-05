@@ -24,37 +24,37 @@ export const GAME_ENGINES = ['web', 'godot'] as const;
 export type GameEngine = (typeof GAME_ENGINES)[number];
 export const DEFAULT_GAME_ENGINE: GameEngine = 'web';
 
-export const NOOBI_SCENE_IDS = ['collaboration', 'fishing'] as const;
-export type NoobiSceneId = (typeof NOOBI_SCENE_IDS)[number];
-export const DEFAULT_NOOBI_SCENE_ID: NoobiSceneId = 'collaboration';
+export const BOBO_SCENE_IDS = ['collaboration', 'fishing'] as const;
+export type BoboSceneId = (typeof BOBO_SCENE_IDS)[number];
+export const DEFAULT_BOBO_SCENE_ID: BoboSceneId = 'collaboration';
 
-export const NOOBI_STAGE_MODES = ['solo', 'crew'] as const;
-export type NoobiStageMode = (typeof NOOBI_STAGE_MODES)[number];
-export const DEFAULT_NOOBI_STAGE_MODE: NoobiStageMode = 'crew';
+export const BOBO_STAGE_MODES = ['solo', 'crew'] as const;
+export type BoboStageMode = (typeof BOBO_STAGE_MODES)[number];
+export const DEFAULT_BOBO_STAGE_MODE: BoboStageMode = 'crew';
 
-export const NOOBI_PACK_IDS = [
+export const BOBO_PACK_IDS = [
   'classic',
   'mosslight',
   'starforge',
   'twilight',
   'hellokitty',
 ] as const;
-export type NoobiPackId = (typeof NOOBI_PACK_IDS)[number];
-export const DEFAULT_NOOBI_PACK_ID: NoobiPackId = 'classic';
-export const DEFAULT_NOOBI_SOLO_SCENE_ID: NoobiPackId = 'classic';
+export type BoboPackId = (typeof BOBO_PACK_IDS)[number];
+export const DEFAULT_BOBO_PACK_ID: BoboPackId = 'classic';
+export const DEFAULT_BOBO_SOLO_SCENE_ID: BoboPackId = 'classic';
 
-export const NOOBI_CREW_ROLES = ['planner', 'artist', 'engineer', 'tester'] as const;
-export type NoobiCrewRole = (typeof NOOBI_CREW_ROLES)[number];
-export const NOOBI_CREW_MIN_SIZE = 2;
-export const NOOBI_CREW_MAX_SIZE = 4;
+export const BOBO_CREW_ROLES = ['planner', 'artist', 'engineer', 'tester'] as const;
+export type BoboCrewRole = (typeof BOBO_CREW_ROLES)[number];
+export const BOBO_CREW_MIN_SIZE = 2;
+export const BOBO_CREW_MAX_SIZE = 4;
 
 /** Persisted crew identity. Visual assets are resolved from packId at render time. */
-export interface NoobiCrewMember {
-  packId: NoobiPackId;
-  role: NoobiCrewRole;
+export interface BoboCrewMember {
+  packId: BoboPackId;
+  role: BoboCrewRole;
 }
 
-export const DEFAULT_NOOBI_CREW: readonly NoobiCrewMember[] = [
+export const DEFAULT_BOBO_CREW: readonly BoboCrewMember[] = [
   { packId: 'classic', role: 'planner' },
   { packId: 'twilight', role: 'artist' },
   { packId: 'hellokitty', role: 'engineer' },
@@ -65,34 +65,34 @@ export function isGameEngine(value: unknown): value is GameEngine {
   return typeof value === 'string' && GAME_ENGINES.some((engine) => engine === value);
 }
 
-export function isNoobiSceneId(value: unknown): value is NoobiSceneId {
-  return typeof value === 'string' && NOOBI_SCENE_IDS.some((sceneId) => sceneId === value);
+export function isBoboSceneId(value: unknown): value is BoboSceneId {
+  return typeof value === 'string' && BOBO_SCENE_IDS.some((sceneId) => sceneId === value);
 }
 
-export function isNoobiStageMode(value: unknown): value is NoobiStageMode {
-  return typeof value === 'string' && NOOBI_STAGE_MODES.some((mode) => mode === value);
+export function isBoboStageMode(value: unknown): value is BoboStageMode {
+  return typeof value === 'string' && BOBO_STAGE_MODES.some((mode) => mode === value);
 }
 
-export function isNoobiPackId(value: unknown): value is NoobiPackId {
-  return typeof value === 'string' && NOOBI_PACK_IDS.some((packId) => packId === value);
+export function isBoboPackId(value: unknown): value is BoboPackId {
+  return typeof value === 'string' && BOBO_PACK_IDS.some((packId) => packId === value);
 }
 
-export function isNoobiCrewRole(value: unknown): value is NoobiCrewRole {
-  return typeof value === 'string' && NOOBI_CREW_ROLES.some((role) => role === value);
+export function isBoboCrewRole(value: unknown): value is BoboCrewRole {
+  return typeof value === 'string' && BOBO_CREW_ROLES.some((role) => role === value);
 }
 
-export function isNoobiCrew(value: unknown): value is NoobiCrewMember[] {
+export function isBoboCrew(value: unknown): value is BoboCrewMember[] {
   if (!Array.isArray(value)
-    || value.length < NOOBI_CREW_MIN_SIZE
-    || value.length > NOOBI_CREW_MAX_SIZE) return false;
-  const packIds = new Set<NoobiPackId>();
-  const roles = new Set<NoobiCrewRole>();
+    || value.length < BOBO_CREW_MIN_SIZE
+    || value.length > BOBO_CREW_MAX_SIZE) return false;
+  const packIds = new Set<BoboPackId>();
+  const roles = new Set<BoboCrewRole>();
   for (const candidate of value) {
     if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return false;
     const member = candidate as Record<string, unknown>;
     if (Object.keys(member).some((key) => key !== 'packId' && key !== 'role')
-      || !isNoobiPackId(member.packId)
-      || !isNoobiCrewRole(member.role)
+      || !isBoboPackId(member.packId)
+      || !isBoboCrewRole(member.role)
       || packIds.has(member.packId)
       || roles.has(member.role)) return false;
     packIds.add(member.packId);
@@ -109,7 +109,7 @@ export function isTargetFrameRate(value: unknown): value is TargetFrameRate {
 export type ProjectIconSource = 'procedural' | 'ai';
 
 export interface ProjectIcon {
-  /** Icon PNG path relative to the project root (host-owned, e.g. `.noobi/icon.png`). */
+  /** Icon PNG path relative to the project root (host-owned, e.g. `.bobo/icon.png`). */
   path: string;
   source: ProjectIconSource;
   updatedAt: string;
@@ -136,9 +136,9 @@ export interface ProjectRecord {
   /** Host-selected simulation/presentation target for generated game code and animation variants. */
   targetFrameRate: TargetFrameRate;
   /** Null follows the app-wide default; otherwise this project keeps its own production-studio pack. */
-  noobiPackOverrideId: NoobiPackId | null;
+  boboPackOverrideId: BoboPackId | null;
   /** Null follows the app-wide crew. Members persist identity and role only. */
-  noobiCrewOverride: NoobiCrewMember[] | null;
+  boboCrewOverride: BoboCrewMember[] | null;
   model: string | null;
   threadId: string | null;
   /** Version of the host dynamic-tool contract persisted on threadId. */
@@ -212,11 +212,11 @@ export interface AppSettings {
   defaultWorkspace: string;
   defaultModel: string | null;
   defaultEffort: string;
-  defaultNoobiStageMode: NoobiStageMode;
-  defaultNoobiSoloSceneId: NoobiPackId;
-  defaultNoobiSceneId: NoobiSceneId;
-  defaultNoobiPackId: NoobiPackId;
-  defaultNoobiCrew: NoobiCrewMember[];
+  defaultBoboStageMode: BoboStageMode;
+  defaultBoboSoloSceneId: BoboPackId;
+  defaultBoboSceneId: BoboSceneId;
+  defaultBoboPackId: BoboPackId;
+  defaultBoboCrew: BoboCrewMember[];
   theme: 'dark' | 'light';
 }
 
@@ -543,7 +543,7 @@ export interface LoginStartResult {
   userCode?: string;
 }
 
-export interface NoobiApi {
+export interface BoboApi {
   bootstrap(): Promise<BootstrapPayload>;
   refreshRuntime(): Promise<RuntimeStatus>;
   startLogin(): Promise<LoginStartResult>;
@@ -574,11 +574,11 @@ export interface NoobiApi {
   /** Returns the project icon as a PNG data URL, or null when no icon exists yet. */
   getProjectIcon(projectId: string): Promise<ProjectIconData | null>;
   /** Pass null to make the project follow the app-wide BoBo production pack again. */
-  saveProjectNoobiPack(projectId: string, packId: NoobiPackId | null): Promise<ProjectRecord>;
+  saveProjectBoboPack(projectId: string, packId: BoboPackId | null): Promise<ProjectRecord>;
   /** Pass null to make the project follow the app-wide BoBo crew again. */
-  saveProjectNoobiCrew(
+  saveProjectBoboCrew(
     projectId: string,
-    crew: readonly NoobiCrewMember[] | null,
+    crew: readonly BoboCrewMember[] | null,
   ): Promise<ProjectRecord>;
   saveSettings(patch: Partial<AppSettings>): Promise<AppSettings>;
   getEnvironmentStatus(): Promise<EnvironmentStatusSnapshot>;

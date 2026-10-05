@@ -12,12 +12,12 @@ import type { ProjectRecord } from '../src/shared/contracts.js';
 /**
  * Real end-to-end check that a short Codex turn with the $imagegen skill
  * produces a valid PNG game icon. Uses the app's own codex-home by default so
- * the system imagegen skill is available; set NOOBI_SMOKE_CODEX_HOME to
+ * the system imagegen skill is available; set BOBO_SMOKE_CODEX_HOME to
  * override.
  */
-const workspace = await mkdtemp(join(tmpdir(), 'noobi-icon-smoke-'));
+const workspace = await mkdtemp(join(tmpdir(), 'bobo-icon-smoke-'));
 const codexHome =
-  process.env.NOOBI_SMOKE_CODEX_HOME?.trim()
+  process.env.BOBO_SMOKE_CODEX_HOME?.trim()
   || join(process.env.HOME ?? '', 'Library', 'Application Support', 'BoBo', 'codex-home');
 const runtime = new CodexAppServer({ codexHome });
 
@@ -45,8 +45,8 @@ try {
     stage: 'brief',
     engine: 'web',
     targetFrameRate: 60,
-    noobiPackOverrideId: null,
-    noobiCrewOverride: null,
+    boboPackOverrideId: null,
+    boboCrewOverride: null,
     model: null,
     threadId: null,
     toolsetVersion: 0,
@@ -65,5 +65,5 @@ try {
   console.log(`preview: ${pathToFileURL(join(workspace, PROJECT_ICON_RELATIVE_PATH)).href}`);
 } finally {
   await runtime.stop().catch(() => undefined);
-  if (process.env.NOOBI_SMOKE_KEEP !== '1') await rm(workspace, { recursive: true, force: true });
+  if (process.env.BOBO_SMOKE_KEEP !== '1') await rm(workspace, { recursive: true, force: true });
 }

@@ -74,7 +74,7 @@ export interface ProductionCrewMember extends ProductionAssistantPoint {
 }
 
 export interface ProductionAssistantEasterEgg {
-  id: 'moonwalk' | 'golden-acorn' | 'mini-noobi' | 'debug-dance';
+  id: 'moonwalk' | 'golden-acorn' | 'mini-bobo' | 'debug-dance';
   label: string;
 }
 
@@ -383,7 +383,7 @@ const PRODUCTION_CREW_PRIMARY_ROLE: Readonly<Record<PipelineStage, ProductionCre
 export const PRODUCTION_ASSISTANT_EASTER_EGGS: readonly ProductionAssistantEasterEgg[] = [
   { id: 'moonwalk', label: '彩蛋：波波 突然开始月球漫步' },
   { id: 'golden-acorn', label: '彩蛋：发现了一颗金色橡果' },
-  { id: 'mini-noobi', label: '彩蛋：迷你 波波 来帮忙了' },
+  { id: 'mini-bobo', label: '彩蛋：迷你 波波 来帮忙了' },
   { id: 'debug-dance', label: '彩蛋：报错消失后跳起调试舞' },
 ] as const;
 

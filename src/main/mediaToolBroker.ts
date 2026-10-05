@@ -1,3 +1,4 @@
+import { currentToolName } from './branding.js';
 import type { AssetStore } from './assetStore.js';
 import type { AssetPlanStore, AssetPlanUpsertInput } from './assetPlanStore.js';
 import type { CodexAppServer, DynamicToolSpec, JsonValue } from './codexAppServer.js';
@@ -243,7 +244,7 @@ export class MediaToolBroker {
 
       let payload: unknown;
       // Accept calls from pre-rename conversations while advertising only BoBo tools.
-      switch (params.tool.replace(/^noobi_/, 'bobo_')) {
+      switch (currentToolName(params.tool)) {
         case 'bobo_asset_list':
           payload = await this.#list(project, params.arguments);
           break;

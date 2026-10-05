@@ -31,11 +31,11 @@
   "main": "dist/main/main.js",
   "scripts": {
     "clean": "node scripts/clean.mjs",
-    "dev": "concurrently -k \"vite --host 127.0.0.1 --port 5174\" \"tsc -p tsconfig.main.json --watch --preserveWatchOutput\" \"wait-on tcp:5174 file:dist/main/main.js file:dist/main/preload.cjs && cross-env NOOBI_RENDERER_URL=http://127.0.0.1:5174 electron .\"",
+    "dev": "concurrently -k \"vite --host 127.0.0.1 --port 5174\" \"tsc -p tsconfig.main.json --watch --preserveWatchOutput\" \"wait-on tcp:5174 file:dist/main/main.js file:dist/main/preload.cjs && cross-env BOBO_RENDERER_URL=http://127.0.0.1:5174 electron .\"",
     "typecheck": "tsc --noEmit -p tsconfig.renderer.json && tsc --noEmit -p tsconfig.main.json",
     "build:renderer": "vite build",
     "build:main": "tsc -p tsconfig.main.json",
-    "build": "npm run clean && npm run typecheck && npm run build:renderer && npm run build:main",
+    "build": "npm run clean && npm run check:branding && npm run typecheck && npm run build:renderer && npm run build:main",
     "test": "vitest run",
     "test:watch": "vitest",
     "protocol:generate": "tsx scripts/generate-codex-protocol.ts",
@@ -46,11 +46,12 @@
     "smoke:icon": "tsx scripts/icon-smoke.ts",
     "smoke:playtest": "npm run build && electron scripts/playtest-smoke-app",
     "smoke:model3d": "tsx scripts/model3d-smoke.ts",
-    "assets:transition-gifs": "node scripts/build-noobi-transition-gifs.mjs",
+    "assets:transition-gifs": "node scripts/build-bobo-transition-gifs.mjs",
     "smoke:godot": "tsx scripts/godot-smoke.ts",
-    "smoke:ui": "npm run build && cross-env NOOBI_SMOKE_CAPTURE=.noobi-smoke/workbench.png electron .",
+    "smoke:ui": "npm run build && cross-env BOBO_SMOKE_CAPTURE=.bobo-smoke/workbench.png electron .",
     "verify": "npm run typecheck && npm run test && npm run build",
-    "package:mac": "npm run build && electron-builder --mac dmg --publish never"
+    "package:mac": "npm run build && electron-builder --mac dmg --publish never",
+    "check:branding": "node scripts/check-branding.mjs"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.3.0",

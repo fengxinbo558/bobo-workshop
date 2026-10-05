@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 async function fakeProject(name = 'Star Drifters'): Promise<ProjectRecord> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-icon-test-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-icon-test-'));
   roots.push(root);
   return {
     id: '11111111-2222-4333-8444-555555555555',
@@ -37,8 +37,8 @@ async function fakeProject(name = 'Star Drifters'): Promise<ProjectRecord> {
     stage: 'brief',
     engine: 'web',
     targetFrameRate: 60,
-    noobiPackOverrideId: null,
-    noobiCrewOverride: null,
+    boboPackOverrideId: null,
+    boboCrewOverride: null,
     model: null,
     threadId: null,
     toolsetVersion: 0,
@@ -199,11 +199,11 @@ describe('generateAiProjectIcon', () => {
 });
 
 describe('project icon path safety', () => {
-  it('never follows a symlinked .noobi directory', async () => {
+  it('never follows a symlinked .bobo directory', async () => {
     const project = await fakeProject();
-    const outside = await mkdtemp(join(tmpdir(), 'noobi-icon-outside-'));
+    const outside = await mkdtemp(join(tmpdir(), 'bobo-icon-outside-'));
     roots.push(outside);
-    await symlink(outside, join(project.root, '.noobi'));
+    await symlink(outside, join(project.root, '.bobo'));
 
     await expect(generateProceduralProjectIcon(project)).rejects.toThrow(/real directory/u);
     await expect(readFile(join(outside, 'icon.png'))).rejects.toMatchObject({ code: 'ENOENT' });
@@ -214,7 +214,7 @@ describe('project icon path safety', () => {
     const outside = join(project.root, 'outside.png');
     const sentinel = Buffer.from('do-not-overwrite');
     await writeFile(outside, sentinel);
-    await mkdir(join(project.root, '.noobi'));
+    await mkdir(join(project.root, '.bobo'));
     await symlink(outside, join(project.root, PROJECT_ICON_RELATIVE_PATH));
 
     await generateProceduralProjectIcon(project);
@@ -227,7 +227,7 @@ describe('project icon path safety', () => {
     const project = await fakeProject();
     const outside = join(project.root, 'outside.png');
     await writeFile(outside, encodePngRgba(2, 2, new Uint8Array(16).fill(64)));
-    await mkdir(join(project.root, '.noobi'));
+    await mkdir(join(project.root, '.bobo'));
     await symlink(outside, join(project.root, PROJECT_ICON_RELATIVE_PATH));
 
     expect(await readProjectIconBytes(project)).toBeNull();

@@ -1,3 +1,4 @@
+import { currentReviewText } from './branding.js';
 import { BOBO_BRAND_POLICY } from './branding.js';
 import { randomUUID } from 'node:crypto';
 import { EventEmitter } from 'node:events';
@@ -154,7 +155,7 @@ const BUILD_TURN_TIMEOUT_MS = 60 * 60 * 1_000;
 const MAX_EVENT_MESSAGE_CHARS = 30_000;
 const MAX_PROMPT_SECTION_CHARS = 32_000;
 export const MAX_GAME_HARNESS_REPAIR_ATTEMPTS = 3;
-export const GAME_HARNESS_TOOLSET_VERSION = 8;
+export const GAME_HARNESS_TOOLSET_VERSION = 9;
 
 export function gameHarnessTurnTimeoutMs(phase: GameHarnessPhase): number {
   return phase === 'implementer' || phase === 'repair'
@@ -217,7 +218,7 @@ For every requested 3D model, call bobo_model3d_generate. The host automatically
 otherwise authors a self-contained procedural GLB with Three.js. Use the returned registered GLB in the final game;
 Three.js is build-time asset tooling only and must never become a second runtime beside Godot. Keep every asset
 referenced by the running game and asset-pack.json.
-Maintain \`.noobi/playtest.json\` using the fixed playtest schema in the host contract. It is an executable player
+Maintain \`.bobo/playtest.json\` using the fixed playtest schema in the host contract. It is an executable player
 journey, not prose: keep the production entrypoint, common action inputs, ordered steps, safe visual/DOM
 observations, time limits, and success/failure/restart checks aligned with the game after every control or gameplay
 change. Never write into \`artifacts/playtest/\`; that directory is reserved for host-generated reports and captures.
@@ -232,7 +233,7 @@ You are the Reviewer in BoBo's game-building harness.
 ${BOBO_BRAND_POLICY}
 You are strictly read-only: inspect the actual workspace and use only non-mutating checks.
 Review correctness, playability, regressions, missing requirements, and verification evidence.
-Inspect \`.noobi/playtest.json\` and verify that it describes a coherent, bounded one-session route through launch,
+Inspect \`.bobo/playtest.json\` and verify that it describes a coherent, bounded one-session route through launch,
 start, movement, the primary action, feedback, pause/resume, and restart using controls that production code really
 handles. When \`artifacts/playtest/latest/report.json\` exists, inspect that host report and its referenced screenshots;
 failed, stale, missing-step, blank-frame, unchanged-frame, console-error, timeout, or missing-capture evidence is a
@@ -1229,7 +1230,7 @@ function buildHostEvidenceReviewPrompt(
   imageGenerationRoute: NonNullable<GameHarnessRunOptions['imageGenerationRoute']> = 'codex-imagegen',
   audioRequirement: HostAudioGenerationRequirement = { state: 'not-required' },
 ): string {
-  return `Re-review the actual workspace now that the deterministic host delivery gate has produced fresh evidence for the current implementation. Inspect artifacts/playtest/latest/report.json and every referenced screenshot, verify the declared .noobi/playtest.json journey against production controls, and check that the captures support the host result rather than trusting its summary alone. Also preserve the original functional, media, animation, and delivery requirements. Return only the required JSON review object.\n\n${buildAgentProductionContracts(requirement, targetFrameRate, imageGenerationRoute, audioRequirement)}\n\n<original_request>\n${clipForPrompt(userPrompt)}\n</original_request>\n\n<implementation_report>\n${clipForPrompt(implementation)}\n</implementation_report>\n\n<fresh_host_evidence status="passed-pending-review">artifacts/playtest/latest/report.json</fresh_host_evidence>`;
+  return `Re-review the actual workspace now that the deterministic host delivery gate has produced fresh evidence for the current implementation. Inspect artifacts/playtest/latest/report.json and every referenced screenshot, verify the declared .bobo/playtest.json journey against production controls, and check that the captures support the host result rather than trusting its summary alone. Also preserve the original functional, media, animation, and delivery requirements. Return only the required JSON review object.\n\n${buildAgentProductionContracts(requirement, targetFrameRate, imageGenerationRoute, audioRequirement)}\n\n<original_request>\n${clipForPrompt(userPrompt)}\n</original_request>\n\n<implementation_report>\n${clipForPrompt(implementation)}\n</implementation_report>\n\n<fresh_host_evidence status="passed-pending-review">artifacts/playtest/latest/report.json</fresh_host_evidence>`;
 }
 
 function buildAgentProductionContracts(
@@ -1248,7 +1249,7 @@ start, visible movement or navigation, the game's primary action, positive progr
 failure or invalid-action response, pause and resume, a terminal success or failure state, and restart back to a
 playable state. Name the exact input and observable result for every step. A source-file checklist is not a journey.
 
-The Implementer MUST create or update \`.noobi/playtest.json\` after every change to controls, entrypoint, rules, UI,
+The Implementer MUST create or update \`.bobo/playtest.json\` after every change to controls, entrypoint, rules, UI,
 or game state. The file must be valid UTF-8 JSON with this bounded schema (unknown executable fields are forbidden):
 {
   "schemaVersion": 1,
@@ -1456,7 +1457,7 @@ function parseReview(raw: string): GameHarnessReview {
     }
   }
 
-  const explicit = /NOOBI_REVIEW_VERDICT\s*:\s*(PASS|REPAIR)/iu.exec(raw)?.[1]?.toLowerCase();
+  const explicit = /BOBO_REVIEW_VERDICT\s*:\s*(PASS|REPAIR)/iu.exec(currentReviewText(raw))?.[1]?.toLowerCase();
   if (explicit === 'pass' || explicit === 'repair') {
     return {
       verdict: explicit,

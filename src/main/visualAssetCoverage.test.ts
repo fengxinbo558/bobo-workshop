@@ -74,7 +74,7 @@ describe('visual asset coverage', () => {
 });
 
 async function makeFixture(): Promise<{ root: string; asset: GameAssetRecord }> {
-  const root = await mkdtemp(join(tmpdir(), 'noobi-visual-coverage-'));
+  const root = await mkdtemp(join(tmpdir(), 'bobo-visual-coverage-'));
   roots.push(root);
   await mkdir(join(root, 'public/assets/images'), { recursive: true });
   await mkdir(join(root, 'scripts'), { recursive: true });

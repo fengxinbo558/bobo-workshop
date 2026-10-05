@@ -4,24 +4,24 @@ import { describe, expect, it } from 'vitest';
 
 import {
   configuredProductionCrewMembers,
-  noobiGroundShadowProfile,
+  boboGroundShadowProfile,
   ProductionDiorama,
 } from './ProductionDiorama';
 
 describe('BoBo ground shadow profiles', () => {
   it('uses a slightly wider shadow while the actor is walking', () => {
-    expect(noobiGroundShadowProfile('walk', 'walking')).toBe('walking');
-    expect(noobiGroundShadowProfile('carry', 'walking')).toBe('walking');
+    expect(boboGroundShadowProfile('walk', 'walking')).toBe('walking');
+    expect(boboGroundShadowProfile('carry', 'walking')).toBe('walking');
   });
 
   it('uses a wide, flat contact shadow for the horizontal sleep pose', () => {
-    expect(noobiGroundShadowProfile('sleep', 'acting')).toBe('sleeping');
+    expect(boboGroundShadowProfile('sleep', 'acting')).toBe('sleeping');
   });
 
   it('keeps every other action on a stable standing shadow', () => {
-    expect(noobiGroundShadowProfile('idle', 'acting')).toBe('standing');
-    expect(noobiGroundShadowProfile('paint', 'acting')).toBe('standing');
-    expect(noobiGroundShadowProfile('celebrate', 'acting')).toBe('standing');
+    expect(boboGroundShadowProfile('idle', 'acting')).toBe('standing');
+    expect(boboGroundShadowProfile('paint', 'acting')).toBe('standing');
+    expect(boboGroundShadowProfile('celebrate', 'acting')).toBe('standing');
   });
 
   it('renders four independently identified crew members in crew mode with one primary shadow', () => {
@@ -39,10 +39,10 @@ describe('BoBo ground shadow profiles', () => {
     for (const role of ['planner', 'artist', 'engineer', 'tester']) {
       expect(markup).toContain(`data-crew-role="${role}"`);
     }
-    expect(markup.match(/data-noobi-ground-shadow="main"/gu)).toHaveLength(1);
-    expect(markup).toContain('data-noobi-ground-shadow="planner"');
-    expect(markup).toContain('data-noobi-ground-shadow="artist"');
-    expect(markup).toContain('data-noobi-ground-shadow="tester"');
+    expect(markup.match(/data-bobo-ground-shadow="main"/gu)).toHaveLength(1);
+    expect(markup).toContain('data-bobo-ground-shadow="planner"');
+    expect(markup).toContain('data-bobo-ground-shadow="artist"');
+    expect(markup).toContain('data-bobo-ground-shadow="tester"');
   });
 
   it('can render a compact two-person crew while retaining the active specialist', () => {
@@ -78,8 +78,8 @@ describe('BoBo ground shadow profiles', () => {
     expect(markup).toContain('data-stage-mode="solo"');
     expect(markup).toContain('data-runtime-scene="starforge"');
     expect(markup).toContain('data-scene-mode="solo"');
-    expect(markup).toContain('data-noobi-member-pack="hellokitty"');
-    expect(markup).not.toContain('data-noobi-member-pack="twilight"');
+    expect(markup).toContain('data-bobo-member-pack="hellokitty"');
+    expect(markup).not.toContain('data-bobo-member-pack="twilight"');
     expect(markup).not.toContain('collaboration/scene.png');
   });
 
@@ -97,10 +97,10 @@ describe('BoBo ground shadow profiles', () => {
     }));
 
     expect(markup).toContain('data-crew-size="3"');
-    expect(markup).toContain('data-noobi-member-pack="twilight"');
-    expect(markup).toContain('data-noobi-member-pack="hellokitty"');
-    expect(markup).toContain('data-noobi-member-pack="starforge"');
-    expect(markup).not.toContain('data-noobi-member-pack="classic"');
+    expect(markup).toContain('data-bobo-member-pack="twilight"');
+    expect(markup).toContain('data-bobo-member-pack="hellokitty"');
+    expect(markup).toContain('data-bobo-member-pack="starforge"');
+    expect(markup).not.toContain('data-bobo-member-pack="classic"');
   });
 
   it('renders the baked fishing runtime scene without duplicate crew or workshop occluders', () => {
@@ -116,7 +116,7 @@ describe('BoBo ground shadow profiles', () => {
     expect(markup).toContain('four-ip-fishing.gif');
     expect(markup).toContain('BOBO WORKING');
     expect(markup).not.toContain('class="workshop-occluder"');
-    expect(markup).not.toContain('data-noobi-member-pack=');
+    expect(markup).not.toContain('data-bobo-member-pack=');
     expect(markup).not.toContain('data-crew-role=');
   });
 

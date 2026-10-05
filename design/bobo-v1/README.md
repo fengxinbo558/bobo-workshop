@@ -1,12 +1,12 @@
-# bobo.ai 视觉提案 · v2
+# 波波工坊视觉提案 · v2
 
 当前版本已修正角色握持方向与工作台状态逻辑，详见 REVISION-v2.md。首稿通过 index-v1.html 保留对照。
 
-本轮交付：原版视觉素材清单、bobo.ai 原创角色设定、首页与制作工作台换肤效果图。新图由内置 imagegen 生成，是供选择和修改的概念图，还不是已接入程序的页面或逐帧动画。
+本文件保留视觉提案阶段的设计说明，当前实现以根目录 `DESIGN.md` 为准。提案包含视觉参考素材、波波角色设定、首页与制作工作台效果图。`generated/` 中的图是 imagegen 生成的概念图，不作为运行截图或逐帧动画的证据。品牌图与工作台参考截图已更新为波波工坊当前资源。
 
 ## 已确认方向
 
-- 新名称：bobo.ai（全小写）。
+- 产品名：波波工坊；英文署名：BoBo。
 - 风格：温暖潮玩；圆润小怪兽；奶油白与橙色；创作伙伴的陪伴感。
 - 现有制作流程、游戏预览、素材、文件、设置和角色岗位延续。
 
@@ -44,21 +44,21 @@
 - 9 个过渡场景：暖木工坊、水晶实验室、森林营地、天空码头、海边街机、雪地小屋、星空观测台、魔药花园、屋顶工作室。
 - 每套主题 manifest 具有 16 类动作：idle、think、wait、walk、work、carry、paint、sleep、play、repair、coffee、stretch、type、inspect、sweep、celebrate。部分状态复用同一组帧，并不是 16 套完全独立的素材。
 - 当前界面结构由 HomeDashboard、ProjectRail、ProductionDiorama、Pipeline、Composer、Inspector、SettingsModal 等组件组成。
-- `original/docs/noobi-workbench.png` 是仓库原有截图，未把它当作当前运行版本的截图；当前代码比该截图多出或改动了部分功能。
-- 已复制 45 个原始参考文件；来源与副本的精确对应在 `original/manifest.json`。
+- `original/docs/bobo-workbench.png` 更新为当前波波工坊工作台截图。
+- 共保留 45 个参考文件；品牌图片已同步当前资源。来源与副本对应见 `original/manifest.json`。
 
 ## 后续替换位置
 
 | 视觉层 | 当前位置 | 替换工作 |
 |---|---|---|
-| 应用名与图标 | package.json、src/renderer/index.html、build/icon.png、src/renderer/assets/noobi-app-icon.png | 统一 bobo.ai 名称、图标与打包显示名称 |
-| 角色主题与岗位 | NoobiPackPicker.tsx、NoobiCrewPicker.tsx、noobiProductionPacks.ts | 接入波波角色、岗位装束和逐帧动作 |
-| 场景与过渡 | NoobiScenePicker.tsx、noobiTransitionScenes.ts、assets/noobi-* | 工坊背景、钓鱼场景与过渡动画统一 |
+| 应用名与图标 | package.json、src/renderer/index.html、build/icon.png、src/renderer/assets/bobo-app-icon.png | 统一波波工坊名称、图标与打包显示名称 |
+| 角色主题与岗位 | BoboPackPicker.tsx、BoboCrewPicker.tsx、boboProductionPacks.ts | 接入波波角色、岗位装束和逐帧动作 |
+| 场景与过渡 | BoboScenePicker.tsx、boboTransitionScenes.ts、assets/bobo-* | 工坊背景、钓鱼场景与过渡动画统一 |
 | 页面与组件 | HomeDashboard.tsx、ProjectRail.tsx、ProductionDiorama.tsx、SettingsModal.tsx、styles.css | 首页、工作台、设置与角色选择换肤 |
-| 兼容与同步 | dev 分支及既有设置/IPC/存储字段 | 展示名优先，内部字段不做盲目全局替换，以降低旧数据迁移和合并上游的成本 |
+| 兼容与同步 | dev 分支及既有设置/IPC/存储字段 | 展示名与内部字段使用统一品牌，历史设置和工作区通过迁移层读取 |
 
 ## 文件与状态
 
-`index.html` 是本地视觉提案册，直接打开即可。`generated/` 放新方案图片和完整生成提示词；`original/` 保留原图。
+`index.html` 是本地视觉提案册，直接打开即可。`generated/` 放新方案图片和完整生成提示词；`original/` 保留角色、场景参考，并同步当前品牌资源。
 
-仓库名称、应用运行代码和远端分支本轮尚未改名或部署；本轮先确定视觉。图片里的项目、状态与游戏画面为示意内容，不代表实际完成的游戏。
+应用运行代码与打包名称已统一为波波工坊。`generated/` 概念图里的项目、状态与游戏画面为示意内容，不代表实际完成的游戏；远端发布状态以仓库发布记录为准。

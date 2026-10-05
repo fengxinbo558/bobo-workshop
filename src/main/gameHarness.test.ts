@@ -113,7 +113,7 @@ describe('game harness required ImageGen contract', () => {
       expect(turn.prompt).toContain('plain text/default controls');
       expect(turn.prompt).toContain('<animation_needs_contract>');
       expect(turn.prompt).toContain('<experience_playtest_contract schema_version="1">');
-      expect(turn.prompt).toContain('`.noobi/playtest.json`');
+      expect(turn.prompt).toContain('`.bobo/playtest.json`');
       expect(turn.prompt).toContain('artifacts/playtest/latest/report.json');
       expect(turn.prompt).toContain('<model3d_generation_contract>');
       expect(turn.prompt).toContain('configured 3D model API is always attempted first');
@@ -482,7 +482,7 @@ describe('game harness required ImageGen contract', () => {
     expect(prompt).toContain('launch/ready');
     expect(prompt).toContain('positive progress feedback');
     expect(prompt).toContain('pause and resume');
-    expect(prompt).toContain('`.noobi/playtest.json`');
+    expect(prompt).toContain('`.bobo/playtest.json`');
     expect(prompt).toContain('"start":');
     expect(prompt).toContain('"move":');
     expect(prompt).toContain('"primary":');

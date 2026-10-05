@@ -1,3 +1,4 @@
+import { brandEnvironmentValue } from './branding.js';
 import { access, realpath } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -41,7 +42,8 @@ const TARGETS: Record<string, { packageName: string; triple: string; executable:
 
 export async function locateCodexBinary(): Promise<string> {
   const candidates: string[] = [];
-  if (process.env.NOOBI_CODEX_BIN) candidates.push(process.env.NOOBI_CODEX_BIN);
+  const configuredBinary = brandEnvironmentValue('BOBO_CODEX_BIN');
+  if (configuredBinary) candidates.push(configuredBinary);
 
   const target = TARGETS[`${process.platform}-${process.arch}`];
   if (target) {
@@ -79,7 +81,7 @@ export async function locateCodexBinary(): Promise<string> {
     }
   }
   throw new Error(
-    `Unable to locate a runnable Codex binary. Set NOOBI_CODEX_BIN. Checked ${failures.length} candidate(s).`,
+    `Unable to locate a runnable Codex binary. Set BOBO_CODEX_BIN. Checked ${failures.length} candidate(s).`,
   );
 }
 
