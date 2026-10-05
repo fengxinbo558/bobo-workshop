@@ -3036,7 +3036,8 @@ async function captureSmoke(window: BrowserWindow, target: string): Promise<void
     if (attempt === 39) throw new Error('Bobo UI did not settle before capture');
     await delay(150);
   }
-  await window.webContents.executeJavaScript('document.fonts.ready.then(() => true)', true);
+  await window.webContents.executeJavaScript('document.fonts.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))', true);
+  await delay(250);
   const image = await window.webContents.capturePage();
   const output = resolve(target);
   await mkdir(dirname(output), { recursive: true });
